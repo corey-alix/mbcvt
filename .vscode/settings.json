@@ -1,0 +1,11 @@
+{
+  "cSpell.words": ["Millbrook", "Westfield"],
+  "search.exclude": {
+    "**/*.js": true,
+    "**/*.js.map": true
+  },
+  "files.exclude": {
+    "**/*.js": true,
+    "**/*.js.map": true
+  }
+}

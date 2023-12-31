@@ -1,0 +1,23 @@
+{
+  "name": "mbcvt",
+  "version": "1.0.0",
+  "description": "Millbrook Campground in Westfield Vermont",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corey-alix/mbcvt.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/corey-alix/mbcvt/issues"
+  },
+  "homepage": "https://github.com/corey-alix/mbcvt#readme",
+  "dependencies": {
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <h1>Millbrook Campground Reservation</h1>
+    <div class="w-90 solid thin pad-1 center green"><img src="../assets/PXL_20231230_153346453.jpg"
+            alt="Footbridge over MillBrook" class="no-mobile center h-20" /></div>
+    <form data-has="action" class="w-90 center">
+        <fieldset class="no-border grid-2">
+            <label for="site">Site Number</label>
+            <input type="number" name="site" id="site" class="pad-1 solid thin" data-action="input:show-site">
+        </fieldset>
+        <fieldset class="no-border grid-2">
+            <label for="arrival">Arrival Date</label>
+            <input type="date" name="arrival" id="arrival" class="pad-1 solid thin">
+        </fieldset>
+        <fieldset class="no-border grid-2">
+            <label for="departure">Departure Date</label>
+            <input type="date" name="departure" id="departure" class="pad-1 solid thin">
+        </fieldset>
+    </form>
+
+    <script type="module">
+        import { setupReservationForm } from "../index.js";
+        setupReservationForm();
+    </script>
+
+</body>
+
+</html>

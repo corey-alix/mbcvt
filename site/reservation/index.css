@@ -1,0 +1,82 @@
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #000;
+    color: #fff;
+  }
+}
+
+@media screen {
+  .no-mobile {
+    display: none;
+  }
+  .no-desktop {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .no-mobile {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .no-desktop {
+    display: block;
+  }
+}
+
+@media screen {
+  :root {
+    --primary: #000;
+    --secondary: #fff;
+    --accent: #f00;
+    --green: rgb(35, 99, 35);
+  }
+}
+
+/* mostly atomic styles */
+@media screen {
+  .no-border {
+    border: none;
+  }
+
+  .solid {
+    border-style: solid;
+  }
+
+  .thin {
+    border-width: 1px;
+  }
+
+  .pad-1 {
+    padding: 0.25rem;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1rem;
+  }
+
+  .w-90 {
+    width: 90%;
+  }
+
+  .h-20 {
+    height: 20vh !important;
+  }
+
+  .w-100 {
+    width: 100%;
+  }
+
+  .center {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .green {
+    background-color: var(--green);
+  }
+}
