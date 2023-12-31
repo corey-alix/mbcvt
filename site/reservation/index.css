@@ -1,7 +1,7 @@
 @media (prefers-color-scheme: dark) {
   body {
-    background-color: #000;
-    color: #fff;
+    background-color: var(--gray);
+    color: var(--secondary);
   }
 }
 
@@ -11,18 +11,6 @@
   }
   .no-desktop {
     display: none;
-  }
-}
-
-@media screen and (min-width: 900px) {
-  .no-mobile {
-    display: block;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .no-desktop {
-    display: block;
   }
 }
 
@@ -32,12 +20,18 @@
     --secondary: hsl(300, 60%, 90%);
     --accent: #f00;
     --green: hsl(120, 60%, 25%);
+    --gray: hsl(120, 10%, 25%);
     --spacer: 0.25rem;
+    --border-radius: 0.25rem;
   }
 }
 
 /* mostly atomic styles */
 @media screen {
+  body {
+    overflow-x: hidden;
+  }
+
   .no-border {
     border: none;
   }
@@ -47,6 +41,7 @@
   }
 
   .spacer-2 {
+    display: inline-block;
     margin: calc(var(--spacer) * 2);
   }
 
@@ -59,41 +54,89 @@
   }
 
   .pad-1 {
-    padding: 0.25rem;
+    padding: var(--spacer);
+  }
+
+  .grid {
+    display: grid;
+    grid-gap: var(--spacer);
   }
 
   .grid-2 {
-    display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-gap: 1rem;
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .grid-10 {
+    grid-template-columns: repeat(10, 1fr);
   }
 
   .w-90 {
     width: 90%;
   }
 
+  .h-4 {
+    height: calc(var(--spacer) * 4);
+  }
+
   .h-20 {
-    height: 20vh !important;
+    height: 20vh;
   }
 
   .w-100 {
     width: 100%;
   }
 
+  .left {
+    text-align: left;
+  }
+
+  .right {
+    text-align: right;
+  }
+
   .center {
     margin-left: auto;
     margin-right: auto;
+    text-align: center;
   }
 
   .green {
     background-color: var(--green);
+  }
+
+  .smaller {
+    font-size: min(1vw, 1rem);
+  }
+
+  .small {
+    font-size: min(1.5vw, 1.5rem);
+  }
+
+  .large {
+    font-size: min(2vw, 2rem);
+  }
+
+  .larger {
+    font-size: min(3vw, 3rem);
+  }
+
+  .largest {
+    font-size: min(4vw, 4rem);
+  }
+
+  .rounded {
+    border-radius: var(--border-radius);
   }
 }
 
 /* style definitions */
 @media screen {
   .btn {
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius);
     padding: 0.5rem;
     border: none;
     cursor: pointer;
@@ -105,8 +148,75 @@
   }
 
   .input {
-    border-radius: 0.25rem;
-    padding: 0.5rem;
+    border-radius: var(--border-radius);
+    padding: var(--spacer);
     border: none;
+  }
+
+  .site-picker-button {
+    color: var(--primary);
+    border-radius: var(--border-radius);
+    transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
+    height: fit-content;
+  }
+
+  .site-picker-button.selected {
+    background-color: var(--secondary);
+    color: var(--primary);
+  }
+
+  .power::after {
+    content: "\26A1";
+  }
+
+  .water::after {
+    content: "\1F30A";
+  }
+
+  .sewer::after {
+    content: "\1F6BD";
+  }
+
+  .nope::after {
+    content: "\1F6AB";
+  }
+
+  .site-number {
+    display: block;
+  }
+
+  .unavailable {
+    background-color: var(--gray);
+    color: var(--secondary);
+    opacity: 0.5;
+  }
+
+  .gradient-fade {
+    background: linear-gradient(to bottom, var(--green) 0%, var(--gray) 100%);
+  }
+
+  .full-screen {
+    width: 90vw;
+    height: auto;
+    position: absolute;
+    z-index: 1000;
+    top: 5vw;
+    left: 5vw;
+    border: 1rem solid var(--secondary);
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .no-mobile {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 899px) {
+  .no-desktop {
+    display: block;
+  }
+  .grid-10 {
+    grid-template-columns: repeat(5, 1fr);
   }
 }

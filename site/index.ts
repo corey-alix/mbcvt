@@ -1,7 +1,53 @@
+import { siteMap } from "./db.js"
+
 export function setupReservationForm() {
     registerFormActions();
+
+    function getFormElements() {
+        const form = document.querySelector<HTMLFormElement>('form')!;
+        return {
+            arrivalDateInput: form.querySelector<HTMLInputElement>('#arrival'),
+            departureDateInput: form.querySelector<HTMLInputElement>('#departure'),
+            daysInput: form.querySelector<HTMLInputElement>('#duration'),
+            siteInput: form.querySelector<HTMLInputElement>('#site'),
+            totalInput: form.querySelector<HTMLInputElement>('#total'),
+        }
+    }
+
+    {
+        const siteButtons = asHtml(generateSitePicker());
+        const target = document.querySelector<HTMLElement>('#site-picker');
+        if (!target) throw new Error('#site-picker is required');
+        target.append(siteButtons);
+        const buttons = target.querySelectorAll('button');
+        buttons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const siteNumber = button.value;
+                const siteInput = document.querySelector<HTMLInputElement>('#site');
+                if (!siteInput) throw new Error('#site is required');
+                siteInput.value = siteNumber;
+                trigger('input:show-site');
+                buttons.forEach(button => button.classList.remove('selected'));
+                button.classList.add('selected');
+            });
+        });
+    }
+
+    on('click:toggle-full-screen', () => {
+        const image = document.querySelector<HTMLImageElement>('#site-preview-img');
+        if (!image) return log('image is required');
+        image.classList.toggle('full-screen');
+    });
+
+    on('input:update-departure-date', () => {
+        updateDepartureDate();
+        updateAvailableSites();
+    });
+
     on('input:show-site', () => {
-        const siteNumber = document.querySelector<HTMLInputElement>('#site')?.value;
+        const elements = getFormElements();
+        const siteNumber = elements.siteInput?.value;
         if (!siteNumber) return;
 
         const sitePreviewImg = document.querySelector<HTMLImageElement>('#site-preview-img');
@@ -16,31 +62,110 @@ export function setupReservationForm() {
     on('click:compute', compute);
     on('input:compute', compute);
 
+    on(`input:update-length-of-stay`, () => updateLengthOfStay());
+
+    function updateLengthOfStay() {
+        log('update length of stay')
+        const elements = getFormElements();
+        const arrivalDate = elements.arrivalDateInput?.value;
+        if (!arrivalDate) return log('arrival date is required');
+        const departureDate = elements.departureDateInput?.value;
+        if (!departureDate) return log('departure date is required');
+        const duration = elements.daysInput;
+        if (!duration) return log('duration is required');
+        duration.value = calculateDays(arrivalDate, departureDate).toString();
+    }
+
+    function updateDepartureDate() {
+        log('update departure date')
+        const elements = getFormElements();
+        const arrivalDate = elements.arrivalDateInput?.value;
+        if (!arrivalDate) return log('arrival date is required');
+        const duration = elements.daysInput?.value;
+        if (!duration) return log('duration is required');
+        const departureDate = new Date(arrivalDate);
+        departureDate.setDate(departureDate.getDate() + parseInt(duration));
+        elements.departureDateInput!.valueAsDate = departureDate;
+    }
+
+    function updateAvailableSites() {
+        log('update available sites')
+        const elements = getFormElements();
+        const arrivalDate = elements.arrivalDateInput?.value;
+        if (!arrivalDate) return log('arrival date is required');
+
+        const sitesAvailableOnArrival = siteMap.filter(siteInfo => {
+            return siteInfo.availableDates.some(date => date === arrivalDate);
+        });
+
+        const departureDate = elements.departureDateInput?.value;
+        if (!departureDate) return log('departure date is required');
+
+        function interpolateDates(start: string, end: string) {
+            const startDate = new Date(start);
+            const days = calculateDays(start, end);
+            return range(days).map((_, i) => {
+                const date = new Date(startDate);
+                date.setDate(date.getDate() + i);
+                // yyyy-mm-dd format
+                return date.toISOString().split('T')[0];
+            });
+        }
+
+        const datesToReserve = interpolateDates(arrivalDate, departureDate);
+
+        const sitesAvailable = sitesAvailableOnArrival.filter(s => datesToReserve.every(date => s.availableDates.includes(date)));
+
+        // black out all sites not available on departure
+        const sitePickers = document.querySelectorAll<HTMLButtonElement>('.site-picker-button');
+        sitePickers.forEach(sitePicker => {
+            const siteNumber = sitePicker.value;
+            const siteInfo = sitesAvailable.find(siteInfo => siteInfo.site === parseInt(siteNumber));
+            sitePicker.classList.toggle('unavailable', !siteInfo);
+            sitePicker.disabled = !siteInfo;
+        });
+    }
+
     function compute() {
-        const form = document.querySelector<HTMLFormElement>('form[data-has]');
-        if (!form) throw new Error('form is required');
+        log('compute')
+        const formElements = getFormElements();
 
-        const formValues = new FormData(form);
-        const siteNumber = formValues.get('site');
-        if (!siteNumber) throw new Error('site number is required');
+        const siteNumber = formElements.siteInput?.value;
+        if (!siteNumber) return log('site number is required');
 
-        const arrivalDate = formValues.get('arrival');
-        if (!arrivalDate) throw new Error('arrival date is required');
+        const arrivalDate = formElements.arrivalDateInput?.value;
+        if (!arrivalDate) return log('arrival date is required');
 
-        const departureDate = formValues.get('departure');
-        if (!departureDate) throw new Error('departure date is required');
+        const departureDate = formElements.departureDateInput?.value;
+        if (!departureDate) return log('departure date is required');
 
         const days = calculateDays(arrivalDate.toString(), departureDate.toString());
-        if (days < 1) throw new Error('departure date must be after arrival date');
+        if (days < 1) return log('departure date must be after arrival date');
 
-        const dailyRate = 28;
+        const dailyRate = siteMap.find(siteInfo => siteInfo.site === parseInt(siteNumber))?.dailyRate;
+        if (!dailyRate) return log('site number is invalid');
+
         const total = days * dailyRate;
-        const totalElement = form.querySelector<HTMLInputElement>('#total');
-        if (!totalElement) throw new Error('#total element is required');
+        const totalElement = formElements.totalInput;
+        if (!totalElement) return log('total is required');
 
         const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
         const totalFormatted = formatter.format(total);
         totalElement.value = totalFormatted;
+    }
+
+    function generateSitePicker() {
+        return siteMap.map(siteInfo => {
+            const { site, power, water, sewer } = siteInfo;
+            return `<button class="site-picker-button site_${site}" value="${site}">
+            ${site ? `<div class="site-number larger">${site}</div>` : ''}
+            <nav class="grid grid-3">
+                ${power ? '<div class="power smaller"></div>' : '<div class="nope smaller"></div>'}
+                ${water ? '<div class="water smaller"></div>' : '<div class="nope smaller"></div>'}
+                ${sewer ? '<div class="sewer smaller"></div>' : '<div class="nope smaller"></div>'}
+            </nav>
+            </button>`;
+        }).join('');
     }
 }
 
@@ -68,12 +193,14 @@ function registerFormActions() {
 }
 
 class EventManager {
-    #queue: Array<() => void> = [];
+    #queue: Record<string, Array<() => void>> = {};
     on(topic: string, callback: () => void) {
-        this.#queue.push(callback);
+        if (!this.#queue[topic]) this.#queue[topic] = [];
+        this.#queue[topic].push(callback);
     }
     trigger(topic: string) {
-        this.#queue.forEach(callback => callback());
+        log(`trigger ${topic}`)
+        this.#queue[topic]?.forEach(callback => callback());
     }
 }
 
@@ -94,4 +221,18 @@ function calculateDays(arrivalDate: string, departureDate: string) {
     const milliseconds = departure.getTime() - arrival.getTime();
     const days = Math.round(milliseconds / 1000 / 60 / 60 / 24);
     return days + 1;
+}
+
+function asHtml(html: string) {
+    const template = document.createElement('template');
+    template.innerHTML = html;
+    return template.content;
+}
+
+function log(message: string) {
+    console.log(message);
+}
+
+function range(size: number) {
+    return [...Array(size).keys()];
 }
