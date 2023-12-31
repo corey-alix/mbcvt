@@ -28,10 +28,11 @@
 
 @media screen {
   :root {
-    --primary: #000;
-    --secondary: #fff;
+    --primary: hsl(120, 60%, 40%);
+    --secondary: hsl(300, 60%, 90%);
     --accent: #f00;
-    --green: rgb(35, 99, 35);
+    --green: hsl(120, 60%, 25%);
+    --spacer: 0.25rem;
   }
 }
 
@@ -39,6 +40,14 @@
 @media screen {
   .no-border {
     border: none;
+  }
+
+  .spacer {
+    margin: var(--spacer);
+  }
+
+  .spacer-2 {
+    margin: calc(var(--spacer) * 2);
   }
 
   .solid {
@@ -78,5 +87,26 @@
 
   .green {
     background-color: var(--green);
+  }
+}
+
+/* style definitions */
+@media screen {
+  .btn {
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background-color: var(--primary);
+    color: var(--secondary);
+  }
+
+  .input {
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    border: none;
   }
 }
