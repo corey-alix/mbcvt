@@ -3,7 +3,14 @@ export function setupReservationForm() {
     on('input:show-site', () => {
         const siteNumber = document.querySelector<HTMLInputElement>('#site')?.value;
         if (!siteNumber) return;
-        alert(`showing site ${siteNumber}`);
+
+        const sitePreviewImg = document.querySelector<HTMLImageElement>('#site-preview-img');
+        if (!sitePreviewImg) return;
+
+        // pad the site number to two digits
+        const siteNumberPadded = siteNumber.padStart(2, '0');
+        const url = `../assets/site_${siteNumberPadded}.jpg`;
+        sitePreviewImg.src = url;
     });
 }
 
