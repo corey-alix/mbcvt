@@ -7,13 +7,13 @@
 
 @media screen {
   .hidden {
-    display: none;
+    display: none !important;
   }
   .no-mobile {
-    display: none;
+    display: none !important;
   }
   .no-desktop {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -21,10 +21,10 @@
   :root {
     --primary: hsl(120, 60%, 40%);
     --secondary: hsl(300, 60%, 90%);
-    --accent: #f00;
+    --accent: hsl(45, 80%, 50%);
     --green: hsl(120, 60%, 25%);
     --gray: hsl(120, 10%, 25%);
-    --spacer: 0.25rem;
+    --spacer: 0.5rem;
     --border-radius: 0.25rem;
   }
 }
@@ -93,6 +93,18 @@
     width: 90%;
   }
 
+  .w-rem-4 {
+    width: calc(1rem * 4);
+  }
+
+  .w-rem-6 {
+    width: calc(1rem * 6);
+  }
+
+  .w-fit {
+    width: fit-content;
+  }
+
   .h-4 {
     height: calc(var(--spacer) * 4);
   }
@@ -107,10 +119,12 @@
 
   .left {
     text-align: left;
+    margin-right: auto;
   }
 
   .right {
     text-align: right;
+    margin-left: auto;
   }
 
   .center {
@@ -149,6 +163,16 @@
 
   .rounded {
     border-radius: var(--border-radius);
+  }
+
+  .warning {
+    color: var(--accent);
+  }
+
+  .warning::before {
+    color: red;
+    content: "\26A0";
+    padding: var(--spacer);
   }
 }
 
@@ -213,8 +237,7 @@
   .unavailable {
     background-color: var(--gray);
     color: var(--secondary);
-    opacity: 0.5;
-    display: none;
+    opacity: 0.1;
   }
 
   .gradient-fade {

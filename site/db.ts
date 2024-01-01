@@ -1,3 +1,8 @@
+const baseRate = 14;
+const sewerRate = 10;
+const waterRate = 5;
+const powerRate = 10;
+
 export const officeInfo = {
     name: 'Millbrook Campground',
     address: '1152 VT RT 100, Westfield, VT 05874',
@@ -10,77 +15,77 @@ export const officeInfo = {
 
 export const siteMap = [{
     alias: "A00",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "A01",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "A02",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "A03",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "B04",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "B05",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "B06",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "B07A",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "B07B",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "B08",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "B09",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "B10",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "B11",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "B12",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "B13",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
@@ -130,57 +135,52 @@ export const siteMap = [{
     sewer: false,
 }, {
     alias: "F00",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: false,
 }, {
     alias: "F01",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "F02",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "F03",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "F04",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "F05",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "F06",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 }, {
     alias: "F07",
-    power: '30 amp',
+    power: true,
     water: true,
     sewer: true,
 },].map((site, siteId) => {
-    let dailyRate = 20;
-    if (site.power) {
-        if (site.power === '30A') dailyRate += 5;
-        else if (site.power === '50A') dailyRate += 10;
-        else dailyRate += 2;
-    }
-
-    if (site.water) dailyRate += 5;
-    if (site.sewer) dailyRate += 5;
+    let dailyRate = baseRate;
+    if (site.power) dailyRate += powerRate;
+    if (site.water) dailyRate += waterRate;
+    if (site.sewer) dailyRate += sewerRate;
 
     const availableDates = range(100).map((_, i) => {
-        const openingDate = new Date('2024-05-01');
+        const openingDate = new Date();
         openingDate.setDate(openingDate.getDate() + i);
         // yyyy-mm-dd format
         return openingDate.toISOString().split('T')[0];
