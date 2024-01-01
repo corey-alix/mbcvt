@@ -4,6 +4,7 @@
   "description": "Millbrook Campground in Westfield Vermont",
   "main": "index.js",
   "scripts": {
+    "deploy": "tsc",
     "dev": "tsc -w"
   },
   "repository": {
