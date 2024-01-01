@@ -1,184 +1,174 @@
+export const officeInfo = {
+    name: 'Millbrook Campground',
+    address: '1152 VT RT 100, Westfield, VT 05874',
+    phone: '802.744.8085',
+    email: 'camp@mbcg.email',
+    template: {
+        '{{no-vacancy}}': 'No sites are available on this date. Please call 802.744.8085 to see if we can find a way to accommodate you.'
+    }
+}
+
 export const siteMap = [{
-    site: 1,
-    alias: "F8",
+    alias: "A00",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 2,
-    alias: "F9",
+    alias: "A01",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 3,
-    alias: "FA",
+    alias: "A02",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 4,
-    alias: "R1",
+    alias: "A03",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 5,
-    alias: "R2",
+    alias: "B04",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 6,
-    alias: "R3",
+    alias: "B05",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 7,
-    alias: "R4",
+    alias: "B06",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 7.1,
-    alias: "R5",
+    alias: "B07A",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 8,
-    alias: "R6",
+    alias: "B07B",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 9,
-    alias: "R7",
+    alias: "B08",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 10,
-    alias: "R8",
+    alias: "B09",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 11,
-    alias: "R9",
+    alias: "B10",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 12,
-    alias: "RA",
+    alias: "B11",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 13,
-    alias: "RB",
+    alias: "B12",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 14,
-    alias: "H1",
+    alias: "B13",
+    power: '30 amp',
+    water: true,
+    sewer: true,
+}, {
+    alias: "C14",
+    power: true,
+    water: true,
+    sewer: false,
+}, {
+    alias: "C15",
+    power: true,
+    water: true,
+    sewer: false,
+}, {
+    alias: "B16",
+    power: true,
+    water: true,
+    sewer: true,
+}, {
+    alias: "C17",
+    power: true,
+    water: true,
+    sewer: false,
+}, {
+    alias: "C18",
+    power: true,
+    water: true,
+    sewer: false,
+}, {
+    alias: "C19",
+    power: true,
+    water: true,
+    sewer: false,
+}, {
+    alias: "C20",
+    power: true,
+    water: true,
+    sewer: false,
+}, {
+    alias: "C21",
+    power: true,
+    water: true,
+    sewer: false,
+}, {
+    alias: "C22",
     power: false,
     water: false,
     sewer: false,
 }, {
-    site: 15,
-    alias: "H2",
-    power: true,
+    alias: "F00",
+    power: '30 amp',
     water: true,
     sewer: false,
 }, {
-    site: 16,
-    alias: "H3",
-    power: true,
-    water: true,
-    sewer: true,
-}, {
-    site: 17,
-    alias: "H4",
-    power: true,
-    water: true,
-    sewer: false,
-}, {
-    site: 18,
-    alias: "H5",
-    power: true,
-    water: true,
-    sewer: false,
-}, {
-    site: 19,
-    alias: "H6",
-    power: false,
-    water: true,
-    sewer: false,
-}, {
-    site: 20,
-    alias: "H7",
-    power: true,
-    water: true,
-    sewer: false,
-}, {
-    site: 21,
-    alias: "H8",
-    power: true,
-    water: true,
-    sewer: false,
-}, {
-    site: 22,
-    alias: "H9",
-    power: false,
-    water: false,
-    sewer: false,
-}, {
-    site: 31,
-    alias: "F1",
+    alias: "F01",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 32,
-    alias: "F2",
+    alias: "F02",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 33,
-    alias: "F3",
+    alias: "F03",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 34,
-    alias: "F4",
+    alias: "F04",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 35,
-    alias: "F5",
+    alias: "F05",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 36,
-    alias: "F6",
+    alias: "F06",
     power: '30 amp',
     water: true,
     sewer: true,
 }, {
-    site: 37,
-    alias: "F7",
+    alias: "F07",
     power: '30 amp',
     water: true,
     sewer: true,
-},].map(site => {
+},].map((site, siteId) => {
     let dailyRate = 20;
     if (site.power) {
         if (site.power === '30A') dailyRate += 5;
@@ -188,8 +178,6 @@ export const siteMap = [{
 
     if (site.water) dailyRate += 5;
     if (site.sewer) dailyRate += 5;
-
-    if (!site.alias) site.alias = site.site.toString();
 
     const availableDates = range(100).map((_, i) => {
         const openingDate = new Date('2024-05-01');
@@ -205,7 +193,7 @@ export const siteMap = [{
         availableDates.splice(indexToRemove, Math.ceil(Math.random() * 21));
     }
     return {
-        ...site, dailyRate, availableDates,
+        site: siteId + 1, ...site, dailyRate, availableDates,
     };
 }).sort((a, b) => a.alias.localeCompare(b.alias));
 

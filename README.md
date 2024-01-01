@@ -37,3 +37,6 @@ Stripe also has a tap-to-pay phone app.  I will use this to accept payments in p
 - Install the FaunaDB CLI
 - Setup a FaunaDB database
 
+# See Also
+
+Deployed to <https://dynamic-unicorn-70879a.netlify.app/site/reservation/index.html>

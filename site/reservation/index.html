@@ -13,7 +13,7 @@
     <form data-has="action" class="w-90 center">
         <div class="w-100 pad-1 center green rounded gradient-fade">
             <h1 class="center largest">Millbrook Campground Reservation</h1>
-            <img src="../assets/PXL_20231230_153346453.jpg" alt="Footbridge over MillBrook" class="center h-20 rounded"
+            <img src="../assets/bath_A01.jpg" alt="Millbrook Campground Photo Gallery" class="center h-20 rounded"
                 id="site-preview-img" data-action="click:toggle-full-screen" />
             <div class="spacer-2"></div>
         </div>
@@ -40,16 +40,17 @@
         </fieldset>
         <fieldset class="no-border grid grid-10" id="site-picker">
             <!-- site buttons go here -->
+            <label class="large span-all if-no-vacancy hidden" data-has="template">{{no-vacancy}}</label>
         </fieldset>
         <fieldset class="no-border grid grid-2">
             <label class="left larger" for="total">Price</label>
             <input type="text" name="total" id="total" class="input pad-1 solid thin right large" readonly>
         </fieldset>
         <div class="spacer-2"></div>
-        <nav class="left">
-            <button type="submit" name="reserve" id="reserve" class="btn btn-primary"
+        <nav class="left grid grid-2">
+            <button type="submit" name="reserve" id="reserve" class="btn btn-primary larger"
                 data-action="click:compute">Reserve</button>
-            <button type="submit" name="reserve" id="reserve" class="btn btn-secondary">Cancel</button>
+            <button type="submit" name="reserve" id="reserve" class="btn btn-secondary larger">Cancel</button>
         </nav>
     </form>
 

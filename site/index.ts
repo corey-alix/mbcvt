@@ -1,18 +1,20 @@
-import { siteMap } from "./db.js"
+import { officeInfo, siteMap } from "./db.js"
 
 export function setupReservationForm() {
     registerFormActions();
 
-    function getFormElements() {
-        const form = document.querySelector<HTMLFormElement>('form')!;
-        return {
-            arrivalDateInput: form.querySelector<HTMLInputElement>('#arrival'),
-            departureDateInput: form.querySelector<HTMLInputElement>('#departure'),
-            daysInput: form.querySelector<HTMLInputElement>('#duration'),
-            siteInput: form.querySelector<HTMLInputElement>('#site'),
-            totalInput: form.querySelector<HTMLInputElement>('#total'),
-        }
-    }
+    // insert template values into DOM
+    const templateKeys = Object.keys(officeInfo.template) as Array<keyof typeof officeInfo.template>;
+    const elements = document.querySelectorAll(`[data-has="template"]`);
+    templateKeys.forEach(key => {
+        elements.forEach(element => {
+            const originalText = element.textContent;
+            if (!originalText) return;
+            const templateValue = officeInfo.template[key];
+            const newText = originalText.replace(key, templateValue);
+            element.textContent = newText;
+        });
+    });
 
     {
         const siteButtons = asHtml(generateSitePicker());
@@ -33,6 +35,20 @@ export function setupReservationForm() {
                 button.classList.add('selected');
             });
         });
+
+        getFormElements().arrivalDateInput!.valueAsDate = new Date();
+        updateDepartureDate();
+    }
+
+    function getFormElements() {
+        const form = document.querySelector<HTMLFormElement>('form')!;
+        return {
+            arrivalDateInput: form.querySelector<HTMLInputElement>('#arrival'),
+            departureDateInput: form.querySelector<HTMLInputElement>('#departure'),
+            daysInput: form.querySelector<HTMLInputElement>('#duration'),
+            siteInput: form.querySelector<HTMLInputElement>('#site'),
+            totalInput: form.querySelector<HTMLInputElement>('#total'),
+        }
     }
 
     on('click:toggle-full-screen', () => {
@@ -55,9 +71,8 @@ export function setupReservationForm() {
         const sitePreviewImg = document.querySelector<HTMLImageElement>('#site-preview-img');
         if (!sitePreviewImg) return;
 
-        // pad the site number to two digits
-        const siteNumberPadded = siteNumber.padStart(2, '0');
-        const url = `../assets/site_${siteNumberPadded}.jpg`;
+        const siteInfo = siteMap.find(siteInfo => siteInfo.site === parseInt(siteNumber));
+        const url = `../assets/site_${siteInfo?.alias}.jpg`;
         sitePreviewImg.src = url;
     });
 
@@ -121,6 +136,8 @@ export function setupReservationForm() {
         const datesToReserve = interpolateDates(arrivalDate, departureDate);
 
         const sitesAvailable = sitesAvailableOnArrival.filter(s => datesToReserve.every(date => s.availableDates.includes(date)));
+
+        document.querySelectorAll(".if-no-vacancy").forEach(element => element.classList.toggle('hidden', sitesAvailable.length > 0));
 
         // black out all sites not available on departure
         const sitePickers = document.querySelectorAll<HTMLButtonElement>('.site-picker-button');
