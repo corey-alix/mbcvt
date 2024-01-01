@@ -28,6 +28,7 @@ export function setupReservationForm() {
                 if (!siteInput) throw new Error('#site is required');
                 siteInput.value = siteNumber;
                 trigger('input:show-site');
+                trigger('input:compute');
                 buttons.forEach(button => button.classList.remove('selected'));
                 button.classList.add('selected');
             });
@@ -43,6 +44,7 @@ export function setupReservationForm() {
     on('input:update-departure-date', () => {
         updateDepartureDate();
         updateAvailableSites();
+        compute();
     });
 
     on('input:show-site', () => {
@@ -62,7 +64,11 @@ export function setupReservationForm() {
     on('click:compute', compute);
     on('input:compute', compute);
 
-    on(`input:update-length-of-stay`, () => updateLengthOfStay());
+    on(`input:update-length-of-stay`, () => {
+        updateLengthOfStay();
+        updateAvailableSites();
+        compute();
+    });
 
     function updateLengthOfStay() {
         log('update length of stay')
@@ -130,9 +136,6 @@ export function setupReservationForm() {
         log('compute')
         const formElements = getFormElements();
 
-        const siteNumber = formElements.siteInput?.value;
-        if (!siteNumber) return log('site number is required');
-
         const arrivalDate = formElements.arrivalDateInput?.value;
         if (!arrivalDate) return log('arrival date is required');
 
@@ -142,27 +145,42 @@ export function setupReservationForm() {
         const days = calculateDays(arrivalDate.toString(), departureDate.toString());
         if (days < 1) return log('departure date must be after arrival date');
 
-        const dailyRate = siteMap.find(siteInfo => siteInfo.site === parseInt(siteNumber))?.dailyRate;
-        if (!dailyRate) return log('site number is invalid');
+        const siteNumber = formElements.siteInput?.value;
+        if (siteNumber) {
+            const dailyRate = siteMap.find(siteInfo => siteInfo.site === parseInt(siteNumber))?.dailyRate;
+            if (!dailyRate) return log('site number is invalid');
 
-        const total = days * dailyRate;
-        const totalElement = formElements.totalInput;
-        if (!totalElement) return log('total is required');
+            const total = days * dailyRate;
+            const totalElement = formElements.totalInput;
+            if (!totalElement) return log('total is required');
 
-        const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
-        const totalFormatted = formatter.format(total);
-        totalElement.value = totalFormatted;
+            const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+            const totalFormatted = formatter.format(total);
+            totalElement.value = totalFormatted;
+        }
+
+        const otherRates = document.querySelectorAll<HTMLDivElement>('.site-picker-button .rate');
+        otherRates.forEach(rate => {
+            const siteNumber = rate.closest<HTMLButtonElement>('button.site-picker-button')?.value;
+            if (!siteNumber) return log('site number is required');
+            const dailyRate = siteMap.find(siteInfo => siteInfo.site === parseInt(siteNumber))?.dailyRate;
+            if (!dailyRate) return log('site number is invalid');
+            const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+            const totalFormatted = formatter.format(dailyRate * days);
+            rate.innerText = totalFormatted;
+        });
     }
 
     function generateSitePicker() {
         return siteMap.map(siteInfo => {
-            const { site, power, water, sewer } = siteInfo;
+            const { alias, site, power, water, sewer } = siteInfo;
             return `<button class="site-picker-button site_${site}" value="${site}">
-            ${site ? `<div class="site-number larger">${site}</div>` : ''}
+            ${site ? `<div class="site-number large">${alias}</div>` : ''}
             <nav class="grid grid-3">
                 ${power ? '<div class="power smaller"></div>' : '<div class="nope smaller"></div>'}
                 ${water ? '<div class="water smaller"></div>' : '<div class="nope smaller"></div>'}
                 ${sewer ? '<div class="sewer smaller"></div>' : '<div class="nope smaller"></div>'}
+                <div class="rate smaller span-3">$</div>
             </nav>
             </button>`;
         }).join('');
@@ -219,8 +237,7 @@ function calculateDays(arrivalDate: string, departureDate: string) {
     const arrival = new Date(arrivalDate);
     const departure = new Date(departureDate);
     const milliseconds = departure.getTime() - arrival.getTime();
-    const days = Math.round(milliseconds / 1000 / 60 / 60 / 24);
-    return days + 1;
+    return Math.round(milliseconds / 1000 / 60 / 60 / 24);
 }
 
 function asHtml(html: string) {

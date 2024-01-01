@@ -70,8 +70,16 @@
     grid-template-columns: repeat(3, 1fr);
   }
 
+  .grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
   .grid-10 {
     grid-template-columns: repeat(10, 1fr);
+  }
+
+  .span-3 {
+    grid-column: span 3;
   }
 
   .w-90 {
@@ -106,6 +114,10 @@
 
   .green {
     background-color: var(--green);
+  }
+
+  .smallest {
+    font-size: min(0.5vw, 0.5rem);
   }
 
   .smaller {
@@ -158,6 +170,11 @@
     border-radius: var(--border-radius);
     transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
     height: fit-content;
+  }
+
+  .site-picker-button:hover {
+    background-color: var(--primary);
+    color: var(--secondary);
   }
 
   .site-picker-button.selected {
