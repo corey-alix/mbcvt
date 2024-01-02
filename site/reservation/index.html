@@ -6,7 +6,7 @@
     <!-- mobile friendly -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservation</title>
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="./index.css">
     <link rel="author" href="mailto:coreyalix@gmail.com">
 </head>
 
@@ -14,9 +14,10 @@
     <form data-has="action" class="w-90 center">
         <div class="w-100 pad-1 center green rounded gradient-fade">
             <h1 class="center largest">Millbrook Campground Reservation</h1>
-            <img src="../assets/bath_A01.jpg" alt="Millbrook Campground Photo Gallery" class="center h-20 rounded"
-                id="site-preview-img" data-action="click:toggle-full-screen" />
-            <div class="spacer-2"></div>
+            <img src="../assets/bath_A01.jpg" alt="Millbrook Campground Photo Gallery"
+                class="center h-20 rounded border-solid border-2 border-white" id="site-preview-img"
+                data-action="click:toggle-full-screen" />
+            <div class="about large">&nbsp;</div>
         </div>
         <div class="spacer-2"></div>
         <fieldset class="no-border grid grid-2">
@@ -27,7 +28,7 @@
         <fieldset class="no-border grid grid-2">
             <label class="left large" for="duration">Length of Stay</label>
             <input type="number" name="duration" id="duration" class="input pad-1 solid thin large w-fit right"
-                data-action="input:minmax input:update-departure-date" min="1" max="28" value="1" />
+                data-action="input:minmax input:update-departure-date focus:select-all" min="1" max="28" value="1" />
         </fieldset>
         <fieldset class="no-border grid grid-2">
             <label class="left large" for="departure">Departure Date</label>

@@ -15,21 +15,25 @@ export const officeInfo = {
 
 export const siteMap = [{
     alias: "A00",
+    about: "This site is located nearest the bathhouse and above the brook.",
     power: true,
     water: true,
     sewer: true,
 }, {
     alias: "A01",
+    about: "This site is near the bathhouse and has a view of the brook and the pond, as well as the children's play area.",
     power: true,
     water: true,
     sewer: true,
 }, {
     alias: "A02",
+    about: "This site is near the bathhouse and has a view of the brook and the pond, as well as the children's play area.",
     power: true,
     water: true,
     sewer: true,
 }, {
     alias: "A03",
+    about: "This site is a short walk from the bathhouse and sits along the brook as well as the children's play area.",
     power: true,
     water: true,
     sewer: true,
@@ -135,6 +139,7 @@ export const siteMap = [{
     sewer: false,
 }, {
     alias: "F00",
+    about: "This is an overflow site between the pond and the brook and suitable for tents or small campers. It is a short walk to the bathhouse and the office.",
     power: true,
     water: true,
     sewer: false,
@@ -175,9 +180,10 @@ export const siteMap = [{
     sewer: true,
 },].map((site, siteId) => {
     let dailyRate = baseRate;
-    if (site.power) dailyRate += powerRate;
-    if (site.water) dailyRate += waterRate;
-    if (site.sewer) dailyRate += sewerRate;
+    const { power, water, sewer, about } = site;
+    if (power) dailyRate += powerRate;
+    if (water) dailyRate += waterRate;
+    if (sewer) dailyRate += sewerRate;
 
     const availableDates = range(100).map((_, i) => {
         const openingDate = new Date();
@@ -192,8 +198,9 @@ export const siteMap = [{
         const indexToRemove = Math.floor(Math.random() * availableDates.length);
         availableDates.splice(indexToRemove, Math.ceil(Math.random() * 21));
     }
+
     return {
-        site: siteId + 1, ...site, dailyRate, availableDates,
+        site: siteId + 1, ...site, dailyRate, availableDates, about: about || 'No description provided'
     };
 }).sort((a, b) => a.alias.localeCompare(b.alias));
 

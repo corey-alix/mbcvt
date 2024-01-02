@@ -53,6 +53,12 @@ export function setupReservationForm() {
         }
     }
 
+    on('focus:select-all', (e?: Event) => {
+        const element = e?.target as HTMLInputElement;
+        if (!element) return;
+        element.select();
+    });
+
     on('click:toggle-full-screen', () => {
         const image = document.querySelector<HTMLImageElement>('#site-preview-img');
         if (!image) return log('image is required');
@@ -91,8 +97,11 @@ export function setupReservationForm() {
         if (!sitePreviewImg) return;
 
         const siteInfo = siteMap.find(siteInfo => siteInfo.site === parseInt(siteNumber));
-        const url = `../assets/site_${siteInfo?.alias}.jpg`;
+        const url = `../assets/site_${siteInfo?.alias}.png`;
         sitePreviewImg.src = url;
+
+        const about = document.querySelector<HTMLDivElement>('.about');
+        if (about) about.innerHTML = siteInfo?.about || "";
     });
 
     on('click:compute', compute);
@@ -214,8 +223,8 @@ export function setupReservationForm() {
 
     function generateSitePicker() {
         return siteMap.map(siteInfo => {
-            const { alias, site, power, water, sewer } = siteInfo;
-            return `<button class="site-picker-button site_${site}" value="${site}">
+            const { alias, site, power, water, sewer, about } = siteInfo;
+            return `<button class="site-picker-button site_${site}" value="${site}" title="${about}">
             ${site ? `<div class="site-number large">${alias}</div>` : ''}
             <nav class="grid grid-3">
                 ${power ? '<div class="power smaller"></div>' : '<div class="nope smaller"></div>'}

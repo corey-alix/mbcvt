@@ -24,6 +24,7 @@
     --accent: hsl(45, 80%, 50%);
     --green: hsl(120, 60%, 25%);
     --gray: hsl(120, 10%, 25%);
+    --white: hsl(90, 0%, 80%);
     --spacer: 0.5rem;
     --border-radius: 0.25rem;
   }
@@ -48,6 +49,7 @@
     margin: calc(var(--spacer) * 2);
   }
 
+  .border-solid,
   .solid {
     border-style: solid;
   }
@@ -159,6 +161,14 @@
 
   .largest {
     font-size: clamp(3rem, 4vw, 4rem);
+  }
+
+  .border-white {
+    border-color: #eee;
+  }
+
+  .border-2 {
+    border-width: calc(var(--spacer) * 2);
   }
 
   .rounded {
