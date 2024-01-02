@@ -107,6 +107,10 @@
     width: 10em;
   }
 
+  .w-75vw {
+    width: 75vw;
+  }
+
   .h-4 {
     height: calc(var(--spacer) * 4);
   }
