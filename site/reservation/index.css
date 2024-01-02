@@ -33,7 +33,7 @@
 /* mostly atomic styles */
 @media screen {
   body {
-    overflow-x: hidden;
+    overflow-x: visible;
   }
 
   .no-border {
@@ -153,7 +153,7 @@
   }
 
   .large {
-    font-size: clamp(1rem, 2vw, 2rem);
+    font-size: clamp(1rem, 2vw, 1.5rem);
   }
 
   .larger {
@@ -247,7 +247,7 @@
   .unavailable {
     background-color: var(--gray);
     color: var(--secondary);
-    opacity: 0.1;
+    opacity: 0.4;
   }
 
   .gradient-fade {
@@ -256,7 +256,7 @@
 
   .full-screen {
     width: 100vw;
-    height: 100vh;
+    height: auto;
     border: none !important;
     margin: 0;
     padding: 0;
@@ -279,6 +279,6 @@
     display: block;
   }
   .grid-10 {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }
