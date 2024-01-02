@@ -119,11 +119,23 @@ export function setupReservationForm() {
         if (!sitePreviewImg) return;
 
         const siteInfo = siteMap.find(siteInfo => siteInfo.site === parseInt(siteNumber));
+        if (!siteInfo) return log('site number is invalid');
+
         const url = `../assets/site_${siteInfo?.alias}.png`;
         sitePreviewImg.src = url;
 
-        const about = document.querySelector<HTMLDivElement>('.about');
-        if (about) about.innerHTML = siteInfo?.about || "";
+        const aboutElement = document.querySelector<HTMLDivElement>('.about');
+        let about = siteInfo?.about || "";
+
+        const { power, water, sewer } = siteInfo;
+        const utilities = [];
+        if (power) utilities.push('power');
+        if (water) utilities.push('water');
+        if (sewer) utilities.push('sewer');
+        if (utilities.length > 0)
+            about += ` This site has ${utilities.join(', ')}.`;
+
+        if (aboutElement) aboutElement.innerHTML = about;
     });
 
     on('click:compute', compute);
