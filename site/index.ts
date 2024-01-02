@@ -37,7 +37,6 @@ export function setupReservationForm() {
         });
 
         getFormElements().arrivalDateInput!.valueAsDate = new Date();
-        updateDepartureDate();
         constraintDepartureDate();
         updateAvailableSites();
         compute();
@@ -49,7 +48,6 @@ export function setupReservationForm() {
         return {
             arrivalDateInput: form.querySelector<HTMLInputElement>('#arrival'),
             departureDateInput: form.querySelector<HTMLInputElement>('#departure'),
-            daysInput: form.querySelector<HTMLInputElement>('#duration'),
             siteInput: form.querySelector<HTMLInputElement>('#site'),
             totalInput: form.querySelector<HTMLInputElement>('#total'),
         }
@@ -65,6 +63,7 @@ export function setupReservationForm() {
         const minDepartureDate = addDay(arrivalDateValue, 1);
         departureDate.min = minDepartureDate;
         departureDate.max = addDay(minDepartureDate, 28);
+        if (!departureDate.value) departureDate.value = minDepartureDate;
     }
 
     on('change:constrain-departure-date', constraintDepartureDate)
@@ -107,7 +106,6 @@ export function setupReservationForm() {
     });
 
     on('input:update-departure-date', () => {
-        updateDepartureDate();
         updateAvailableSites();
         compute();
     });
@@ -132,34 +130,9 @@ export function setupReservationForm() {
     on('input:compute', compute);
 
     on(`input:update-length-of-stay`, () => {
-        updateLengthOfStay();
         updateAvailableSites();
         compute();
     });
-
-    function updateLengthOfStay() {
-        log('update length of stay')
-        const elements = getFormElements();
-        const arrivalDate = elements.arrivalDateInput?.value;
-        if (!arrivalDate) return log('arrival date is required');
-        const departureDate = elements.departureDateInput?.value;
-        if (!departureDate) return log('departure date is required');
-        const duration = elements.daysInput;
-        if (!duration) return log('duration is required');
-        duration.value = calculateDays(arrivalDate, departureDate).toString();
-    }
-
-    function updateDepartureDate() {
-        log('update departure date')
-        const elements = getFormElements();
-        const arrivalDate = elements.arrivalDateInput?.value;
-        if (!arrivalDate) return log('arrival date is required');
-        const duration = elements.daysInput?.value;
-        if (!duration) return log('duration is required');
-        const departureDate = new Date(arrivalDate);
-        departureDate.setDate(departureDate.getDate() + parseInt(duration));
-        elements.departureDateInput!.valueAsDate = departureDate;
-    }
 
     function updateAvailableSites() {
         log('update available sites')

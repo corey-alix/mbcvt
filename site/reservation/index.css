@@ -103,8 +103,8 @@
     width: calc(1rem * 6);
   }
 
-  .w-fit {
-    width: fit-content;
+  .w-10em {
+    width: 10em;
   }
 
   .h-4 {

@@ -22,17 +22,12 @@
         <div class="spacer-2"></div>
         <fieldset class="no-border grid grid-2">
             <label class="left large" for="arrival">Arrival Date</label>
-            <input type="date" name="arrival" id="arrival" class="input pad-1 solid thin large w-fit right"
+            <input type="date" name="arrival" id="arrival" class="input pad-1 solid thin large w-10em right"
                 data-action="input:update-departure-date change:constrain-departure-date">
         </fieldset>
         <fieldset class="no-border grid grid-2">
-            <label class="left large" for="duration">Length of Stay</label>
-            <input type="number" name="duration" id="duration" class="input pad-1 solid thin large w-fit right"
-                data-action="input:minmax input:update-departure-date focus:select-all" min="1" max="28" value="1" />
-        </fieldset>
-        <fieldset class="no-border grid grid-2">
             <label class="left large" for="departure">Departure Date</label>
-            <input type="date" name="departure" id="departure" class="input pad-1 solid thin large w-fit right"
+            <input type="date" name="departure" id="departure" class="input pad-1 solid thin large w-10em right"
                 data-action="input:update-length-of-stay">
         </fieldset>
         <fieldset class="no-border grid grid-2">
@@ -46,7 +41,7 @@
         </fieldset>
         <fieldset class="no-border grid grid-2 if-price hidden">
             <label class="left larger" for="total">Price</label>
-            <input type="text" name="total" id="total" class="input pad-1 solid thin right large w-fit" readonly>
+            <input type="text" name="total" id="total" class="input pad-1 solid thin right large w-10em" readonly>
         </fieldset>
         <div class="spacer-2"></div>
         <nav class="left grid grid-2">
