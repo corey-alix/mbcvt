@@ -115,9 +115,12 @@
     height: calc(var(--spacer) * 4);
   }
 
-  .h-20 {
-    height: 20vh;
-    min-height: 20vh;
+  .h-20em {
+    height: 20em;
+  }
+
+  .w-30em {
+    width: 30em;
   }
 
   .w-100 {
@@ -256,19 +259,6 @@
 
   .gradient-fade {
     background: linear-gradient(to bottom, var(--green) 0%, var(--gray) 100%);
-  }
-
-  .full-screen {
-    width: 100vw;
-    height: auto;
-    border: none !important;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    z-index: 1000;
-    top: 0;
-    left: 0;
-    border: 1rem solid var(--secondary);
   }
 }
 

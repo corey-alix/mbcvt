@@ -77,13 +77,13 @@ export function setupReservationForm() {
     on('click:toggle-full-screen', () => {
         const image = document.querySelector<HTMLImageElement>('#site-preview-img');
         if (!image) return log('image is required');
-        image.classList.toggle('full-screen');
 
-        const isFullscreen = image.classList.contains('full-screen');
         // if full screen change the image extension to .jpg
         // otherwise change to .png
         const url = image.src;
-        const extension = isFullscreen ? '.jpg' : '.png';
+        const currentExtension = url.includes('.jpg') ? '.jpg' : '.png';
+        const wasFullscreen = currentExtension === '.jpg';
+        const extension = !wasFullscreen ? '.jpg' : '.png';
         const newUrl = url.replace(/\.png|\.jpg/, extension);
         image.src = newUrl;
     });
