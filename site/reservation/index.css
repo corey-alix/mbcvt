@@ -32,17 +32,6 @@
 
 /* mostly atomic styles */
 @media screen {
-  html,
-  body {
-    align-items: center;
-    margin: 0;
-    padding: 0;
-    outline: 1px solid pink;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-
   .flex-column {
     display: flex;
     flex-direction: column;
