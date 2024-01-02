@@ -38,8 +38,10 @@ export function setupReservationForm() {
 
         getFormElements().arrivalDateInput!.valueAsDate = new Date();
         updateDepartureDate();
+        constraintDepartureDate();
         updateAvailableSites();
         compute();
+
     }
 
     function getFormElements() {
@@ -53,6 +55,20 @@ export function setupReservationForm() {
         }
     }
 
+    function constraintDepartureDate() {
+        const arrivalDateValue = getFormElements().arrivalDateInput?.value;
+        if (!arrivalDateValue) return log('arrival date is required');
+        const departureDate = getFormElements().departureDateInput;
+        if (!departureDate) return log('departure date is required');
+
+        // prevent user from selecting dates on or before arrival date
+        const minDepartureDate = addDay(arrivalDateValue, 1);
+        departureDate.min = minDepartureDate;
+        departureDate.max = addDay(minDepartureDate, 28);
+    }
+
+    on('change:constrain-departure-date', constraintDepartureDate)
+
     on('focus:select-all', (e?: Event) => {
         const element = e?.target as HTMLInputElement;
         if (!element) return;
@@ -63,6 +79,14 @@ export function setupReservationForm() {
         const image = document.querySelector<HTMLImageElement>('#site-preview-img');
         if (!image) return log('image is required');
         image.classList.toggle('full-screen');
+
+        const isFullscreen = image.classList.contains('full-screen');
+        // if full screen change the image extension to .jpg
+        // otherwise change to .png
+        const url = image.src;
+        const extension = isFullscreen ? '.jpg' : '.png';
+        const newUrl = url.replace(/\.png|\.jpg/, extension);
+        image.src = newUrl;
     });
 
     on('input:minmax', (e?: Event) => {
@@ -318,5 +342,11 @@ function interpolateDates(start: string, end: string) {
 function isAvailable(availableDates: string[], dateRange: { arrivalDate: string; departureDate: string; }) {
     const dates = interpolateDates(dateRange.arrivalDate, dateRange.departureDate);
     return dates.every(date => availableDates.includes(date));
+}
+
+function addDay(arrivalDateValue: string, days = 1) {
+    const arrivalDate = new Date(arrivalDateValue);
+    arrivalDate.setDate(arrivalDate.getDate() + days);
+    return arrivalDate.toISOString().split('T')[0];
 }
 

@@ -12,7 +12,7 @@ const async = require("async")
 const dir = process.cwd()
 const files = fs.readdirSync(dir)
 
-const maxWidth = 640
+const maxWidth = 800
 const maxHeight = maxWidth * (2 / 3)
 
 async.each(
