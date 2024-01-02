@@ -1,4 +1,28 @@
+@media screen {
+  :root {
+    --primary: hsl(120, 60%, 40%);
+    --secondary: hsl(300, 60%, 90%);
+    --accent: hsl(45, 80%, 50%);
+    --gray: hsl(120, 10%, 25%);
+    --white: hsl(90, 0%, 80%);
+    --spacer: 0.5rem;
+    --border-radius: 0.25rem;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --green: hsl(120, 60%, 35%);
+  }
+}
+
 @media (prefers-color-scheme: dark) {
+  :root {
+    --green: hsl(120, 60%, 25%);
+  }
+}
+
+@media screen {
   body {
     background-color: var(--gray);
     color: var(--secondary);
@@ -14,19 +38,6 @@
   }
   .no-desktop {
     display: none !important;
-  }
-}
-
-@media screen {
-  :root {
-    --primary: hsl(120, 60%, 40%);
-    --secondary: hsl(300, 60%, 90%);
-    --accent: hsl(45, 80%, 50%);
-    --green: hsl(120, 60%, 25%);
-    --gray: hsl(120, 10%, 25%);
-    --white: hsl(90, 0%, 80%);
-    --spacer: 0.5rem;
-    --border-radius: 0.25rem;
   }
 }
 
