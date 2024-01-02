@@ -35,6 +35,9 @@
   .flex-column {
     display: flex;
     flex-direction: column;
+    /* center children */
+    justify-content: center;
+    align-items: center;
   }
 
   .no-border {
@@ -128,6 +131,7 @@
     width: 30em;
   }
 
+  .w-100pc,
   .w-100 {
     width: 100%;
   }
