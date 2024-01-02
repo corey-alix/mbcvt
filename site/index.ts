@@ -146,14 +146,13 @@ export function setupReservationForm() {
             while (nextSibling) {
                 // did this sibling wrap to the first column of the grid?
                 if (nextSibling.offsetTop > button.offsetTop) {
-                    // yes, so stop here
-                    // insert the gallery after the button
-                    button.parentElement!.insertBefore(gallery, nextSibling);
                     break;
                 }
                 nextSibling = nextSibling.nextElementSibling as HTMLButtonElement;
                 if (!nextSibling) break;
             }
+            // insert the gallery after the button
+            button.parentElement!.insertBefore(gallery, nextSibling);
         }
     });
 
