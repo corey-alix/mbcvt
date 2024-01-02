@@ -69,7 +69,7 @@ export function setupReservationForm() {
     on('change:constrain-departure-date', constraintDepartureDate)
 
     on('focus:select-all', (e?: Event) => {
-        const element = e?.target as HTMLInputElement;
+        const element = e?.currentTarget as HTMLInputElement;
         if (!element) return;
         element.select();
     });
@@ -89,7 +89,7 @@ export function setupReservationForm() {
     });
 
     on('input:minmax', (e?: Event) => {
-        const element = e?.target as HTMLInputElement;
+        const element = e?.currentTarget as HTMLInputElement;
         if (!element) return;
         const min = element.min;
         const max = element.max;
@@ -110,7 +110,7 @@ export function setupReservationForm() {
         compute();
     });
 
-    on('input:show-site', () => {
+    on('input:show-site', (event?: Event) => {
         const elements = getFormElements();
         const siteNumber = elements.siteInput?.value;
         if (!siteNumber) return;
@@ -136,6 +136,25 @@ export function setupReservationForm() {
             about += ` This site has ${utilities.join(', ')}.`;
 
         if (aboutElement) aboutElement.innerHTML = about;
+
+        const gallery = document.querySelector<HTMLDivElement>('.gallery');
+        if (gallery) {
+            const button = event?.currentTarget as HTMLButtonElement;
+            if (!button) return;
+            // navigate through the siblings until we wrap to the left
+            let nextSibling = button;
+            while (nextSibling) {
+                // did this sibling wrap to the first column of the grid?
+                if (nextSibling.offsetTop > button.offsetTop) {
+                    // yes, so stop here
+                    // insert the gallery after the button
+                    button.parentElement!.insertBefore(gallery, nextSibling);
+                    break;
+                }
+                nextSibling = nextSibling.nextElementSibling as HTMLButtonElement;
+                if (!nextSibling) break;
+            }
+        }
     });
 
     on('click:compute', compute);
