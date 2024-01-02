@@ -29,24 +29,24 @@
             </nav>
         </fieldset>
         <div class="spacer-2"></div>
-        <fieldset class="no-border grid grid-2">
-            <label class="left large" for="arrival">Arrival Date</label>
-            <input type="date" name="arrival" id="arrival" class="input pad-1 solid thin large w-10em right"
+        <fieldset class="no-border flex-column">
+            <label class="larger" for="arrival">Arrival Date</label>
+            <input type="date" name="arrival" id="arrival" class="input pad-1 solid thin large w-10em center"
                 data-action="input:update-departure-date change:constrain-departure-date">
         </fieldset>
-        <fieldset class="no-border grid grid-2">
-            <label class="left large" for="departure">Departure Date</label>
-            <input type="date" name="departure" id="departure" class="input pad-1 solid thin large w-10em right"
+        <fieldset class="no-border flex-column">
+            <label class="larger" for="departure">Departure Date</label>
+            <input type="date" name="departure" id="departure" class="input pad-1 solid thin large w-10em center"
                 data-action="input:update-length-of-stay">
         </fieldset>
-        <fieldset class="no-border grid grid-2">
-            <label class="left large" for="site">Available Sites</label>
+        <fieldset class="no-border flex-column">
+            <label class="larger" for="site">Available Sites</label>
+            <fieldset class="no-border grid grid-10" id="site-picker">
+                <!-- site buttons go here -->
+                <label class="large span-all if-no-vacancy hidden warning" data-has="template">{{no-vacancy}}</label>
+            </fieldset>
             <input type="hidden" name="site" id="site" class="input pad-1 solid thin"
                 data-action="input:show-site input:compute" min="1" max="40">
-        </fieldset>
-        <fieldset class="no-border grid grid-10" id="site-picker">
-            <!-- site buttons go here -->
-            <label class="large span-all if-no-vacancy hidden warning" data-has="template">{{no-vacancy}}</label>
         </fieldset>
         <div class="spacer-2"></div>
     </form>
