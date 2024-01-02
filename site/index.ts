@@ -49,7 +49,7 @@ export function setupReservationForm() {
             arrivalDateInput: form.querySelector<HTMLInputElement>('#arrival'),
             departureDateInput: form.querySelector<HTMLInputElement>('#departure'),
             siteInput: form.querySelector<HTMLInputElement>('#site'),
-            totalInput: form.querySelector<HTMLInputElement>('#total'),
+            totalInput: form.querySelector<HTMLDivElement>('#total'),
         }
     }
 
@@ -208,7 +208,7 @@ export function setupReservationForm() {
         const totalInput = formElements.totalInput;
         if (!totalInput) return log('total is required');
 
-        totalInput.value = '';
+        totalInput.innerText = '';
         try {
             const siteNumber = formElements.siteInput?.value;
             if (siteNumber) {
@@ -227,13 +227,13 @@ export function setupReservationForm() {
                 if (total) {
                     const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
                     const totalFormatted = formatter.format(total);
-                    totalInput.value = totalFormatted;
+                    totalInput.textContent = totalFormatted;
                 }
             }
         } catch (ex) {
             log(ex + "");
         }
-        document.querySelectorAll(".if-price").forEach(element => element.classList.toggle('hidden', totalInput.value === ''));
+        document.querySelectorAll(".if-price").forEach(element => element.classList.toggle('hidden', totalInput.textContent === ''));
 
 
         const otherRates = document.querySelectorAll<HTMLDivElement>('.site-picker-button .rate');

@@ -19,15 +19,13 @@
             <img src="../assets/bath_A01.png" alt="Millbrook Campground Photo Gallery"
                 class="rounded border-solid border-2 border-white" id="site-preview-img"
                 style="max-width: 75vw;min-width:75vw" data-action="click:toggle-full-screen" />
-            <div class="about large center">&nbsp;</div>
+            <div class="about large center pad-1">&nbsp;</div>
             <div class="spacer-2"></div>
-            <nav class="toolbar left flex-row">
-                <button type="submit" name="reserve" id="reserve" class="btn btn-primary larger if-price hidden"
+            <nav class="toolbar left flex-row if-price">
+                <div id="total" class="input pad-1 solid thin right largest"></div>
+                <button type="submit" name="reserve" id="reserve" class="btn btn-primary large"
                     data-action="click:compute">Reserve</button>
-                <input type="text" name="total" id="total" class="if-price input pad-1 solid thin right large w-10em"
-                    readonly>
-                <button type="submit" name="reserve" id="reserve"
-                    class="if-price btn btn-secondary larger">Cancel</button>
+                <button type="submit" name="reserve" id="reserve" class="btn btn-secondary large">Cancel</button>
             </nav>
         </fieldset>
         <div class="spacer-2"></div>
