@@ -20,6 +20,15 @@
                 class="rounded border-solid border-2 border-white" id="site-preview-img"
                 style="max-width: 75vw;min-width:75vw" data-action="click:toggle-full-screen" />
             <div class="about large center">&nbsp;</div>
+            <div class="spacer-2"></div>
+            <nav class="toolbar left flex-row">
+                <button type="submit" name="reserve" id="reserve" class="btn btn-primary larger if-price hidden"
+                    data-action="click:compute">Reserve</button>
+                <input type="text" name="total" id="total" class="if-price input pad-1 solid thin right large w-10em"
+                    readonly>
+                <button type="submit" name="reserve" id="reserve"
+                    class="if-price btn btn-secondary larger">Cancel</button>
+            </nav>
         </fieldset>
         <div class="spacer-2"></div>
         <fieldset class="no-border grid grid-2">
@@ -41,16 +50,6 @@
             <!-- site buttons go here -->
             <label class="large span-all if-no-vacancy hidden warning" data-has="template">{{no-vacancy}}</label>
         </fieldset>
-        <fieldset class="no-border grid grid-2 if-price hidden">
-            <label class="left larger" for="total">Price</label>
-            <input type="text" name="total" id="total" class="input pad-1 solid thin right large w-10em" readonly>
-        </fieldset>
-        <div class="spacer-2"></div>
-        <nav class="left grid grid-2">
-            <button type="submit" name="reserve" id="reserve" class="btn btn-primary larger if-price hidden"
-                data-action="click:compute">Reserve</button>
-            <button type="submit" name="reserve" id="reserve" class="btn btn-secondary larger">Cancel</button>
-        </nav>
         <div class="spacer-2"></div>
     </form>
 
