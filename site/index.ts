@@ -63,7 +63,7 @@ export function setupReservationForm() {
         const minDepartureDate = addDay(arrivalDateValue, 1);
         departureDate.min = minDepartureDate;
         departureDate.max = addDay(minDepartureDate, 28);
-        if (!departureDate.value) departureDate.value = minDepartureDate;
+        if (!departureDate.value || departureDate.value < minDepartureDate) departureDate.value = minDepartureDate;
     }
 
     on('change:constrain-departure-date', constraintDepartureDate)
