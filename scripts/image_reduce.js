@@ -40,7 +40,7 @@ async.each(
           img
             .resize(w, h)
             .gravity("Center")
-            .extent(640, 480)
+            .extent(maxWidth, maxHeight)
             .write(path.join(dir, `${filename}.png`), callback)
         }
       })

@@ -113,6 +113,7 @@
 
   .h-20 {
     height: 20vh;
+    min-height: 20vh;
   }
 
   .w-100 {
@@ -219,9 +220,8 @@
   }
 
   .site-picker-button.selected {
-    background-color: var(--secondary);
-    color: var(--primary);
-    display: block;
+    background-color: var(--primary);
+    color: var(--secondary);
   }
 
   .power::after {
@@ -255,12 +255,15 @@
   }
 
   .full-screen {
-    width: 90vw;
-    height: auto;
+    width: 100vw;
+    height: 100vh;
+    border: none !important;
+    margin: 0;
+    padding: 0;
     position: absolute;
     z-index: 1000;
-    top: 5vw;
-    left: 5vw;
+    top: 0;
+    left: 0;
     border: 1rem solid var(--secondary);
   }
 }

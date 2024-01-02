@@ -39,6 +39,7 @@ export const siteMap = [{
     sewer: true,
 }, {
     alias: "B04",
+    about: "Very spacious site across the brook and nestled in on the edge of the campground.",
     power: true,
     water: true,
     sewer: true,
