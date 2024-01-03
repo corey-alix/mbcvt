@@ -109,6 +109,12 @@
     grid-template-columns: repeat(10, 1fr);
   }
 
+  .flex-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
   .span-3 {
     grid-column: span 3;
   }
@@ -324,5 +330,6 @@
   .grid-10 {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
   }
 }
