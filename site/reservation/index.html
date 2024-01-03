@@ -17,31 +17,34 @@
         </div>
         <fieldset class="gallery no-border flex-column span-all">
             <img src="../assets/bath_A01.png" alt="Millbrook Campground Photo Gallery"
-                class="rounded border-solid border-2 border-white w-75vw w-min-10rem w-max-40rem" id="site-preview-img"
+                class="rounded border-solid border-2 border-white w-75vw w-min-10rem w-max-60rem" id="site-preview-img"
                 data-action="click:toggle-full-screen" />
             <div class="about large center pad-1">&nbsp;</div>
             <div class="spacer-2"></div>
             <nav class="toolbar flex-row if-price">
-                <div id="total" class="input pad-1 solid thin right largest"></div>
+                <div class="input pad-1 solid thin right largest">
+                    <div id="total"></div>
+                    <div class="smaller" data-has="binding">{{total-nites}} nites</div>
+                </div>
                 <button type="submit" name="reserve" id="reserve" class="btn btn-primary large"
                     data-action="click:compute">Reserve</button>
                 <button type="submit" name="reserve" id="reserve" class="btn btn-secondary large">Cancel</button>
             </nav>
         </fieldset>
         <div class="spacer-2"></div>
-        <fieldset class="no-border flex-column">
+        <fieldset class="no-border flex-column pad-1">
             <label class="larger" for="arrival">Arrival Date</label>
             <input type="date" name="arrival" id="arrival" class="input pad-1 solid thin large w-10em center"
                 data-action="input:update-departure-date change:constrain-departure-date">
         </fieldset>
-        <fieldset class="no-border flex-column">
+        <fieldset class="no-border flex-column pad-1">
             <label class="larger" for="departure">Departure Date</label>
             <input type="date" name="departure" id="departure" class="input pad-1 solid thin large w-10em center"
                 data-action="input:update-length-of-stay">
         </fieldset>
-        <fieldset class="no-border flex-column">
+        <fieldset class="no-border flex-column pad-1">
             <label class="larger" for="site">Available Sites</label>
-            <fieldset class="no-border flex-wrap w-max-40rem" id="site-picker">
+            <fieldset class="no-border flex-wrap w-max-60rem" id="site-picker">
                 <!-- site buttons go here -->
                 <label class="large span-all if-no-vacancy hidden warning" data-has="template">{{no-vacancy}}</label>
             </fieldset>

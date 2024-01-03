@@ -1,20 +1,76 @@
 import { officeInfo, siteMap } from "./db.js"
 
+class EventManager {
+    #queue: Record<string, Array<(e?: Event) => void>> = {};
+    on(topic: string, callback: (e?: Event) => void) {
+        if (!this.#queue[topic]) this.#queue[topic] = [];
+        this.#queue[topic].push(callback);
+    }
+    trigger(topic: string, e: Event) {
+        log(`trigger ${topic}`)
+        this.#queue[topic]?.forEach(callback => callback(e));
+    }
+}
+
+const globalEventManager = new EventManager();
+
+export const bindings = makeObservable({
+    "{{total-nites}}": "0",
+}, globalEventManager);
+
+// convert the bindings object into an observable that can be used to update the DOM
+function makeObservable<T extends Object>(bindings: T, events: EventManager) {
+    return new Proxy(bindings, {
+        set: (target, property, value) => {
+            (target as any)[property] = value;
+            events.trigger(property as string, new Event('change'));
+            return true;
+        },
+        get: (target, property) => {
+            return (target as any)[property];
+        },
+    });
+}
+
 export function setupReservationForm() {
     registerFormActions();
 
     // insert template values into DOM
-    const templateKeys = Object.keys(officeInfo.template) as Array<keyof typeof officeInfo.template>;
-    const elements = document.querySelectorAll(`[data-has="template"]`);
-    templateKeys.forEach(key => {
+    {
+        const templateKeys = Object.keys(officeInfo.template) as Array<keyof typeof officeInfo.template>;
+        const elements = document.querySelectorAll(`[data-has="template"]`);
+        templateKeys.forEach(key => {
+            elements.forEach(element => {
+                const originalText = element.textContent;
+                if (!originalText) return;
+                const templateValue = officeInfo.template[key];
+                const newText = originalText.replace(key, templateValue);
+                element.textContent = newText;
+            });
+        });
+    }
+
+    // setup bindings
+    {
+        const elements = document.querySelectorAll(`[data-has="binding"]`) as NodeListOf<HTMLElement>;
+        function doit(key: keyof typeof bindings, element: HTMLElement, template: string) {
+            const value = bindings[key];
+            element.textContent = template.replace(key, value);
+        }
         elements.forEach(element => {
             const originalText = element.textContent;
             if (!originalText) return;
-            const templateValue = officeInfo.template[key];
-            const newText = originalText.replace(key, templateValue);
-            element.textContent = newText;
+            // find all bindings that start with "{{" and end with "}}"
+            const matches = originalText.match(/{{.+?}}/g);
+            if (!matches) return;
+            matches.forEach(match => {
+                const key = match as keyof typeof bindings;
+                globalEventManager.on(key, () => doit(key, element, originalText));
+                doit(key, element, originalText);
+            });
         });
-    });
+
+    }
 
     {
         const siteButtons = asHtml(generateSitePicker());
@@ -205,6 +261,8 @@ export function setupReservationForm() {
         const days = calculateDays(arrivalDate.toString(), departureDate.toString());
         if (days < 1) return log('departure date must be after arrival date');
 
+        bindings["{{total-nites}}"] = days.toString();
+
         const totalInput = formElements.totalInput;
         if (!totalInput) return log('total is required');
 
@@ -287,19 +345,7 @@ function registerFormActions() {
     });
 }
 
-class EventManager {
-    #queue: Record<string, Array<(e?: Event) => void>> = {};
-    on(topic: string, callback: (e?: Event) => void) {
-        if (!this.#queue[topic]) this.#queue[topic] = [];
-        this.#queue[topic].push(callback);
-    }
-    trigger(topic: string, e: Event) {
-        log(`trigger ${topic}`)
-        this.#queue[topic]?.forEach(callback => callback(e));
-    }
-}
 
-const globalEventManager = new EventManager();
 
 function trigger(topic: string, e: Event) {
     globalEventManager.trigger(topic, e);
