@@ -1,4 +1,6 @@
 import { officeInfo, siteMap } from "./db.js"
+const MIN_RESERVATION_DAYS = 2;
+const MAX_RESERVATION_DAYS = 28;
 
 class EventManager {
     #queue: Record<string, Array<(e?: Event) => void>> = {};
@@ -15,7 +17,11 @@ class EventManager {
 const globalEventManager = new EventManager();
 
 export const bindings = makeObservable({
-    "{{total-nites}}": "0",
+    "{{total-due}}": "",
+    "{{total-nites}}": "",
+    "{{primary-address}}": officeInfo.address,
+    "{{primary-email}}": officeInfo.email,
+    "{{primary-telephone-number}}": officeInfo.phone
 }, globalEventManager);
 
 // convert the bindings object into an observable that can be used to update the DOM
@@ -105,7 +111,6 @@ export function setupReservationForm() {
             arrivalDateInput: form.querySelector<HTMLInputElement>('#arrival'),
             departureDateInput: form.querySelector<HTMLInputElement>('#departure'),
             siteInput: form.querySelector<HTMLInputElement>('#site'),
-            totalInput: form.querySelector<HTMLDivElement>('#total'),
         }
     }
 
@@ -116,9 +121,9 @@ export function setupReservationForm() {
         if (!departureDate) return log('departure date is required');
 
         // prevent user from selecting dates on or before arrival date
-        const minDepartureDate = addDay(arrivalDateValue, 1);
+        const minDepartureDate = addDay(arrivalDateValue, MIN_RESERVATION_DAYS);
         departureDate.min = minDepartureDate;
-        departureDate.max = addDay(minDepartureDate, 28);
+        departureDate.max = addDay(arrivalDateValue, MAX_RESERVATION_DAYS);
         if (!departureDate.value || departureDate.value < minDepartureDate) departureDate.value = minDepartureDate;
     }
 
@@ -152,12 +157,12 @@ export function setupReservationForm() {
         const value = element.value;
         if (!value) return;
         if (min) {
-            const minNumber = parseInt(min);
-            if (minNumber > parseInt(value)) element.value = min;
+            const minNumber = (min);
+            if (minNumber > (value)) element.value = min;
         }
         if (max) {
-            const maxNumber = parseInt(max);
-            if (maxNumber < parseInt(value)) element.value = max;
+            const maxNumber = (max);
+            if (maxNumber < (value)) element.value = max;
         }
     });
 
@@ -212,13 +217,18 @@ export function setupReservationForm() {
         }
     });
 
-    on('click:compute', compute);
+    on('click:compute', () => {
+        compute();
+        alert("todo");
+    });
     on('input:compute', compute);
 
     on(`input:update-length-of-stay`, () => {
         updateAvailableSites();
         compute();
     });
+
+    document.querySelectorAll(".if-init").forEach(element => element.classList.toggle('if-init', false));
 
     function updateAvailableSites() {
         log('update available sites')
@@ -261,12 +271,8 @@ export function setupReservationForm() {
         const days = calculateDays(arrivalDate.toString(), departureDate.toString());
         if (days < 1) return log('departure date must be after arrival date');
 
-        bindings["{{total-nites}}"] = days.toString();
+        bindings["{{total-nites}}"] = days == 1 ? `overnight` : `${days} nights`;
 
-        const totalInput = formElements.totalInput;
-        if (!totalInput) return log('total is required');
-
-        totalInput.innerText = '';
         try {
             const siteNumber = formElements.siteInput?.value;
             const siteNumbers = siteNumber ? [siteNumber] : [];
@@ -280,11 +286,13 @@ export function setupReservationForm() {
 
                 return acc + computeSiteCharge(days, dailyRate);
             }, 0);
-            totalInput.textContent = total ? asUsd(total) : "";
+            bindings["{{total-due}}"] = total ? asUsd(total) : "";
+            document.querySelectorAll(".if-price").forEach(element => element.classList.toggle('hidden', !total));
         } catch (ex) {
+            bindings["{{total-due}}"] = "";
+            document.querySelectorAll(".if-price").forEach(element => element.classList.toggle('hidden', true));
             log(ex + "");
         }
-        document.querySelectorAll(".if-price").forEach(element => element.classList.toggle('hidden', totalInput.textContent === ''));
 
 
         const otherRates = document.querySelectorAll<HTMLDivElement>('.site-picker-button .rate');
@@ -293,22 +301,22 @@ export function setupReservationForm() {
             if (!siteNumber) return log('site number is required');
             const dailyRate = siteMap.find(siteInfo => siteInfo.site === parseInt(siteNumber))?.dailyRate;
             if (!dailyRate) return log('site number is invalid');
-            const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
             const siteCharge = computeSiteCharge(days, dailyRate);
-            const totalFormatted = formatter.format(siteCharge);
+            const totalFormatted = asUsd(siteCharge);
             rate.innerText = totalFormatted;
         });
     }
 
     function generateSitePicker() {
+        const utility = "small w-3hem pad-1 bg-white center bold";
         return siteMap.map(siteInfo => {
             const { alias, site, power, water, sewer, about } = siteInfo;
             return `<button class="site-picker-button site_${site}" value="${site}" title="${about}">
             ${site ? `<div class="site-number large">${alias}</div>` : ''}
             <nav class="grid grid-3 pad-1">
-                ${power ? '<div class="power small"></div>' : '<div class="nope small"></div>'}
-                ${water ? '<div class="water small"></div>' : '<div class="nope small"></div>'}
-                ${sewer ? '<div class="sewer small"></div>' : '<div class="nope small"></div>'}
+                ${power ? `<div class="power ${utility}"></div>` : `<div class="nope ${utility}"></div>`}
+                ${water ? `<div class="water ${utility}"></div>` : `<div class="nope ${utility}"></div>`}
+                ${sewer ? `<div class="sewer ${utility}"></div>` : `<div class="nope ${utility}"></div>`}
                 <div class="rate smaller span-3">$</div>
             </nav>
             </button>`;

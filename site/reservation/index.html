@@ -11,25 +11,29 @@
 </head>
 
 <body>
-    <form data-has="action" class="flex-column">
-        <div class="w-100pc pad-1 center green rounded gradient-fade">
-            <h1 class="center largest">Millbrook Campground Reservation</h1>
-        </div>
+    <section class="pad-1 center green rounded gradient-fade if-init">
+        <h1 class="center largest">Millbrook Campground Reservation</h1>
+        <address class="center larger" data-has="binding">{{primary-address}}</address>
+        <address class="center largest" data-has="binding">{{primary-telephone-number}}</address>
+        <address class="center large" data-has="binding">{{primary-email}}</address>
+    </section>
+    <hr />
+    <form data-has="action" class="flex-column if-init">
         <fieldset class="gallery no-border flex-column span-all">
-            <img src="../assets/bath_A01.png" alt="Millbrook Campground Photo Gallery"
-                class="rounded border-solid border-2 border-white w-75vw w-min-10rem w-max-60rem" id="site-preview-img"
-                data-action="click:toggle-full-screen" />
-            <div class="about large center pad-1">&nbsp;</div>
-            <div class="spacer-2"></div>
             <nav class="toolbar flex-row if-price">
-                <div class="input pad-1 solid thin right largest">
-                    <div id="total"></div>
-                    <div class="smaller" data-has="binding">{{total-nites}} nites</div>
+                <div class="input pad-1 solid thin right largest flex-column">
+                    <div class="smaller" data-has="binding">{{total-nites}}</div>
+                    <div class="larger" data-has="binding">{{total-due}}</div>
+                    <div class="smaller" data-has="binding">tax included</div>
                 </div>
-                <button type="submit" name="reserve" id="reserve" class="btn btn-primary large"
+                <button type="submit" name="reserve" id="reserve" class="btn btn-primary large w-min-6rem"
                     data-action="click:compute">Reserve</button>
-                <button type="submit" name="reserve" id="reserve" class="btn btn-secondary large">Cancel</button>
+                <button name="reserve" id="reserve" class="btn btn-secondary large w-min-6rem">Cancel</button>
             </nav>
+            <div class="about large center pad-1">&nbsp;</div>
+            <img src="../assets/bath_A01.png" alt="Millbrook Campground Photo Gallery"
+                class="rounded border-solid border-2 border-white w-75vw w-min-10rem w-max-60rem h-min-20vh"
+                id="site-preview-img" data-action="click:toggle-full-screen" />
         </fieldset>
         <div class="spacer-2"></div>
         <fieldset class="no-border flex-column pad-1">
@@ -40,7 +44,7 @@
         <fieldset class="no-border flex-column pad-1">
             <label class="larger" for="departure">Departure Date</label>
             <input type="date" name="departure" id="departure" class="input pad-1 solid thin large w-10em center"
-                data-action="input:update-length-of-stay">
+                data-action="input:minmax input:update-length-of-stay">
         </fieldset>
         <fieldset class="no-border flex-column pad-1">
             <label class="larger" for="site">Available Sites</label>

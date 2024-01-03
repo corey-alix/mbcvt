@@ -1,7 +1,10 @@
 @media screen {
   :root {
-    --primary: hsl(120, 60%, 40%);
-    --secondary: hsl(300, 60%, 90%);
+    --primary: hsl(120, 60%, 30%);
+    --primary-hover: hsl(120, 60%, 40%);
+    --selected: hsl(210, 60%, 30%);
+    --hover: hsl(210, 60%, 40%);
+    --secondary: hsl(90, 60%, 90%);
     --accent: hsl(45, 80%, 50%);
     --gray: hsl(120, 10%, 25%);
     --white: hsl(90, 0%, 80%);
@@ -39,6 +42,9 @@
   }
   .no-desktop {
     display: none !important;
+  }
+  .if-init {
+    opacity: 0;
   }
 }
 
@@ -127,8 +133,33 @@
     grid-column: 1 / -1;
   }
 
+  .w-1rem {
+    width: 1rem;
+  }
+
+  .w-2rem {
+    width: 2rem;
+  }
+
+  .h-2rem {
+    height: 2rem;
+  }
+
+  /* hem - half em */
+  .w-3hem {
+    width: calc(0.5em * 3);
+  }
+
+  .bold {
+    font-weight: bold;
+  }
+
   .w-75vw {
     width: 75vw;
+  }
+
+  .w-min-6rem {
+    min-width: 6rem;
   }
 
   .w-min-10rem {
@@ -161,6 +192,10 @@
 
   .w-75vw {
     width: 75vw;
+  }
+
+  .h-min-20vh {
+    min-height: 20vh;
   }
 
   .h-4 {
@@ -259,6 +294,10 @@
     color: var(--secondary);
   }
 
+  .btn-primary:hover {
+    background-color: var(--primary-hover);
+  }
+
   .input {
     border-radius: var(--border-radius);
     padding: var(--spacer);
@@ -272,40 +311,47 @@
     height: fit-content;
   }
 
-  .site-picker-button:hover {
-    background-color: var(--primary);
+  input:hover,
+  .site-picker-button:hover,
+  .site-picker-button.selected:hover {
+    background-color: var(--hover);
     color: var(--secondary);
   }
 
   .site-picker-button.selected {
-    background-color: var(--primary);
+    background-color: var(--selected);
     color: var(--secondary);
+    transform: rotate(5deg) scale(1.25);
+  }
+
+  .bg-black {
+    background-color: var(--black);
+  }
+
+  .bg-white {
+    background-color: var(--white);
   }
 
   .power::after {
-    content: "\26A1";
-    background-color: var(--black);
+    content: "E";
     padding: 3px;
     border-radius: var(--border-radius);
   }
 
   .water::after {
-    content: "\1F30A";
-    background-color: var(--black);
+    content: "W";
     padding: 3px;
     border-radius: var(--border-radius);
   }
 
   .sewer::after {
-    content: "\1F6BD";
-    background-color: var(--black);
+    content: "S";
     padding: 3px;
     border-radius: var(--border-radius);
   }
 
   .nope::after {
     content: "\1F6AB";
-    background-color: var(--white);
     padding: 3px;
     border-radius: var(--border-radius);
   }
@@ -318,6 +364,8 @@
     background-color: var(--gray);
     color: var(--secondary);
     opacity: 0.4;
+    filter: blur(1px);
+    transform: rotate(-5deg) scale(0.75);
   }
 
   .gradient-fade {
