@@ -5,6 +5,7 @@
     --accent: hsl(45, 80%, 50%);
     --gray: hsl(120, 10%, 25%);
     --white: hsl(90, 0%, 80%);
+    --black: hsl(210, 0%, 25%);
     --spacer: 0.5rem;
     --border-radius: 0.25rem;
   }
@@ -114,6 +115,18 @@
 
   .span-all {
     grid-column: 1 / -1;
+  }
+
+  .w-75vw {
+    width: 75vw;
+  }
+
+  .w-min-10rem {
+    min-width: 10rem;
+  }
+
+  .w-max-40rem {
+    max-width: 40rem;
   }
 
   .w-90 {
@@ -257,18 +270,30 @@
 
   .power::after {
     content: "\26A1";
+    background-color: var(--black);
+    padding: 3px;
+    border-radius: var(--border-radius);
   }
 
   .water::after {
     content: "\1F30A";
+    background-color: var(--black);
+    padding: 3px;
+    border-radius: var(--border-radius);
   }
 
   .sewer::after {
     content: "\1F6BD";
+    background-color: var(--black);
+    padding: 3px;
+    border-radius: var(--border-radius);
   }
 
   .nope::after {
     content: "\1F6AB";
+    background-color: var(--white);
+    padding: 3px;
+    border-radius: var(--border-radius);
   }
 
   .site-number {
@@ -297,6 +322,7 @@
     display: block;
   }
   .grid-10 {
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
+    flex-wrap: wrap;
   }
 }

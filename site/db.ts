@@ -2,6 +2,7 @@ const baseRate = 14;
 const sewerRate = 10;
 const waterRate = 5;
 const powerRate = 10;
+const tax = 0.09;
 
 export const officeInfo = {
     name: 'Millbrook Campground',
@@ -154,8 +155,8 @@ export const siteMap = [{
 }, {
     alias: "C22",
     about: "This is the most isolated site in the campground, sitting alone on top of the campground away from brook and all other guests.",
-    power: false,
-    water: false,
+    power: true,
+    water: true,
     sewer: false,
 }, {
     alias: "F00",
@@ -225,6 +226,8 @@ export const siteMap = [{
         const indexToRemove = Math.floor(Math.random() * availableDates.length);
         availableDates.splice(indexToRemove, Math.ceil(Math.random() * 21));
     }
+
+    dailyRate = Math.ceil(dailyRate * (1 + tax));
 
     return {
         site: siteId + 1, ...site, dailyRate, availableDates, about: about || 'No description provided'

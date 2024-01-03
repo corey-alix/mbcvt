@@ -211,25 +211,18 @@ export function setupReservationForm() {
         totalInput.innerText = '';
         try {
             const siteNumber = formElements.siteInput?.value;
-            if (siteNumber) {
-                const siteNumbers = [siteNumber];
-                const total = siteNumbers.reduce((acc, siteNumber) => {
-                    const siteInfo = siteMap.find(siteInfo => siteInfo.site === parseInt(siteNumber));
-                    if (!siteInfo) throw log('site number is invalid');
+            const siteNumbers = siteNumber ? [siteNumber] : [];
+            const total = siteNumbers.reduce((acc, siteNumber) => {
+                const siteInfo = siteMap.find(siteInfo => siteInfo.site === parseInt(siteNumber));
+                if (!siteInfo) throw log('site number is invalid');
 
-                    const { dailyRate, availableDates } = siteInfo;
-                    if (!dailyRate) throw log('site number is invalid, no daily rate');
-                    if (!isAvailable(availableDates, { arrivalDate, departureDate })) throw log('site is not available');
+                const { dailyRate, availableDates } = siteInfo;
+                if (!dailyRate) throw log('site number is invalid, no daily rate');
+                if (!isAvailable(availableDates, { arrivalDate, departureDate })) throw log('site is not available');
 
-                    return acc + days * dailyRate;
-                }, 0);
-
-                if (total) {
-                    const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
-                    const totalFormatted = formatter.format(total);
-                    totalInput.textContent = totalFormatted;
-                }
-            }
+                return acc + computeSiteCharge(days, dailyRate);
+            }, 0);
+            totalInput.textContent = total ? asUsd(total) : "";
         } catch (ex) {
             log(ex + "");
         }
@@ -243,7 +236,8 @@ export function setupReservationForm() {
             const dailyRate = siteMap.find(siteInfo => siteInfo.site === parseInt(siteNumber))?.dailyRate;
             if (!dailyRate) return log('site number is invalid');
             const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
-            const totalFormatted = formatter.format(dailyRate * days);
+            const siteCharge = computeSiteCharge(days, dailyRate);
+            const totalFormatted = formatter.format(siteCharge);
             rate.innerText = totalFormatted;
         });
     }
@@ -253,15 +247,21 @@ export function setupReservationForm() {
             const { alias, site, power, water, sewer, about } = siteInfo;
             return `<button class="site-picker-button site_${site}" value="${site}" title="${about}">
             ${site ? `<div class="site-number large">${alias}</div>` : ''}
-            <nav class="grid grid-3">
-                ${power ? '<div class="power smaller"></div>' : '<div class="nope smaller"></div>'}
-                ${water ? '<div class="water smaller"></div>' : '<div class="nope smaller"></div>'}
-                ${sewer ? '<div class="sewer smaller"></div>' : '<div class="nope smaller"></div>'}
+            <nav class="grid grid-3 pad-1">
+                ${power ? '<div class="power small"></div>' : '<div class="nope small"></div>'}
+                ${water ? '<div class="water small"></div>' : '<div class="nope small"></div>'}
+                ${sewer ? '<div class="sewer small"></div>' : '<div class="nope small"></div>'}
                 <div class="rate smaller span-3">$</div>
             </nav>
             </button>`;
         }).join('');
     }
+}
+
+function computeSiteCharge(days: number, dailyRate: number) {
+    const freeDays = Math.floor(days / 7);
+    const charge = dailyRate * (days - freeDays);
+    return charge;
 }
 
 // scan for form elements that contain a "data-has" attribute
@@ -353,3 +353,7 @@ function addDay(arrivalDateValue: string, days = 1) {
     return arrivalDate.toISOString().split('T')[0];
 }
 
+function asUsd(value: number) {
+    const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    return formatter.format(value).replace('.00', '');
+}

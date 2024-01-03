@@ -17,11 +17,11 @@
         </div>
         <fieldset class="gallery no-border flex-column span-all">
             <img src="../assets/bath_A01.png" alt="Millbrook Campground Photo Gallery"
-                class="rounded border-solid border-2 border-white" id="site-preview-img"
-                style="max-width: 75vw;min-width:75vw" data-action="click:toggle-full-screen" />
+                class="rounded border-solid border-2 border-white w-75vw w-min-10rem w-max-40rem" id="site-preview-img"
+                data-action="click:toggle-full-screen" />
             <div class="about large center pad-1">&nbsp;</div>
             <div class="spacer-2"></div>
-            <nav class="toolbar left flex-row if-price">
+            <nav class="toolbar flex-row if-price">
                 <div id="total" class="input pad-1 solid thin right largest"></div>
                 <button type="submit" name="reserve" id="reserve" class="btn btn-primary large"
                     data-action="click:compute">Reserve</button>
@@ -39,9 +39,9 @@
             <input type="date" name="departure" id="departure" class="input pad-1 solid thin large w-10em center"
                 data-action="input:update-length-of-stay">
         </fieldset>
-        <fieldset class="no-border flex-column w-100pc">
+        <fieldset class="no-border flex-column">
             <label class="larger" for="site">Available Sites</label>
-            <fieldset class="no-border grid grid-10 w-100pc" id="site-picker">
+            <fieldset class="no-border grid grid-10" id="site-picker">
                 <!-- site buttons go here -->
                 <label class="large span-all if-no-vacancy hidden warning" data-has="template">{{no-vacancy}}</label>
             </fieldset>
