@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- mobile friendly -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation</title>
+    <link rel="stylesheet" href="../index.css">
+    <link rel="author" href="mailto:coreyalix@gmail.com">
+</head>
+
+<body>
+    <section class="welcome">
+        <div class="pad-1 center green rounded gradient-fade if-init">
+            <h1 class="center largest">Millbrook Campground Welcome</h1>
+            <address class="center larger" data-has="binding">{{primary-address}}</address>
+            <address class="center largest" data-has="binding">{{primary-telephone-number}}</address>
+            <address class="center large" data-has="binding">{{primary-email}}</address>
+        </div>
+        <hr />
+        <p>About...</p>
+    </section>
+
+
+    <script type="module">
+        import { setupWelcomeForm } from "../index.js";
+        setupWelcomeForm();
+    </script>
+
+</body>
+
+</html>

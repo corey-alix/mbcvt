@@ -6,57 +6,61 @@
     <!-- mobile friendly -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservation</title>
-    <link rel="stylesheet" href="./index.css">
+    <link rel="stylesheet" href="../index.css">
     <link rel="author" href="mailto:coreyalix@gmail.com">
 </head>
 
 <body>
-    <section class="pad-1 center green rounded gradient-fade if-init">
-        <h1 class="center largest">Millbrook Campground Reservation</h1>
-        <address class="center larger" data-has="binding">{{primary-address}}</address>
-        <address class="center largest" data-has="binding">{{primary-telephone-number}}</address>
-        <address class="center large" data-has="binding">{{primary-email}}</address>
-    </section>
-    <hr />
-    <form data-has="action" class="flex-column if-init">
-        <fieldset class="gallery no-border flex-column span-all">
-            <nav class="toolbar flex-row if-price">
-                <div class="input pad-1 solid thin right largest flex-column">
-                    <div class="smaller" data-has="binding">{{total-nites}}</div>
-                    <div class="larger" data-has="binding">{{total-due}}</div>
-                    <div class="smaller" data-has="binding">tax included</div>
-                </div>
-                <button type="submit" name="reserve" id="reserve" class="btn btn-primary large w-min-6rem"
-                    data-action="click:compute">Reserve</button>
-                <button name="reserve" id="reserve" class="btn btn-secondary large w-min-6rem">Cancel</button>
-            </nav>
-            <div class="about large center pad-1">&nbsp;</div>
-            <img src="../assets/bath_A01.png" alt="Millbrook Campground Photo Gallery"
-                class="rounded border-solid border-2 border-white w-75vw w-min-10rem w-max-60rem h-min-20vh"
-                id="site-preview-img" data-action="click:toggle-full-screen" />
-        </fieldset>
-        <div class="spacer-2"></div>
-        <fieldset class="no-border flex-column pad-1">
-            <label class="larger" for="arrival">Arrival Date</label>
-            <input type="date" name="arrival" id="arrival" class="input pad-1 solid thin large w-10em center"
-                data-action="input:update-departure-date change:constrain-departure-date">
-        </fieldset>
-        <fieldset class="no-border flex-column pad-1">
-            <label class="larger" for="departure">Departure Date</label>
-            <input type="date" name="departure" id="departure" class="input pad-1 solid thin large w-10em center"
-                data-action="input:minmax input:update-length-of-stay">
-        </fieldset>
-        <fieldset class="no-border flex-column pad-1">
-            <label class="larger" for="site">Available Sites</label>
-            <fieldset class="no-border flex-wrap w-max-60rem" id="site-picker">
-                <!-- site buttons go here -->
-                <label class="large span-all if-no-vacancy hidden warning" data-has="template">{{no-vacancy}}</label>
+    <section class="reservation form">
+        <div class="pad-1 center green rounded gradient-fade if-init">
+            <h1 class="center largest">Millbrook Campground Reservation</h1>
+            <address class="center larger" data-has="binding">{{primary-address}}</address>
+            <address class="center largest" data-has="binding">{{primary-telephone-number}}</address>
+            <address class="center large" data-has="binding">{{primary-email}}</address>
+        </div>
+        <hr />
+        <form data-has="action" class="flex-column if-init">
+            <fieldset class="gallery no-border flex-column span-all">
+                <nav class="toolbar flex-row if-price">
+                    <div class="input pad-1 solid thin right largest flex-column">
+                        <div class="smaller" data-has="binding">{{total-nites}}</div>
+                        <div class="larger" data-has="binding">{{total-due}}</div>
+                        <div class="smaller" data-has="binding">tax included</div>
+                    </div>
+                    <button type="submit" name="reserve" id="reserve" class="btn btn-primary large w-min-6rem"
+                        data-action="click:compute">Reserve</button>
+                    <button name="reserve" id="reserve" class="btn btn-secondary large w-min-6rem">Cancel</button>
+                </nav>
+                <div class="about large center pad-1">&nbsp;</div>
+                <img src="../assets/bath_A01.png" alt="Millbrook Campground Photo Gallery"
+                    class="rounded border-solid border-2 border-white w-75vw w-min-10rem w-max-60rem h-min-20vh"
+                    id="site-preview-img" data-action="click:toggle-full-screen" />
             </fieldset>
-            <input type="hidden" name="site" id="site" class="input pad-1 solid thin"
-                data-action="input:show-site input:compute" min="1" max="40">
-        </fieldset>
-        <div class="spacer-2"></div>
-    </form>
+            <div class="spacer-2"></div>
+            <fieldset class="no-border flex-column pad-1">
+                <label class="larger" for="arrival">Arrival Date</label>
+                <input type="date" name="arrival" id="arrival" class="input pad-1 solid thin large w-10em center"
+                    data-action="input:update-departure-date change:constrain-departure-date">
+            </fieldset>
+            <fieldset class="no-border flex-column pad-1">
+                <label class="larger" for="departure">Departure Date</label>
+                <input type="date" name="departure" id="departure" class="input pad-1 solid thin large w-10em center"
+                    data-action="input:minmax input:update-length-of-stay">
+            </fieldset>
+            <fieldset class="no-border flex-column pad-1">
+                <label class="larger" for="site">Available Sites</label>
+                <fieldset class="no-border flex-wrap w-max-60rem" id="site-picker">
+                    <!-- site buttons go here -->
+                    <label class="large span-all if-no-vacancy hidden warning"
+                        data-has="template">{{no-vacancy}}</label>
+                </fieldset>
+                <input type="hidden" name="site" id="site" class="input pad-1 solid thin"
+                    data-action="input:show-site input:compute" min="1" max="40">
+            </fieldset>
+            <div class="spacer-2"></div>
+        </form>
+    </section>
+
 
     <script type="module">
         import { setupReservationForm } from "../index.js";

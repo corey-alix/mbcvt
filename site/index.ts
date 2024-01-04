@@ -38,46 +38,53 @@ function makeObservable<T extends Object>(bindings: T, events: EventManager) {
     });
 }
 
-export function setupReservationForm() {
-    registerFormActions();
-
-    // insert template values into DOM
-    {
-        const templateKeys = Object.keys(officeInfo.template) as Array<keyof typeof officeInfo.template>;
-        const elements = document.querySelectorAll(`[data-has="template"]`);
-        templateKeys.forEach(key => {
-            elements.forEach(element => {
-                const originalText = element.textContent;
-                if (!originalText) return;
-                const templateValue = officeInfo.template[key];
-                const newText = originalText.replace(key, templateValue);
-                element.textContent = newText;
-            });
-        });
-    }
-
-    // setup bindings
-    {
-        const elements = document.querySelectorAll(`[data-has="binding"]`) as NodeListOf<HTMLElement>;
-        function doit(key: keyof typeof bindings, element: HTMLElement, template: string) {
-            const value = bindings[key];
-            element.textContent = template.replace(key, value);
-        }
+// insert template values into DOM
+function applyTemplates() {
+    const templateKeys = Object.keys(officeInfo.template) as Array<keyof typeof officeInfo.template>;
+    const elements = document.querySelectorAll(`[data-has="template"]`);
+    templateKeys.forEach(key => {
         elements.forEach(element => {
             const originalText = element.textContent;
             if (!originalText) return;
-            // find all bindings that start with "{{" and end with "}}"
-            const matches = originalText.match(/{{.+?}}/g);
-            if (!matches) return;
-            matches.forEach(match => {
-                const key = match as keyof typeof bindings;
-                globalEventManager.on(key, () => doit(key, element, originalText));
-                doit(key, element, originalText);
-            });
+            const templateValue = officeInfo.template[key];
+            const newText = originalText.replace(key, templateValue);
+            element.textContent = newText;
         });
+    });
+}
 
+function setupBindings() {
+    const elements = document.querySelectorAll(`[data-has="binding"]`) as NodeListOf<HTMLElement>;
+    function doit(key: keyof typeof bindings, element: HTMLElement, template: string) {
+        const value = bindings[key];
+        element.textContent = template.replace(key, value);
     }
+    elements.forEach(element => {
+        const originalText = element.textContent;
+        if (!originalText) return;
+        // find all bindings that start with "{{" and end with "}}"
+        const matches = originalText.match(/{{.+?}}/g);
+        if (!matches) return;
+        matches.forEach(match => {
+            const key = match as keyof typeof bindings;
+            globalEventManager.on(key, () => doit(key, element, originalText));
+            doit(key, element, originalText);
+        });
+    });
 
+}
+
+export function setupWelcomeForm() {
+    registerFormActions();
+    applyTemplates();
+    setupBindings();
+    initializationComplete();
+}
+
+export function setupReservationForm() {
+    registerFormActions();
+    applyTemplates();
+    setupBindings();
     {
         const siteButtons = asHtml(generateSitePicker());
         const target = document.querySelector<HTMLElement>('#site-picker');
@@ -190,7 +197,7 @@ export function setupReservationForm() {
 
         const { power, water, sewer } = siteInfo;
         const utilities = [];
-        if (power) utilities.push('power');
+        if (power) utilities.push('electric');
         if (water) utilities.push('water');
         if (sewer) utilities.push('sewer');
         if (utilities.length > 0)
@@ -228,7 +235,7 @@ export function setupReservationForm() {
         compute();
     });
 
-    document.querySelectorAll(".if-init").forEach(element => element.classList.toggle('if-init', false));
+    initializationComplete();
 
     function updateAvailableSites() {
         log('update available sites')
@@ -312,7 +319,7 @@ export function setupReservationForm() {
         return siteMap.map(siteInfo => {
             const { alias, site, power, water, sewer, about } = siteInfo;
             return `<button class="site-picker-button site_${site}" value="${site}" title="${about}">
-            ${site ? `<div class="site-number large">${alias}</div>` : ''}
+            ${site ? `<div class="small">site</div><div class="site-number large">${alias}</div>` : ''}
             <nav class="grid grid-3 pad-1">
                 ${power ? `<div class="power ${utility}"></div>` : `<div class="nope ${utility}"></div>`}
                 ${water ? `<div class="water ${utility}"></div>` : `<div class="nope ${utility}"></div>`}
@@ -410,4 +417,8 @@ function addDay(arrivalDateValue: string, days = 1) {
 function asUsd(value: number) {
     const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
     return formatter.format(value).replace('.00', '');
+}
+
+function initializationComplete() {
+    document.querySelectorAll(".if-init").forEach(element => element.classList.toggle('if-init', false));
 }

@@ -44,3 +44,8 @@ Stripe also has a tap-to-pay phone app.  I will use this to accept payments in p
 # See Also
 
 Deployed to <https://dynamic-unicorn-70879a.netlify.app/site/reservation/index.html>
+
+# Notes
+
+- Incorporate other campgrounds -- Basecamp, Barrewood, others?
+- What is Vermont Campground Association?
