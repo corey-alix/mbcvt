@@ -360,13 +360,30 @@
     display: block;
   }
 
-  .unavailable {
+  .site-picker-button {
+    cursor: pointer;
+  }
+
+  .site-picker-button.unavailable {
+    cursor: not-allowed;
     background-color: var(--gray);
     color: var(--secondary);
     opacity: 0.4;
     filter: blur(1px);
     transform: rotate(-5deg) scale(0.75);
   }
+
+  .site-picker-button.unavailable > .available,
+  .site-picker-button > .reserved {
+    display: none;
+  }
+
+  .site-picker-button > .available,
+  .site-picker-button.unavailable > .reserved {
+    display: block;
+  }
+
+  /* has test */
 
   .gradient-fade {
     background: linear-gradient(to bottom, var(--green) 0%, var(--gray) 100%);

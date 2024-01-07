@@ -319,7 +319,7 @@ export function setupReservationForm() {
         return siteMap.map(siteInfo => {
             const { alias, site, power, water, sewer, about } = siteInfo;
             return `<button class="site-picker-button site_${site}" value="${site}" title="${about}">
-            ${site ? `<div class="small available">Available</div><div class="small not-available">Reserved</div><div class="site-number large">Site ${alias}</div>` : ''}
+            ${site ? `<div class="small available">Available</div><div class="small reserved">Reserved</div><div class="site-number large">Site ${alias}</div>` : ''}
             <nav class="grid grid-3 pad-1">
                 ${power ? `<div class="power ${utility}"></div>` : `<div class="nope ${utility}"></div>`}
                 ${water ? `<div class="water ${utility}"></div>` : `<div class="nope ${utility}"></div>`}
