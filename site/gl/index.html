@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- mobile friendly -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reservation</title>
+    <link rel="stylesheet" href="../index.css" />
+    <link rel="author" href="mailto:coreyalix@gmail.com" />
+  </head>
+
+  <body>
+    <!-- 
+      scaffolding for a general ledger grid 
+      must capture the following for each row:
+        a date, 
+        debit or credit amount, 
+        description and 
+        account number 
+    -->
+    <section>
+      <h1>General Ledger</h1>
+      <form id="general-ledger-form">
+        <fieldset>
+          <label for="date">Date</label>
+          <input type="date" name="date" id="date" />
+        </fieldset>
+        <fieldset>
+          <label for="amount">Amount</label>
+          <input type="number" name="amount" id="amount" />
+        </fieldset>
+        <fieldset>
+          <label for="description">Description</label>
+          <input type="text" name="description" id="description" />
+        </fieldset>
+        <fieldset>
+          <label for="account-number">Account Number</label>
+          <input type="number" name="account-number" id="account-number" />
+          <p id="account-description"></p>
+        </fieldset>
+        <button type="submit">Add Entry</button>
+      </form>
+      <table id="general-ledger">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Account Number</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- ledger entries go here -->
+        </tbody>
+      </table>
+    </section>
+
+    <script type="module">
+      import { setupGeneralLedgerForm } from "./index.js";
+      setupGeneralLedgerForm();
+    </script>
+  </body>
+</html>
