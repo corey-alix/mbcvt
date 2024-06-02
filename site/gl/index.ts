@@ -14,40 +14,29 @@ type TransactionModel = {
   amt: number;
 };
 
-type DatabaseSchema = {
-  transactions: TransactionModel[];
+type AccountModel = {
+  id: number;
+  name: string;
+  balance: number;
 };
 
-const glAccounts = [
-  {
-    id: 1001,
-    name: "Cash",
-    balance: 1000,
-  },
-  {
-    id: 2001,
-    name: "Accounts Receivable",
-    balance: 2000,
-  },
-  {
-    id: 3001,
-    name: "Inventory",
-    balance: 3000,
-  },
-  {
-    id: 2101,
-    name: "Site F1",
-    balance: 1800,
-  },
-];
+type DatabaseSchema = {
+  transactions: TransactionModel[];
+  accounts: AccountModel[];
+};
 
 class Database {
+  getAccounts() {
+    return this.#data.accounts || [];
+  }
+
   getTransactions() {
     return this.#data.transactions || [];
   }
 
   #data = {
     transactions: [] as TransactionModel[],
+    accounts: [] as AccountModel[],
   } satisfies DatabaseSchema;
 
   constructor() {}
@@ -60,6 +49,14 @@ class Database {
     await this.#load().catch((error) => {
       console.error(`Failed to load data: ${error}`);
     });
+  }
+
+  async addAccount(account: AccountModel) {
+    if (!this.#data.accounts) {
+      this.#data.accounts = [];
+    }
+    this.#data.accounts.push(account);
+    await this.#save();
   }
 
   async addTransaction(transactionInfo: TransactionModel) {
@@ -102,66 +99,80 @@ class Database {
   }
 }
 
-const db = new Database();
-
 export async function setupGeneralLedgerForm() {
+  const db = new Database();
+  await db.init();
+
   const ux = {
+    form: document.getElementById("general-ledger-form") as HTMLFormElement,
     totalDebit: document.getElementById("total-debit") as HTMLElement,
     totalCredit: document.getElementById("total-credit") as HTMLElement,
     amountDebit: document.getElementById("amount-debit") as HTMLInputElement,
     amountCredit: document.getElementById("amount-credit") as HTMLInputElement,
     saveButton: document.getElementById("save-button") as HTMLButtonElement,
+    addAccountButton: document.getElementById(
+      "add-account"
+    ) as HTMLButtonElement,
+    date: document.getElementById("date") as HTMLInputElement,
+    description: document.getElementById("description") as HTMLInputElement,
+    accountDescription: document.getElementById(
+      "account-description"
+    ) as HTMLElement,
+    accountNumber: document.getElementById(
+      "account-number"
+    ) as HTMLInputElement,
   };
 
-  await db.init();
   // set window title
   document.title = "General Ledger";
-  const form = document.getElementById(
-    "general-ledger-form"
-  ) as HTMLFormElement;
 
-  const date = document.getElementById("date") as HTMLInputElement;
-  date.value = new Date().toISOString().substring(0, 10);
-
+  ux.date.value = new Date().toISOString().substring(0, 10);
   asAmount(ux.amountCredit);
   asAmount(ux.amountCredit);
 
-  const description = document.getElementById(
-    "description"
-  ) as HTMLInputElement;
+  const glAccounts = db.getAccounts();
 
-  const accountDescription = document.getElementById(
-    "account-description"
-  ) as HTMLElement;
+  ux.addAccountButton.addEventListener("click", async () => {
+    const accountName = prompt("Enter account name");
+    if (!accountName) {
+      return;
+    }
 
-  // validate account number against the list of accounts
-  const accountNumber = document.getElementById(
-    "account-number"
-  ) as HTMLInputElement;
-  accountNumber.addEventListener("input", () => {
+    const account = {
+      id: ux.accountNumber.valueAsNumber,
+      name: accountName,
+      balance: 0,
+    } satisfies AccountModel;
+
+    glAccounts.push(account);
+    await db.addAccount(account);
+  });
+
+  ux.accountNumber.addEventListener("input", () => {
     const account = glAccounts.find(
-      (a) => a.id === parseInt(accountNumber.value)
+      (a) => a.id === parseInt(ux.accountNumber.value)
     );
+    ux.addAccountButton.disabled = !!account;
     if (!account) {
-      accountNumber.setCustomValidity("Invalid account number");
-      accountDescription.textContent = "";
+      ux.accountNumber.setCustomValidity("Invalid account number");
+      ux.accountDescription.textContent = "";
     } else {
-      accountNumber.setCustomValidity("");
-      accountDescription.textContent = account.name;
+      ux.accountNumber.setCustomValidity("");
+      ux.accountDescription.textContent = account.name;
     }
     // validate the form
-    form.reportValidity();
+    ux.form.reportValidity();
   });
 
   // intercept form submission
-  form.addEventListener("submit", async (event) => {
+  ux.form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (!form.checkValidity()) {
+    if (!ux.form.checkValidity()) {
       return;
     }
 
     const account = glAccounts.find(
-      (a) => a.id === parseInt(accountNumber.value)
+      (a) => a.id === parseInt(ux.accountNumber.value)
     );
     if (!account) {
       throw new Error("Invalid account number");
@@ -177,8 +188,8 @@ export async function setupGeneralLedgerForm() {
     account.balance -= credit;
 
     const transactionInfo = {
-      date: date.value,
-      description: description.value || "<no description provided>",
+      date: ux.date.value,
+      description: ux.description.value || "<no description provided>",
       account: account.id,
       amt: debit - credit,
     } satisfies TransactionModel;
@@ -195,7 +206,7 @@ export async function setupGeneralLedgerForm() {
     amount.step = "0.01";
 
     amount.addEventListener("input", () => {
-      form.reportValidity();
+      ux.form.reportValidity();
     });
     return amount;
   }
