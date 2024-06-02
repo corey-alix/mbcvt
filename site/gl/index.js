@@ -1,5 +1,6 @@
 const PUBLIC_KEY = "123";
 const DATABASE_NAME = readQueryString("database") || "test";
+const API_URL = "https://ca0v.us:3000/api";
 function readQueryString(name) {
     const url = new URL(window.location.href);
     return url.searchParams.get(name);
@@ -27,7 +28,6 @@ const glAccounts = [
     },
 ];
 class Database {
-    #apiUrl = "https://localhost:3000/api";
     getTransactions() {
         return this.#data.transactions || [];
     }
@@ -54,7 +54,7 @@ class Database {
     async #save() {
         const data = JSON.stringify(this.#data);
         localStorage.setItem(DATABASE_NAME, data);
-        await fetch(this.#apiUrl, {
+        await fetch(API_URL, {
             method: "POST",
             body: JSON.stringify({
                 key: PUBLIC_KEY,
@@ -67,7 +67,7 @@ class Database {
         });
     }
     async #load() {
-        const response = await fetch(`${this.#apiUrl}/${DATABASE_NAME}`, {
+        const response = await fetch(`${API_URL}/${DATABASE_NAME}`, {
             method: "GET",
             headers: {
                 // public key for the API

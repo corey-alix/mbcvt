@@ -139,7 +139,7 @@ app.post('/api', (req, res) => {
 
 
 app.get('/api/:topic', (req, res) => {
-    const key = req.headers['x-api-key'];
+    const key = req.headers['x-api-key'] || req.query.key || "123";
     const topic = req.params.topic;
     console.log({ key, topic })
     try {
