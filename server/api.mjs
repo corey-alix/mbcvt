@@ -3,6 +3,12 @@
 */
 
 import fs from 'fs';
+import express from 'express'
+import cors from 'cors'
+import https from 'https';
+
+// read port from argument or use default
+const port = process.argv[2] || 3000;
 
 class DataServices {
 
@@ -18,12 +24,18 @@ class DataServices {
         return key;
     }
 
+    /**
+     * @param {string} key
+     */
     validateKey(key) {
         if (key !== this.secretKey) {
             throw new Error('Invalid key');
         }
     }
 
+    /**
+     * @param {string} topic
+     */
     validateTopic(topic) {
         if (!topic) {
             throw new Error('Invalid topic');
@@ -35,6 +47,9 @@ class DataServices {
         }
     }
 
+    /**
+     * @param {string} value
+     */
     validateValue(value) {
         if (!value) {
             throw new Error('Invalid value');
@@ -49,9 +64,9 @@ class DataServices {
     }
 
     /**
-     * @param {any} key
-     * @param {any} topic
-     * @param {any} value
+     * @param {string} key
+     * @param {string} topic
+     * @param {string} value
      */
     save(key, topic, value) {
         this.validateKey(key);
@@ -90,11 +105,9 @@ class WebServices {
 // start listening on port 3000
 const webServices = new WebServices();
 
-import express from 'express'
-import cors from 'cors'
 
 const app = express()
-const port = 3000;
+
 
 // allow CORS
 app.use(cors());
@@ -116,6 +129,15 @@ app.post('/api', (req, res) => {
     });
 })
 
-app.listen(port, () => {
+// SSL certificate files, to generate a private key and certificate, you can use openssl
+// openssl req -nodes -new -x509 -keyout server.key -out server.cert
+
+const options = {
+    key: fs.readFileSync('./server.key'),
+    cert: fs.readFileSync('./server.cert')
+};
+
+// Create HTTPS server
+https.createServer(options, app).listen(port, () => {
     console.log(`Example app listening on port ${port}`)
-})
+});

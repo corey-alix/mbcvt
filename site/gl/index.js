@@ -48,7 +48,7 @@ class Database {
             topic: "test",
             value: data,
         };
-        await fetch("http://localhost:3000/api", {
+        await fetch("https://localhost:3000/api", {
             method: "POST",
             body: JSON.stringify(persist),
             headers: {

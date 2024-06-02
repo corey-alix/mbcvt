@@ -2,3 +2,5 @@ node_modules
 site/**/*.js.map
 site/**/*.js
 *.Identifier
+server.key
+server.cert
