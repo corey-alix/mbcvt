@@ -413,13 +413,20 @@
   .w-15 {
     width: 15rem;
   }
-  form {
-    button {
-      margin: var(--spacer);
-      padding: var(--spacer);
-      border-radius: var(--border-radius);
-      border: none;
-    }
+
+  input,
+  button {
+    margin: var(--spacer);
+    padding: var(--spacer);
+    border-radius: var(--border-radius);
+    border: 1px solid;
+  }
+
+  .gl-grid {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
+    max-height: 25rem;
+    overflow: auto;
   }
 
   td {
@@ -447,7 +454,7 @@
     }
   }
 
-  .gl-grid {
+  .gl-header-grid {
     display: grid;
     grid-template-columns: auto 5rem 5rem;
     gap: var(--spacer);
@@ -465,8 +472,12 @@
     }
   }
 
+  .w-4 {
+    width: 4rem;
+  }
+
   .w-usd {
-    width: clamp(4em, 100%, 8rem);
+    width: clamp(4rem, 100%, 8rem);
   }
 
   fieldset {

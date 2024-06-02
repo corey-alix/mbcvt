@@ -94,11 +94,19 @@ class WebServices {
     }
 
     /**
-     * @param {{ key: any; topic: any; value: any; }} request
+     * @param {{ key: string; topic: string; value: string; }} request
      */
-    handleRequest(request) {
+    writeTopic(request) {
         const { key, topic, value } = request;
         return this.dataServices.save(key, topic, value);
+    }
+
+    /**
+     * @param {{ key: string; topic: string; }} request
+     */
+    readTopic(request) {
+        const { key, topic } = request;
+        return this.dataServices.read(key, topic);
     }
 }
 
@@ -121,13 +129,31 @@ app.post('/api', (req, res) => {
     req.on('end', () => {
         try {
             const request = JSON.parse(body);
-            const response = webServices.handleRequest(request);
+            const response = webServices.writeTopic(request);
             res.send(response);
         } catch (e) {
-            res.status(400).send(e.message);
+            res.status(400).send(e);
         }
     });
-})
+});
+
+
+app.get('/api/:topic', (req, res) => {
+    const key = req.headers['x-api-key'];
+    const topic = req.params.topic;
+    console.log({ key, topic })
+    try {
+        const response = webServices.readTopic({ key, topic });
+        // as json
+        res.format({
+            'application/json': function () {
+                res.send(response);
+            }
+        });
+    } catch (e) {
+        res.status(400).send(e);
+    }
+});
 
 // SSL certificate files, to generate a private key and certificate, you can use openssl
 // openssl req -nodes -new -x509 -keyout server.key -out server.cert

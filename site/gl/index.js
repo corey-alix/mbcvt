@@ -1,3 +1,9 @@
+const PUBLIC_KEY = "123";
+const DATABASE_NAME = readQueryString("database") || "test";
+function readQueryString(name) {
+    const url = new URL(window.location.href);
+    return url.searchParams.get(name);
+}
 const glAccounts = [
     {
         id: 1001,
@@ -21,17 +27,22 @@ const glAccounts = [
     },
 ];
 class Database {
+    #apiUrl = "https://localhost:3000/api";
     getTransactions() {
         return this.#data.transactions || [];
     }
     #data = {
         transactions: [],
     };
-    constructor() {
-        const data = localStorage.getItem("gl");
+    constructor() { }
+    async init() {
+        const data = localStorage.getItem(DATABASE_NAME);
         if (data) {
             this.#data = JSON.parse(data);
         }
+        await this.#load().catch((error) => {
+            console.error(`Failed to load data: ${error}`);
+        });
     }
     async addTransaction(transactionInfo) {
         if (!this.#data.transactions) {
@@ -42,30 +53,50 @@ class Database {
     }
     async #save() {
         const data = JSON.stringify(this.#data);
-        localStorage.setItem("gl", data);
-        const persist = {
-            key: "123",
-            topic: "test",
-            value: data,
-        };
-        await fetch("https://localhost:3000/api", {
+        localStorage.setItem(DATABASE_NAME, data);
+        await fetch(this.#apiUrl, {
             method: "POST",
-            body: JSON.stringify(persist),
+            body: JSON.stringify({
+                key: PUBLIC_KEY,
+                topic: DATABASE_NAME,
+                value: data,
+            }),
             headers: {
                 "Content-Type": "application/json",
             },
         });
     }
+    async #load() {
+        const response = await fetch(`${this.#apiUrl}/${DATABASE_NAME}`, {
+            method: "GET",
+            headers: {
+                // public key for the API
+                "X-API-Key": PUBLIC_KEY,
+                "Content-Type": "application/json",
+            },
+        });
+        const data = (await response.json());
+        this.#data = data;
+        console.log(`Data updated from server: ${JSON.stringify(this.#data)}`);
+    }
 }
 const db = new Database();
-export function setupGeneralLedgerForm() {
+export async function setupGeneralLedgerForm() {
+    const ux = {
+        totalDebit: document.getElementById("total-debit"),
+        totalCredit: document.getElementById("total-credit"),
+        amountDebit: document.getElementById("amount-debit"),
+        amountCredit: document.getElementById("amount-credit"),
+        saveButton: document.getElementById("save-button"),
+    };
+    await db.init();
     // set window title
     document.title = "General Ledger";
     const form = document.getElementById("general-ledger-form");
     const date = document.getElementById("date");
     date.value = new Date().toISOString().substring(0, 10);
-    const amountDebit = asAmount("amount-debit");
-    var amountCredit = asAmount("amount-credit");
+    asAmount(ux.amountCredit);
+    asAmount(ux.amountCredit);
     const description = document.getElementById("description");
     const accountDescription = document.getElementById("account-description");
     // validate account number against the list of accounts
@@ -93,9 +124,11 @@ export function setupGeneralLedgerForm() {
         if (!account) {
             throw new Error("Invalid account number");
         }
-        const debit = parseFloat(amountDebit.value || "0");
+        asAmount(ux.amountDebit);
+        asAmount(ux.amountCredit);
+        const debit = parseFloat(ux.amountDebit.value || "0");
         account.balance += debit;
-        const credit = parseFloat(amountCredit.value || "0");
+        const credit = parseFloat(ux.amountCredit.value || "0");
         account.balance -= credit;
         const transactionInfo = {
             date: date.value,
@@ -106,30 +139,48 @@ export function setupGeneralLedgerForm() {
         await db.addTransaction(transactionInfo);
         renderTransaction(transactionInfo);
     });
-    function asAmount(id) {
-        const amountDebit = document.getElementById(id);
+    function asAmount(amount) {
         // must be a currency value (e.g. 123.45)
-        amountDebit.pattern = "[0-9]+(\\.[0-9]{1,2})?";
+        amount.pattern = "[0-9]+(\\.[0-9]{1,2})?";
         // must be a positive number
-        amountDebit.min = "0.01";
-        amountDebit.step = "0.01";
-        amountDebit.addEventListener("input", () => {
+        amount.min = "0.01";
+        amount.step = "0.01";
+        amount.addEventListener("input", () => {
             form.reportValidity();
         });
-        return amountDebit;
+        return amount;
     }
     db.getTransactions().forEach((transactionInfo) => {
         renderTransaction(transactionInfo);
+    });
+    function compute() {
+        const transactions = db.getTransactions();
+        const totalDebit = transactions.reduce((total, t) => total + Math.max(t.amt, 0), 0);
+        const totalCredit = transactions.reduce((total, t) => total + Math.min(t.amt, 0), 0);
+        ux.totalDebit.textContent = asCurrency(totalDebit);
+        ux.totalCredit.textContent = asCurrency(-totalCredit);
+    }
+    compute();
+    ux.saveButton.addEventListener("click", () => {
+        // only save if total debit equals total credit
+        if (ux.totalDebit.textContent !== ux.totalCredit.textContent) {
+            throw new Error("Debits and credits must balance");
+        }
     });
 }
 function renderTransaction(transactionInfo) {
     const { date, description, account, amt } = transactionInfo;
     const debit = amt > 0 ? amt : 0;
     const credit = amt < 0 ? -amt : 0;
-    const template = `<tr><td>${date}</td><td>${safeHtml(description)}<td class="align-left">${account}</td><td class="align-right">${debit ? asCurrency(debit) : ""}</td><td class="align-right">${credit ? asCurrency(credit) : ""}</td></tr>`;
+    const template = `
+  <div>${date}</div>
+  <div>${safeHtml(description)}</div>
+  <div class="align-left">${account}</div>
+  <div class="align-right">${debit ? asCurrency(debit) : "-"}</div>
+  <div class="align-right">${credit ? asCurrency(credit) : "-"}</div>
+  `;
     const target = document.getElementById("general-ledger");
-    const tbody = target.querySelector("tbody");
-    tbody.insertAdjacentHTML("beforebegin", template);
+    target.insertAdjacentHTML("beforeend", template);
 }
 function safeHtml(description) {
     // prevent XSS attacks
@@ -142,4 +193,18 @@ function asCurrency(amount) {
         currency: "USD",
     }).format(amount);
 }
+// report uncaught exceptions
+window.addEventListener("error", (event) => {
+    const toaster = document.getElementById("toaster");
+    if (!toaster) {
+        alert(`Uncaught exception: ${event.error}`);
+        return;
+    }
+    const message = document.createElement("div");
+    message.textContent = `${event.error}`;
+    toaster.appendChild(message);
+    setTimeout(() => {
+        toaster.removeChild(message);
+    }, 5000);
+});
 //# sourceMappingURL=index.js.map
