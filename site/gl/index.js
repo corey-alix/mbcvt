@@ -33,15 +33,28 @@ class Database {
             this.#data = JSON.parse(data);
         }
     }
-    addTransaction(transactionInfo) {
+    async addTransaction(transactionInfo) {
         if (!this.#data.transactions) {
             this.#data.transactions = [];
         }
         this.#data.transactions.push(transactionInfo);
-        this.#save();
+        await this.#save();
     }
-    #save() {
-        localStorage.setItem("gl", JSON.stringify(this.#data));
+    async #save() {
+        const data = JSON.stringify(this.#data);
+        localStorage.setItem("gl", data);
+        const persist = {
+            key: "123",
+            topic: "test",
+            value: data,
+        };
+        await fetch("http://localhost:3000/api", {
+            method: "POST",
+            body: JSON.stringify(persist),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
     }
 }
 const db = new Database();
@@ -71,7 +84,7 @@ export function setupGeneralLedgerForm() {
         form.reportValidity();
     });
     // intercept form submission
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
         event.preventDefault();
         if (!form.checkValidity()) {
             return;
@@ -90,7 +103,7 @@ export function setupGeneralLedgerForm() {
             account: account.id,
             amt: debit - credit,
         };
-        db.addTransaction(transactionInfo);
+        await db.addTransaction(transactionInfo);
         renderTransaction(transactionInfo);
     });
     function asAmount(id) {

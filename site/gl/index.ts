@@ -44,16 +44,30 @@ class Database {
     }
   }
 
-  addTransaction(transactionInfo: TransactionModel) {
+  async addTransaction(transactionInfo: TransactionModel) {
     if (!this.#data.transactions) {
       this.#data.transactions = [];
     }
     this.#data.transactions.push(transactionInfo);
-    this.#save();
+    await this.#save();
   }
 
-  #save() {
-    localStorage.setItem("gl", JSON.stringify(this.#data));
+  async #save() {
+    const data = JSON.stringify(this.#data);
+    localStorage.setItem("gl", data);
+
+    const persist = {
+      key: "123",
+      topic: "test",
+      value: data,
+    };
+    await fetch("http://localhost:3000/api", {
+      method: "POST",
+      body: JSON.stringify(persist),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 }
 
@@ -100,7 +114,7 @@ export function setupGeneralLedgerForm() {
   });
 
   // intercept form submission
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!form.checkValidity()) {
       return;
@@ -126,7 +140,7 @@ export function setupGeneralLedgerForm() {
       amt: debit - credit,
     } satisfies TransactionModel;
 
-    db.addTransaction(transactionInfo);
+    await db.addTransaction(transactionInfo);
     renderTransaction(transactionInfo);
   });
 

@@ -3,3 +3,8 @@ This should be a double-entry GL form where user can enter date and then two or 
 
 The layout should be tabular, with an editor appearing in the active row (one row at a time).
 Similar to a spreadsheet, the user can tab through the columns and rows but must be mobile first.
+
+
+# Storage
+
+The data should persist in the cloud, perhaps on the digital ocean server.  The data could be stored in sqlite and I can stand up a light-weight API to serve simple JSON.  The client would only need the secret key to access the service.
