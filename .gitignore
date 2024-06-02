@@ -1,3 +1,4 @@
 node_modules
-site/*.js
+*.js.map
+*.js
 *.Identifier

@@ -11,6 +11,7 @@
     --black: hsl(210, 0%, 25%);
     --spacer: 0.5rem;
     --border-radius: 0.25rem;
+    --padding-slim: 0.25rem;
   }
 }
 
@@ -400,9 +401,80 @@
   .no-desktop {
     display: block;
   }
+
   .grid-10 {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+  }
+}
+
+.gl {
+  .w-15 {
+    width: 15rem;
+  }
+  form {
+    button {
+      margin: var(--spacer);
+      padding: var(--spacer);
+      border-radius: var(--border-radius);
+      border: none;
+    }
+  }
+
+  td {
+    padding: var(--spacer);
+  }
+
+  .align-left {
+    text-align: left;
+  }
+
+  .align-right {
+    text-align: right;
+  }
+  .gl-header {
+    display: grid;
+    grid-template-columns: 100%;
+    gap: var(--spacer);
+    label {
+      display: block;
+      text-align: start;
+    }
+
+    input[name="description"] {
+      width: calc(100% - var(--spacer) * 2);
+    }
+  }
+
+  .gl-grid {
+    display: grid;
+    grid-template-columns: auto 5rem 5rem;
+    gap: var(--spacer);
+
+    fieldset {
+      display: flex;
+
+      .align-left {
+        /* not sure */
+      }
+
+      .align-right {
+        /* not sure */
+      }
+    }
+  }
+
+  .w-usd {
+    width: clamp(4em, 100%, 8rem);
+  }
+
+  fieldset {
+    padding: 0;
+    border: none;
+  }
+  input {
+    border: 0.5px solid;
+    padding: var(--padding-slim);
   }
 }

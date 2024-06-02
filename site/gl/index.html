@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="gl">
   <head>
     <meta charset="UTF-8" />
     <!-- mobile friendly -->
@@ -10,43 +10,60 @@
   </head>
 
   <body>
-    <!-- 
-      scaffolding for a general ledger grid 
-      must capture the following for each row:
-        a date, 
-        debit or credit amount, 
-        description and 
-        account number 
-    -->
     <section>
       <h1>General Ledger</h1>
       <form id="general-ledger-form">
-        <fieldset>
-          <label for="date">Date</label>
-          <input type="date" name="date" id="date" />
-        </fieldset>
-        <fieldset>
-          <label for="amount">Amount</label>
-          <input type="number" name="amount" id="amount" />
-        </fieldset>
-        <fieldset>
-          <label for="description">Description</label>
-          <input type="text" name="description" id="description" />
-        </fieldset>
-        <fieldset>
-          <label for="account-number">Account Number</label>
-          <input type="number" name="account-number" id="account-number" />
-          <p id="account-description"></p>
-        </fieldset>
+        <div class="gl-header">
+          <fieldset>
+            <label for="date">Date</label>
+            <input type="date" name="date" id="date" required />
+          </fieldset>
+          <fieldset>
+            <label for="description">Description</label>
+            <input
+              type="text"
+              name="description"
+              id="description"
+              placeholder="Purpose of this transaction"
+              required
+            />
+          </fieldset>
+        </div>
+        <div class="spacer" />
+        <div class="gl-grid">
+          <label class="align-left">Account Number</label>
+          <label class="align-right">Debit</label>
+          <label class="align-right">Credit</label>
+          <fieldset>
+            <input
+              type="number"
+              id="account-number"
+              class="align-left"
+              required
+            />
+            <p id="account-description"></p>
+          </fieldset>
+          <fieldset>
+            <input type="number" id="amount-debit" class="w-usd align-right" />
+          </fieldset>
+          <fieldset>
+            <input type="number" id="amount-credit" class="w-usd align-right" />
+          </fieldset>
+        </div>
+        <div class="spacer" />
         <button type="submit">Add Entry</button>
       </form>
+    </section>
+    <section>
+      <div class="spacer" />
       <table id="general-ledger">
         <thead>
           <tr>
             <th>Date</th>
-            <th>Amount</th>
-            <th>Description</th>
+            <th class="align-left w-15">Description</th>
             <th>Account Number</th>
+            <th>Debit</th>
+            <th>Credit</th>
           </tr>
         </thead>
         <tbody>
