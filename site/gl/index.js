@@ -1,6 +1,6 @@
 const PUBLIC_KEY = "123";
 const DATABASE_NAME = readQueryString("database") || "test";
-const API_URL = "https://ca0v.us:3000/api";
+const API_URL = "/api";
 function readQueryString(name) {
     const url = new URL(window.location.href);
     return url.searchParams.get(name);

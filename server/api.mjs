@@ -156,7 +156,7 @@ app.get('/api/:topic', (req, res) => {
 });
 
 // server app files located in "../site" folder under the "/app" route
-app.use('/app', express.static('../'));
+app.use('/app', express.static('../site'));
 
 // SSL certificate files, to generate a private key and certificate, you can use openssl
 // openssl req -nodes -new -x509 -keyout server.key -out server.cert
