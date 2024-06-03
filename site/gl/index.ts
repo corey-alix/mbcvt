@@ -20,23 +20,49 @@ type AccountModel = {
   balance: number;
 };
 
-type DatabaseSchema = {
+type BatchModel = {
+  id: number;
+  date: string;
   transactions: TransactionModel[];
+};
+
+type DatabaseSchema = {
+  batches: BatchModel[];
   accounts: AccountModel[];
+  transactions: TransactionModel[];
 };
 
 class Database {
+  getBatches() {
+    return this.#data.batches || [];
+  }
+
+  async createBatch() {
+    this.#data.batches = this.#data.batches || [];
+    this.#data.batches.push({
+      id: this.#data.batches.length + 1,
+      date: new Date().toISOString().substring(0, 10),
+      transactions: this.#data.transactions,
+    });
+    this.#data.transactions = [];
+    await this.#save();
+  }
+
+  getCurrentTransactions() {
+    return this.#data.transactions || [];
+  }
   getAccounts() {
     return this.#data.accounts || [];
   }
 
-  getTransactions() {
-    return this.#data.transactions || [];
+  getTransactions(batchId: number) {
+    return this.#data.batches.find((b) => b.id === batchId)?.transactions || [];
   }
 
   #data = {
-    transactions: [] as TransactionModel[],
     accounts: [] as AccountModel[],
+    batches: [] as BatchModel[],
+    transactions: [] as TransactionModel[],
   } satisfies DatabaseSchema;
 
   constructor() {}
@@ -103,16 +129,16 @@ export async function setupGeneralLedgerForm() {
   const db = new Database();
   await db.init();
 
+  const state = {
+    batchId: 0,
+  };
+
   const ux = {
     form: document.getElementById("general-ledger-form") as HTMLFormElement,
     totalDebit: document.getElementById("total-debit") as HTMLElement,
     totalCredit: document.getElementById("total-credit") as HTMLElement,
     amountDebit: document.getElementById("amount-debit") as HTMLInputElement,
     amountCredit: document.getElementById("amount-credit") as HTMLInputElement,
-    saveButton: document.getElementById("save-button") as HTMLButtonElement,
-    addAccountButton: document.getElementById(
-      "add-account"
-    ) as HTMLButtonElement,
     date: document.getElementById("date") as HTMLInputElement,
     description: document.getElementById("description") as HTMLInputElement,
     accountDescription: document.getElementById(
@@ -121,6 +147,15 @@ export async function setupGeneralLedgerForm() {
     accountNumber: document.getElementById(
       "account-number"
     ) as HTMLInputElement,
+    saveButton: document.getElementById("save-button") as HTMLButtonElement,
+    addAccountButton: document.getElementById(
+      "add-account"
+    ) as HTMLButtonElement,
+    addEntryButton: document.getElementById("add-entry") as HTMLButtonElement,
+    priorBatchButton: document.getElementById(
+      "batch-prev"
+    ) as HTMLButtonElement,
+    nextBatchButton: document.getElementById("batch-next") as HTMLButtonElement,
   };
 
   // set window title
@@ -128,7 +163,7 @@ export async function setupGeneralLedgerForm() {
 
   ux.date.value = new Date().toISOString().substring(0, 10);
   asAmount(ux.amountCredit);
-  asAmount(ux.amountCredit);
+  asAmount(ux.amountDebit);
 
   const glAccounts = db.getAccounts();
 
@@ -165,8 +200,37 @@ export async function setupGeneralLedgerForm() {
   });
 
   // intercept form submission
-  ux.form.addEventListener("submit", async (event) => {
+  ux.form.addEventListener("submit", (event) => {
     event.preventDefault();
+  });
+
+  ux.priorBatchButton.addEventListener("click", async () => {
+    if (state.batchId > 0) {
+      state.batchId--;
+      render();
+    } else {
+      const batches = db.getBatches();
+      const maxBatchId = batches.reduce((max, b) => Math.max(max, b.id), 0);
+      state.batchId = maxBatchId;
+      render();
+    }
+    toast(`Batch ${state.batchId}`);
+  });
+
+  ux.nextBatchButton.addEventListener("click", async () => {
+    const batches = db.getBatches();
+    const maxBatchId = batches.reduce((max, b) => Math.max(max, b.id), 0);
+    if (state.batchId < maxBatchId) {
+      state.batchId++;
+      render();
+    } else {
+      state.batchId = 0;
+      render();
+    }
+    toast(`Batch ${state.batchId}`);
+  });
+
+  ux.addEntryButton.addEventListener("click", async (event) => {
     if (!ux.form.checkValidity()) {
       return;
     }
@@ -177,9 +241,6 @@ export async function setupGeneralLedgerForm() {
     if (!account) {
       throw new Error("Invalid account number");
     }
-
-    asAmount(ux.amountDebit);
-    asAmount(ux.amountCredit);
 
     const debit = parseFloat(ux.amountDebit.value || "0");
     account.balance += debit;
@@ -195,8 +256,27 @@ export async function setupGeneralLedgerForm() {
     } satisfies TransactionModel;
 
     await db.addTransaction(transactionInfo);
-    renderTransaction(transactionInfo);
+    render();
   });
+
+  function render() {
+    const target = document.getElementById("general-ledger") as HTMLDivElement;
+    target.innerHTML = "";
+
+    if (state.batchId) {
+      const transactions = db.getTransactions(state.batchId);
+      transactions.forEach((transactionInfo) => {
+        renderTransaction(transactionInfo);
+      });
+      compute(transactions);
+    } else {
+      const transactions = db.getCurrentTransactions();
+      transactions.forEach((transactionInfo) => {
+        renderTransaction(transactionInfo);
+      });
+      compute(transactions);
+    }
+  }
 
   function asAmount(amount: HTMLInputElement) {
     // must be a currency value (e.g. 123.45)
@@ -211,12 +291,7 @@ export async function setupGeneralLedgerForm() {
     return amount;
   }
 
-  db.getTransactions().forEach((transactionInfo) => {
-    renderTransaction(transactionInfo);
-  });
-
-  function compute() {
-    const transactions = db.getTransactions();
+  function compute(transactions: TransactionModel[] ) {
     const totalDebit = transactions.reduce(
       (total, t) => total + Math.max(t.amt, 0),
       0
@@ -229,13 +304,16 @@ export async function setupGeneralLedgerForm() {
     ux.totalCredit.textContent = asCurrency(-totalCredit);
   }
 
-  compute();
+  render();
 
-  ux.saveButton.addEventListener("click", () => {
+  ux.saveButton.addEventListener("click", async () => {
     // only save if total debit equals total credit
     if (ux.totalDebit.textContent !== ux.totalCredit.textContent) {
       throw new Error("Debits and credits must balance");
     }
+
+    await db.createBatch();
+    window.location.reload();
   });
 }
 
@@ -270,16 +348,22 @@ function asCurrency(amount: number) {
 
 // report uncaught exceptions
 window.addEventListener("error", (event) => {
+  const message = `Uncaught exception: ${event.error}`;
+  toast(message);
+});
+
+function toast(message: string) {
   const toaster = document.getElementById("toaster") as HTMLElement;
   if (!toaster) {
-    alert(`Uncaught exception: ${event.error}`);
+    alert(message);
     return;
   }
 
-  const message = document.createElement("div");
-  message.textContent = `${event.error}`;
-  toaster.appendChild(message);
+  const messageDiv = document.createElement("div");
+  messageDiv.textContent = message;
+  toaster.appendChild(messageDiv);
+
   setTimeout(() => {
-    toaster.removeChild(message);
+    toaster.removeChild(messageDiv);
   }, 5000);
-});
+}

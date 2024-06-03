@@ -422,6 +422,10 @@
     border: 1px solid;
   }
 
+  button[disabled] {
+    display: none;
+  }
+
   .gl-grid {
     display: grid;
     grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
