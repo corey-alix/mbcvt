@@ -6,7 +6,7 @@
   "scripts": {
     "deploy": "tsc",
     "tsc": "tsc -w",
-    "live": "live-server --port=8080 --entry-file=index.html",
+    "live": "cd server && node api.mjs",
     "dev": "npm-run-all --parallel tsc live"
   },
   "repository": {

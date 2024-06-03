@@ -4,3 +4,4 @@ site/**/*.js
 *.Identifier
 server.key
 server.cert
+server/data
