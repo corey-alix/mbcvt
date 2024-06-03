@@ -83,7 +83,12 @@ class DataServices {
     read(key, topic) {
         this.validateKey(key);
         this.validateTopic(topic);
-        return fs.readFileSync(`./data/${topic}.json`, 'utf8');
+        // does the file exist?
+        const fileName = `./data/${topic}.json`;
+        if (!fs.existsSync(fileName)) {
+            return '{}';
+        }
+        return fs.readFileSync(fileName, 'utf8');
     }
 }
 
