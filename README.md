@@ -66,34 +66,20 @@ sudo systemctl start nginx
 
 ### Nginx
 
-A future approach is to use NGINX as a reverse proxy.  This will allow me to run multiple servers on the same machine.  I will use the following configuration:
-
-```nginx
-server {
-    listen 80;
-    server_name mbcvt.com www.mbcvt.com;
-
-    location /mbcvt {
-        proxy_pass http://localhost:3001;
-    }
-}
-```
-
-Since port 3001 is running with a non-trusted certificate, I can provide the ceritificate to nginx for verification.  I will use the following configuration:
+The current approach is to use NGINX as a reverse proxy.  This will allow me to run multiple servers on the same machine.  I will use the following configuration so users trying to visit https://ca0v.us/gl will be redirected to http://localhost:3001/app/gl/index.html:
 
 ```nginx
 server {
     listen 443 ssl;
-    server_name ca0v.us;
+    server_name ca0v.us mbcvt.ca0v.us;
 
-    ssl_certificate /root/mbcvt/server/server.cert;
-    ssl_certificate_key /root/mbcvt/server/server.key;
-
-    location /mbcvt {
-        proxy_pass http://localhost:3001;
+    location /gl {
+        proxy_pass http://localhost:3001/app/gl/index.html;
     }
 }
 ```
+
+The `listen` parameter means that the server will listen on port 443.  The `server_name` parameter means that the server will respond to requests for `ca0v.us` and `www.ca0v.us`.  The `location` parameter means that requests for `/gl` will be proxied to `http://localhost:3001/app/gl/index.html`.
 
 To get the full path to the current directory (~) use the following command:
 
@@ -109,13 +95,13 @@ To delete from the cursor to the end of the line use `d$`.  To delete from the c
 I then restarted nginx using the following command:
 
 ```bash
-sudo systemctl restart nginx
+systemctl restart nginx
 ```
 
 To generate a TSL certificate for digital ocean:
 
 ```
-sudo certbot --nginx --agree-tos -m coreyalix@gmail.com  -d ca0v.us
+certbot --nginx --agree-tos -m coreyalix@gmail.com  -d ca0v.us
 ```
 
 To install certbot:

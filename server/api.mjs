@@ -5,7 +5,7 @@
 import fs from 'fs';
 import express from 'express'
 import cors from 'cors'
-import https from 'https';
+import http from 'http';
 
 // read port from argument or use default
 const port = process.argv[2] || 3000;
@@ -163,15 +163,7 @@ app.get('/api/:topic', (req, res) => {
 // server app files located in "../site" folder under the "/app" route
 app.use('/app', express.static('../site'));
 
-// SSL certificate files, to generate a private key and certificate, you can use openssl
-// openssl req -nodes -new -x509 -keyout server.key -out server.cert
-
-const options = {
-    key: fs.readFileSync('./server.key'),
-    cert: fs.readFileSync('./server.cert')
-};
-
 // Create HTTPS server
-https.createServer(options, app).listen(port, () => {
+http.createServer(app).listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 });
