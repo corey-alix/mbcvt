@@ -163,7 +163,12 @@ app.get('/api/:topic', (req, res) => {
 // server app files located in "../site" folder under the "/app" route
 app.use('/app', express.static('../site'));
 
-// Create HTTPS server
+// if user is accessing the root, redirect them to the app
+app.get('/', (req, res) => {
+    res.redirect('/app');
+});
+
+// Create HTTP server
 http.createServer(app).listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 });

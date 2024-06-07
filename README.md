@@ -70,14 +70,22 @@ The current approach is to use NGINX as a reverse proxy.  This will allow me to 
 
 ```nginx
 server {
-    listen 443 ssl;
-    server_name ca0v.us mbcvt.ca0v.us;
+        listen 443 ssl;
+        server_name ca0v.us;
 
-    location /gl {
-        proxy_pass http://localhost:3001/app/gl/index.html;
-    }
+        ssl_certificate /etc/letsencrypt/live/ca0v.us/fullchain.pem; # managed by Certbot
+        ssl_certificate_key /etc/letsencrypt/live/ca0v.us/privkey.pem; # managed by Certbot
+
+        location /mbcvt {
+                proxy_pass http://localhost:3001/app;
+        }
+
+        location /api {
+                proxy_pass http://localhost:3001/api;
+        }
 }
 ```
+
 
 The `listen` parameter means that the server will listen on port 443.  The `server_name` parameter means that the server will respond to requests for `ca0v.us` and `www.ca0v.us`.  The `location` parameter means that requests for `/gl` will be proxied to `http://localhost:3001/app/gl/index.html`.
 
