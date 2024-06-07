@@ -426,9 +426,21 @@
     display: none;
   }
 
+  .delete-button {
+    text-align: center;
+    padding: 3px;
+    margin: 3px;
+    background-color: inherit;
+  }
+
+  .delete-button:hover {
+    background-color: var(--accent);
+    color: var(--secondary);
+  }
+
   .gl-grid {
     display: grid;
-    grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 3fr 1fr 1fr 1fr 2rem;
     max-height: 25rem;
     overflow: auto;
   }

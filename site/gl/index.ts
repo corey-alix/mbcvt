@@ -33,6 +33,10 @@ type DatabaseSchema = {
 };
 
 class Database {
+  deleteTransaction(index: number) {
+    this.#data.transactions.splice(index, 1);
+  }
+
   getBatches() {
     return this.#data.batches || [];
   }
@@ -258,7 +262,6 @@ export async function setupGeneralLedgerForm() {
     await db.addTransaction(transactionInfo);
     render();
 
-    debugger;
     trigger("on-add-entry");
   });
 
@@ -274,8 +277,8 @@ export async function setupGeneralLedgerForm() {
       compute(transactions);
     } else {
       const transactions = db.getCurrentTransactions();
-      transactions.forEach((transactionInfo) => {
-        renderTransaction(transactionInfo);
+      transactions.forEach((transactionInfo, index) => {
+        renderTransaction(transactionInfo, index);
       });
       compute(transactions);
     }
@@ -321,6 +324,18 @@ export async function setupGeneralLedgerForm() {
     window.location.reload();
   });
 
+  on("delete-row", (event) => {
+    const element = event?.detail.element as HTMLElement;
+    // the element should have a data-id attribute
+    const id = element.getAttribute("data-id");
+    if (!id) {
+      throw new Error("Missing data-id attribute");
+    }
+    // remove the transaction in this position
+    db.deleteTransaction(parseInt(id));
+    render();
+  });
+
   on("on-add-entry", () => {
     const transactions = db.getCurrentTransactions();
 
@@ -349,20 +364,42 @@ export async function setupGeneralLedgerForm() {
   });
 }
 
-function renderTransaction(transactionInfo: TransactionModel) {
+function renderTransaction(
+  transactionInfo: TransactionModel,
+  transactionIndex?: number
+) {
   const { date, description, account, amt } = transactionInfo;
   const debit = amt > 0 ? amt : 0;
   const credit = amt < 0 ? -amt : 0;
 
+  const dateAsMonthAndDay = new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+
   const template = `
-  <div>${date}</div>
+  <div>${dateAsMonthAndDay}</div>
   <div>${safeHtml(description)}</div>
   <div class="align-left">${account}</div>
   <div class="align-right">${debit ? asCurrency(debit) : "-"}</div>
   <div class="align-right">${credit ? asCurrency(credit) : "-"}</div>
+  ${
+    transactionIndex != null
+      ? `<button class="delete-button" data-action="delete-row" data-id="${transactionIndex}">X</button>`
+      : "<div></div>"
+  }
   `;
   const target = document.getElementById("general-ledger") as HTMLDivElement;
   target.insertAdjacentHTML("beforeend", template);
+
+  const actions = target.querySelectorAll("[data-action]");
+  actions.forEach((action) => {
+    const command = action.getAttribute("data-action")!;
+    action.removeAttribute("data-action");
+    action.addEventListener("click", () => {
+      trigger(command, { element: action });
+    });
+  });
 }
 
 function safeHtml(description: string) {
@@ -400,11 +437,11 @@ function toast(message: string) {
   }, 5000);
 }
 
-function trigger(topic: string) {
-  const event = new CustomEvent(topic);
+function trigger(topic: string, data?: any) {
+  const event = new CustomEvent(topic, { detail: data || null });
   window.dispatchEvent(event);
 }
 
-function on(topic: string, callback: () => void) {
-  window.addEventListener(topic, callback);
+function on(topic: string, callback: (event?: CustomEvent) => void) {
+  window.addEventListener(topic, (event) => callback(event as CustomEvent));
 }
