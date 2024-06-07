@@ -267,7 +267,13 @@ export async function setupGeneralLedgerForm() {
 
   function render() {
     const target = document.getElementById("general-ledger") as HTMLDivElement;
-    target.innerHTML = "";
+    target.innerHTML = `
+    <div class="header">Date</div>
+    <div class="header align-left w-15">Description</div>
+    <div class="header align-left">Account Number</div>
+    <div class="header align-right">Debit</div>
+    <div class="header align-right">Credit</div>
+    <div></div>`;
 
     if (state.batchId) {
       const transactions = db.getTransactions(state.batchId);

@@ -443,6 +443,9 @@
     grid-template-columns: 1fr 3fr 1fr 1fr 1fr 2rem;
     max-height: 25rem;
     overflow: auto;
+    .header {
+      font-weight: bold;
+    }
   }
 
   td {
