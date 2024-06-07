@@ -42,7 +42,7 @@ Stripe also has a tap-to-pay phone app.  I will use this to accept payments in p
 For the time being I will use a file-based service for the backend.  The server will be a simple express server that serves json files.  To deploy the server to Digital Ocean, I will use the Digital Ocean Console to pull changes using git.  The server will run as a daemon.  To ensure the server is always running, I will use the following:
 
 ```bash
-nohup node api.mjs &
+nohup node api.mjs 3001 &
 ```
 
 The `nohup` stops the server from being killed when the terminal is closed.  The `&` runs the server in the background.  To stop the server, I will use the following:
