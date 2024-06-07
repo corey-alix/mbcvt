@@ -257,6 +257,9 @@ export async function setupGeneralLedgerForm() {
 
     await db.addTransaction(transactionInfo);
     render();
+
+    debugger;
+    trigger("on-add-entry");
   });
 
   function render() {
@@ -291,15 +294,17 @@ export async function setupGeneralLedgerForm() {
     return amount;
   }
 
-  function compute(transactions: TransactionModel[] ) {
+  function compute(transactions: TransactionModel[]) {
     const totalDebit = transactions.reduce(
       (total, t) => total + Math.max(t.amt, 0),
       0
     );
+
     const totalCredit = transactions.reduce(
       (total, t) => total + Math.min(t.amt, 0),
       0
     );
+
     ux.totalDebit.textContent = asCurrency(totalDebit);
     ux.totalCredit.textContent = asCurrency(-totalCredit);
   }
@@ -314,6 +319,33 @@ export async function setupGeneralLedgerForm() {
 
     await db.createBatch();
     window.location.reload();
+  });
+
+  on("on-add-entry", () => {
+    const transactions = db.getCurrentTransactions();
+
+    const totalDebit = transactions.reduce(
+      (total, t) => total + Math.max(t.amt, 0),
+      0
+    );
+
+    const totalCredit = transactions.reduce(
+      (total, t) => total + Math.min(t.amt, 0),
+      0
+    );
+
+    const balance = totalCredit - totalDebit;
+
+    ux.accountNumber.value = "";
+    ux.amountDebit.value = "";
+    ux.amountCredit.value = "";
+
+    if (balance < 0) {
+      ux.amountCredit.value = (-balance).toFixed(2);
+    }
+    if (balance > 0) {
+      ux.amountDebit.value = balance.toFixed(2);
+    }
   });
 }
 
@@ -366,4 +398,13 @@ function toast(message: string) {
   setTimeout(() => {
     toaster.removeChild(messageDiv);
   }, 5000);
+}
+
+function trigger(topic: string) {
+  const event = new CustomEvent(topic);
+  window.dispatchEvent(event);
+}
+
+function on(topic: string, callback: () => void) {
+  window.addEventListener(topic, callback);
 }
