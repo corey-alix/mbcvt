@@ -387,8 +387,8 @@ function renderTransaction(
   <div>${dateAsMonthAndDay}</div>
   <div>${safeHtml(description)}</div>
   <div class="align-left">${account}</div>
-  <div class="align-right">${debit ? asCurrency(debit) : "-"}</div>
-  <div class="align-right">${credit ? asCurrency(credit) : "-"}</div>
+  <div class="align-right">${debit ? asCurrency(debit) : ""}</div>
+  <div class="align-right">${credit ? asCurrency(credit) : ""}</div>
   ${
     transactionIndex != null
       ? `<button class="delete-button" data-action="delete-row" data-id="${transactionIndex}">X</button>`
