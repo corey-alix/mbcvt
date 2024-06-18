@@ -1,4 +1,5 @@
 import { Database, type AccountModel } from "../db/index.js";
+import { asCurrency } from "../fun/index.js";
 
 const db = new Database();
 
@@ -28,12 +29,15 @@ export class ChartOfAccounts {
       </thead>
       <tbody>
         ${this.accounts
+          .sort((a, b) => a.id - b.id)
           .map(
             (account) => `
           <tr>
             <td>${account.id}</td>
-            <td><input data-account-id="${account.id}" value="${account.name}"/></td>
-            <td>${account.balance}</td>
+            <td><input data-account-id="${account.id}" value="${
+              account.name
+            }"/></td>
+            <td class="align-right">${asCurrency(account.balance)}</td>
           </tr>
         `
           )
@@ -46,7 +50,10 @@ export class ChartOfAccounts {
     inputs.forEach((input) => {
       input.addEventListener("change", async (event) => {
         const target = event.target as HTMLInputElement;
-        const accountId = parseInt(target.getAttribute("data-account-id") || "", 10);
+        const accountId = parseInt(
+          target.getAttribute("data-account-id") || "",
+          10
+        );
 
         const account = this.accounts.find(
           (account) => account.id === accountId
@@ -69,13 +76,16 @@ export class ChartOfAccounts {
     this.#state.root.appendChild(form);
 
     const addButton = form.querySelector("button") as HTMLButtonElement;
+
+    const accountNumber = form.querySelector(
+      "input[type=number]"
+    ) as HTMLInputElement;
+
+    const accountDescription = form.querySelector(
+      "input[type=text]"
+    ) as HTMLInputElement;
+
     addButton.addEventListener("click", async () => {
-      const accountNumber = form.querySelector(
-        "input[type=number]"
-      ) as HTMLInputElement;
-      const accountDescription = form.querySelector(
-        "input[type=text]"
-      ) as HTMLInputElement;
       const account = {
         id: accountNumber.valueAsNumber,
         name: accountDescription.value,
@@ -87,6 +97,7 @@ export class ChartOfAccounts {
       this.render(node);
     });
     this.#state.root.appendChild(addButton);
+    accountNumber.focus();
   }
 }
 

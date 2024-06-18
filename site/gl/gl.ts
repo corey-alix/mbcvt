@@ -1,4 +1,6 @@
 import { AccountModel, Database, TransactionModel } from "../db/index.js";
+import { safeHtml } from "../fun/index.js";
+import { asCurrency } from "../fun/index.js";
 
 export async function setupGeneralLedgerForm() {
   const db = new Database();
@@ -189,7 +191,35 @@ export async function setupGeneralLedgerForm() {
     ux.totalCredit.textContent = asCurrency(-totalCredit);
   }
 
+  function updateBalance() {
+    const transactions = db.getCurrentTransactions();
+
+    let totalDebit = 0;
+    let totalCredit = 0;
+
+    transactions.forEach((t) => {
+      if (t.amt < 0) totalCredit += t.amt;
+      else totalDebit += t.amt;
+    });
+
+    const balance = totalCredit + totalDebit;
+
+    ux.accountNumber.value = "";
+    ux.amountDebit.value = "";
+    ux.amountCredit.value = "";
+
+    if (balance < 0) {
+      console.log("debit required");
+      ux.amountDebit.value = (-balance).toFixed(2);
+    }
+    if (balance > 0) {
+      console.log("credit required");
+      ux.amountCredit.value = balance.toFixed(2);
+    }
+  }
+
   render();
+  updateBalance();
 
   ux.saveButton.addEventListener("click", async () => {
     // only save if total debit equals total credit
@@ -214,30 +244,8 @@ export async function setupGeneralLedgerForm() {
   });
 
   on("on-add-entry", () => {
-    const transactions = db.getCurrentTransactions();
-
-    const totalDebit = transactions.reduce(
-      (total, t) => total + Math.max(t.amt, 0),
-      0
-    );
-
-    const totalCredit = transactions.reduce(
-      (total, t) => total + Math.min(t.amt, 0),
-      0
-    );
-
-    const balance = totalCredit - totalDebit;
-
-    ux.accountNumber.value = "";
-    ux.amountDebit.value = "";
-    ux.amountCredit.value = "";
-
-    if (balance < 0) {
-      ux.amountCredit.value = (-balance).toFixed(2);
-    }
-    if (balance > 0) {
-      ux.amountDebit.value = balance.toFixed(2);
-    }
+    updateBalance();
+    ux.accountNumber.focus();
   });
 }
 
@@ -249,13 +257,8 @@ function renderTransaction(
   const debit = amt > 0 ? amt : 0;
   const credit = amt < 0 ? -amt : 0;
 
-  const dateAsMonthAndDay = new Date(date).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-
   const template = `
-  <div>${dateAsMonthAndDay}</div>
+  <div>${date}</div>
   <div>${safeHtml(description)}</div>
   <div class="align-left">${account}</div>
   <div class="align-right">${debit ? asCurrency(debit) : ""}</div>
@@ -277,19 +280,6 @@ function renderTransaction(
       trigger(command, { element: action });
     });
   });
-}
-
-function safeHtml(description: string) {
-  // prevent XSS attacks
-  return description.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
-
-function asCurrency(amount: number) {
-  // return the amount as USD
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(amount);
 }
 
 // report uncaught exceptions

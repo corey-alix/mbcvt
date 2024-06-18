@@ -409,6 +409,10 @@
   }
 }
 
+.align-right {
+  text-align: right;
+}
+
 .gl {
   .w-15 {
     width: 15rem;
@@ -456,9 +460,6 @@
     text-align: left;
   }
 
-  .align-right {
-    text-align: right;
-  }
   .gl-header {
     display: grid;
     grid-template-columns: 100%;
