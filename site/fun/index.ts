@@ -16,11 +16,11 @@ export function readQueryString(name: string) {
   return url.searchParams.get(name);
 }
 
-export function asLinkToAccountHistory(account: number) {
+export function asLinkToAccountHistory(account: number, text: string) {
   const database = readQueryString("database") || "test";
   const queryString = new URLSearchParams({
     account: account.toString(),
     database,
   });
-  return `<a href="account-history.html?${queryString.toString()}">${account}</a>`;
+  return `<a href="account-history.html?${queryString.toString()}">${text}</a>`;
 }

@@ -8,12 +8,20 @@ export async function setupAccountHistoryForm() {
   const target = document.querySelector("#general-ledger") || document.body;
   const db = new Database();
   await db.init();
+
   // read account number from query string
   const url = new URL(window.location.href);
   const accountNumber = url.searchParams.get("account");
   if (!accountNumber) {
     throw "'account' is a required query string parameter";
   }
+
+  // get account description
+  const account = db.getAccounts().find((account) => account.id === parseInt(accountNumber));
+  if (!account) {
+    throw `Account not found: ${accountNumber}`;
+  }
+  document.title = `Account History: ${account.name}`;
 
   const transactions = [] as Array<TransactionModel & { batchId: number }>;
   db.getBatches().forEach((batch) => {

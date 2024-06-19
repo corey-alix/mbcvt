@@ -7,6 +7,8 @@ const db = new Database();
 export class ChartOfAccounts {
   #state = {
     root: null as HTMLElement | null,
+    // capture data-account-id of focused input
+    focusedAccountId: "",
   };
 
   constructor(public accounts: AccountModel[]) {}
@@ -15,6 +17,7 @@ export class ChartOfAccounts {
     if (!this.#state.root) {
       this.#state.root = document.createElement("div");
     }
+
     this.#state.root.innerHTML = "";
     node.appendChild(this.#state.root);
 
@@ -33,7 +36,7 @@ export class ChartOfAccounts {
           .map(
             (account) => `
           <tr>
-            <td>${asLinkToAccountHistory(account.id)}</td>
+            <td>${asLinkToAccountHistory(account.id, account.id+"")}</td>
             <td><input data-account-id="${account.id}" value="${
               account.name
             }"/></td>
@@ -50,10 +53,9 @@ export class ChartOfAccounts {
     inputs.forEach((input) => {
       input.addEventListener("change", async (event) => {
         const target = event.target as HTMLInputElement;
-        const accountId = parseInt(
-          target.getAttribute("data-account-id") || "",
-          10
-        );
+        this.#state.focusedAccountId = target.getAttribute("data-account-id") || "";
+        if (!this.#state.focusedAccountId) throw "Account ID not found";
+        const accountId = parseInt(this.#state.focusedAccountId, 10);
 
         const account = this.accounts.find(
           (account) => account.id === accountId
@@ -97,7 +99,13 @@ export class ChartOfAccounts {
       this.render(node);
     });
     this.#state.root.appendChild(addButton);
-    accountNumber.focus();
+
+    if (this.#state.focusedAccountId) {
+      const input = this.#state.root.querySelector(
+        `input[data-account-id="${this.#state.focusedAccountId}"]`
+      ) as HTMLInputElement;
+      input.focus();
+    } else accountNumber.focus();
   }
 }
 

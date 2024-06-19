@@ -7,11 +7,71 @@
     <title>Reservation</title>
     <link rel="stylesheet" href="../index.css" />
     <link rel="author" href="mailto:coreyalix@gmail.com" />
+    <style>
+      #general-ledger-form {
+        margin: 0.5rem;
+      }
+
+      .spacer {
+        height: 1rem;
+      }
+      .yes-batch {
+        display: none;
+      }
+      .batch-mode .no-batch {
+        display: none;
+      }
+      .batch-mode .yes-batch {
+        display: initial;
+      }
+
+      #toaster {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background-color: #333;
+        color: white;
+        margin: 0;
+        padding: 1rem;
+        border: 1px solid white;
+        min-width: 10rem;
+        min-height: 4rem;
+        overflow: visible;
+        border-radius: 0;
+        border-top-left-radius: 1rem;
+      }
+
+      .dock-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
   </head>
 
   <body>
+    <h1>General Ledger</h1>
     <section>
-      <h1>General Ledger</h1>
+      <div id="general-ledger" class="gl-grid"></div>
+      <div class="spacer"></div>
+    </section>
+    <section>
+      <hr />
+      <div id="general-ledger-total" class="gl-grid">
+        <div>Total</div>
+        <div></div>
+        <div></div>
+        <div id="total-debit" class="align-right">$0.00</div>
+        <div id="total-credit" class="align-right">$0.00</div>
+      </div>
+      <div class="spacer"></div>
+    </section>
+
+    <section class="no-batch">
       <form id="general-ledger-form">
         <div class="gl-header">
           <fieldset>
@@ -30,7 +90,7 @@
             />
           </fieldset>
         </div>
-        <div class="spacer" />
+        <div class="spacer"></div>
         <div class="gl-header-grid">
           <label class="align-left">Account Number</label>
           <label class="align-right">Debit</label>
@@ -61,27 +121,14 @@
         <button id="add-entry">Add Entry</button>
       </form>
     </section>
-    <section>
-      <div class="spacer" />
-      <div id="general-ledger" class="gl-grid"></div>
-    </section>
-    <section>
-      <hr />
-      <div class="spacer"></div>
-      <div id="general-ledger-total" class="gl-grid">
-        <div>Total</div>
-        <div></div>
-        <div></div>
-        <div id="total-debit" class="align-right">$0.00</div>
-        <div id="total-credit" class="align-right">$0.00</div>
-      </div>
-    </section>
-    <div class="spacer"></div>
-    <button id="save-button">Apply</button>
-    <button id="batch-prev">Prior</button>
-    <button id="batch-next">Next</button>
 
-    <span id="toaster"></span>
+    <section class="dock-bottom">
+      <button class="no-batch" id="save-button">Apply</button>
+      <button id="batch-prev">Prior</button>
+      <button class="yes-batch" id="batch-next">Next</button>
+    </section>
+
+    <span class="hidden" id="toaster"></span>
 
     <script type="module">
       import { setupGeneralLedgerForm } from "./index.js";

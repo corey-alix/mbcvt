@@ -2,8 +2,9 @@ import { AccountModel, Database, TransactionModel } from "../db/index.js";
 import { asLinkToAccountHistory } from "../fun/index.js";
 import { readQueryString, safeHtml, asCurrency } from "../fun/index.js";
 
+const db = new Database();
+
 export async function setupGeneralLedgerForm() {
-  const db = new Database();
   await db.init();
 
   const state = {
@@ -49,19 +50,8 @@ export async function setupGeneralLedgerForm() {
   const glAccounts = db.getAccounts();
 
   ux.addAccountButton.addEventListener("click", async () => {
-    const accountName = prompt("Enter account name");
-    if (!accountName) {
-      return;
-    }
-
-    const account = {
-      id: ux.accountNumber.valueAsNumber,
-      name: accountName,
-      balance: 0,
-    } satisfies AccountModel;
-
-    glAccounts.push(account);
-    await db.addAccount(account);
+    // navigate to chart-of-accounts.html
+    navigateTo("chart-of-accounts.html");
   });
 
   ux.accountNumber.addEventListener("input", () => {
@@ -152,6 +142,8 @@ export async function setupGeneralLedgerForm() {
     <div class="header align-right">Credit</div>
     <div></div>`;
 
+    document.body.classList.toggle("batch-mode", !!state.batchId);
+
     if (state.batchId) {
       const transactions = db.getTransactions(state.batchId);
       transactions.sort((a, b) => a.date.localeCompare(b.date));
@@ -159,11 +151,19 @@ export async function setupGeneralLedgerForm() {
         renderTransaction(transactionInfo);
       });
       compute(transactions);
+      // add the "batch" to the query string
+      const url = new URL(window.location.href);
+      url.searchParams.set("batch", state.batchId.toString());
+      window.history.replaceState({}, "", url.toString());
     } else {
       const transactions = db.getCurrentTransactions();
       transactions.forEach((transactionInfo, index) => {
         renderTransaction(transactionInfo, index);
       });
+      // remove "batch" from the query string
+      const url = new URL(window.location.href);
+      url.searchParams.delete("batch");
+      window.history.replaceState({}, "", url.toString());
       compute(transactions);
     }
   }
@@ -262,9 +262,15 @@ function renderTransaction(
   const debit = amt > 0 ? amt : 0;
   const credit = amt < 0 ? -amt : 0;
 
+  const accountInfo = db.getAccounts().find((a) => a.id === account);
+  if (!accountInfo) throw new Error(`Account not found: ${account}`);
+
   const template = `
   <div>${asShortDate(date)}</div>
-  <div class="align-left">${asLinkToAccountHistory(account)}</div>
+  <div title="${accountInfo?.name}" class="align-left">${asLinkToAccountHistory(
+    account,
+    account + " (" + accountInfo.name + ")"
+  )}</div>
   <div>${safeHtml(description)}</div>
   <div class="align-right">${debit ? asCurrency(debit) : ""}</div>
   <div class="align-right">${credit ? asCurrency(credit) : ""}</div>
@@ -303,9 +309,13 @@ function toast(message: string) {
   const messageDiv = document.createElement("div");
   messageDiv.textContent = message;
   toaster.appendChild(messageDiv);
+  toaster.classList.toggle("hidden", false);
 
   setTimeout(() => {
     toaster.removeChild(messageDiv);
+    if (!toaster.children.length) {
+      toaster.classList.toggle("hidden", true);
+    }
   }, 5000);
 }
 
@@ -322,3 +332,7 @@ function asShortDate(date: string) {
   return date.substring(5, 10);
 }
 
+function navigateTo(url: string) {
+  const query = new URLSearchParams(window.location.search);
+  window.location.href = `${url}?${query.toString()}`;
+}
