@@ -6,8 +6,8 @@
   "scripts": {
     "deploy": "tsc",
     "tsc": "tsc -w",
-    "live": "live-server --port=8080 --entry-file=index.html",
-    "dev": "npm-run-all --parallel tsc live"
+    "server": "cd ./server && npm run server",
+    "dev": "npm-run-all --parallel tsc server"
   },
   "repository": {
     "type": "git",

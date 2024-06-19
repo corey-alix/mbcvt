@@ -5,7 +5,7 @@
 import fs from 'fs';
 import express from 'express'
 import cors from 'cors'
-import https from 'https';
+import http from 'http';
 
 // read port from argument or use default
 const port = process.argv[2] || 3000;
@@ -83,7 +83,12 @@ class DataServices {
     read(key, topic) {
         this.validateKey(key);
         this.validateTopic(topic);
-        return fs.readFileSync(`./data/${topic}.json`, 'utf8');
+        // does the file exist?
+        const fileName = `./data/${topic}.json`;
+        if (!fs.existsSync(fileName)) {
+            return '{}';
+        }
+        return fs.readFileSync(fileName, 'utf8');
     }
 }
 
@@ -139,7 +144,7 @@ app.post('/api', (req, res) => {
 
 
 app.get('/api/:topic', (req, res) => {
-    const key = req.headers['x-api-key'];
+    const key = req.headers['x-api-key'] || req.query.key || "123";
     const topic = req.params.topic;
     console.log({ key, topic })
     try {
@@ -155,15 +160,15 @@ app.get('/api/:topic', (req, res) => {
     }
 });
 
-// SSL certificate files, to generate a private key and certificate, you can use openssl
-// openssl req -nodes -new -x509 -keyout server.key -out server.cert
+// server app files located in "../site" folder under the "/app" route
+app.use('/app', express.static('../site'));
 
-const options = {
-    key: fs.readFileSync('./server.key'),
-    cert: fs.readFileSync('./server.cert')
-};
+// if user is accessing the root, redirect them to the app
+app.get('/', (req, res) => {
+    res.redirect('/app');
+});
 
-// Create HTTPS server
-https.createServer(options, app).listen(port, () => {
+// Create HTTP server
+http.createServer(app).listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 });

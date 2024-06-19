@@ -25,7 +25,7 @@
               name="description"
               id="description"
               placeholder="Purpose of this transaction"
-              value="test"
+              value=""
               required
             />
           </fieldset>
@@ -40,35 +40,30 @@
               type="number"
               id="account-number"
               class="align-left w-4"
-              value="1001"
+              value=""
               required
             />
             <p id="account-description"></p>
+            <button id="add-account" disabled>Add Account</button>
           </fieldset>
           <fieldset>
             <input
               type="number"
               id="amount-debit"
               class="w-usd align-right"
-              value="100"
+              value=""
             />
           </fieldset>
           <fieldset>
             <input type="number" id="amount-credit" class="w-usd align-right" />
           </fieldset>
         </div>
-        <button type="submit">Add Entry</button>
+        <button id="add-entry">Add Entry</button>
       </form>
     </section>
     <section>
       <div class="spacer" />
-      <div id="general-ledger" class="gl-grid">
-        <div>Date</div>
-        <div class="align-left w-15">Description</div>
-        <div>Account Number</div>
-        <div class="align-right">Debit</div>
-        <div class="align-right">Credit</div>
-      </div>
+      <div id="general-ledger" class="gl-grid"></div>
     </section>
     <section>
       <hr />
@@ -83,6 +78,8 @@
     </section>
     <div class="spacer"></div>
     <button id="save-button">Apply</button>
+    <button id="batch-prev">Prior</button>
+    <button id="batch-next">Next</button>
 
     <span id="toaster"></span>
 
