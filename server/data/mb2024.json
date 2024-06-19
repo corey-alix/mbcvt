@@ -1,0 +1,697 @@
+{
+    "accounts": [
+        {
+            "id": 1001,
+            "name": "Cash",
+            "balance": -11303.820000000002
+        },
+        {
+            "id": 2001,
+            "name": "AR",
+            "balance": -41200
+        },
+        {
+            "id": 2101,
+            "name": "Site F1",
+            "balance": 1800
+        },
+        {
+            "id": 2102,
+            "name": "Site F2",
+            "balance": 600
+        },
+        {
+            "id": 2103,
+            "name": "Site F3",
+            "balance": 1300
+        },
+        {
+            "id": 2104,
+            "name": "Site F4",
+            "balance": 0
+        },
+        {
+            "id": 2105,
+            "name": "Site F5",
+            "balance": 0
+        },
+        {
+            "id": 2106,
+            "name": "Site F6",
+            "balance": 1800
+        },
+        {
+            "id": 2107,
+            "name": "Site F7",
+            "balance": 0
+        },
+        {
+            "id": 2108,
+            "name": "Site B0",
+            "balance": 0
+        },
+        {
+            "id": 2109,
+            "name": "Site B1",
+            "balance": 0
+        },
+        {
+            "id": 2110,
+            "name": "Site B2",
+            "balance": 800
+        },
+        {
+            "id": 2111,
+            "name": "Site B3",
+            "balance": 0
+        },
+        {
+            "id": 2112,
+            "name": "Site Pullout",
+            "balance": 0
+        },
+        {
+            "id": 2113,
+            "name": "Site Other",
+            "balance": 800
+        },
+        {
+            "id": 2114,
+            "name": "Site 4",
+            "balance": 800
+        },
+        {
+            "id": 2115,
+            "name": "Site 5",
+            "balance": 1800
+        },
+        {
+            "id": 2116,
+            "name": "Site 6",
+            "balance": 0
+        },
+        {
+            "id": 2117,
+            "name": "Site 7A",
+            "balance": 0
+        },
+        {
+            "id": 2118,
+            "name": "Site 7B",
+            "balance": 1150
+        },
+        {
+            "id": 2119,
+            "name": "Site 8",
+            "balance": 0
+        },
+        {
+            "id": 2120,
+            "name": "Site 9",
+            "balance": 900
+        },
+        {
+            "id": 2121,
+            "name": "Site 10",
+            "balance": 600
+        },
+        {
+            "id": 2122,
+            "name": "Site 12",
+            "balance": 0
+        },
+        {
+            "id": 2123,
+            "name": "Site 13",
+            "balance": 0
+        },
+        {
+            "id": 2124,
+            "name": "Site 14",
+            "balance": 0
+        },
+        {
+            "id": 2125,
+            "name": "Site 15",
+            "balance": 0
+        },
+        {
+            "id": 2126,
+            "name": "Site 16",
+            "balance": 0
+        },
+        {
+            "id": 2127,
+            "name": "Site H17",
+            "balance": 0
+        },
+        {
+            "id": 2128,
+            "name": "Site H18",
+            "balance": 1000
+        },
+        {
+            "id": 2129,
+            "name": "Site H19",
+            "balance": 0
+        },
+        {
+            "id": 2130,
+            "name": "Site H20",
+            "balance": 0
+        },
+        {
+            "id": 2131,
+            "name": "Site H21",
+            "balance": 0
+        },
+        {
+            "id": 2132,
+            "name": "Site H22",
+            "balance": 0
+        },
+        {
+            "id": 3001,
+            "name": "Taxes",
+            "balance": 2299.54
+        },
+        {
+            "id": 1002,
+            "name": "Community National Bank",
+            "balance": 36854.28
+        }
+    ],
+    "transactions": [],
+    "batches": [
+        {
+            "id": 1,
+            "date": "2024-06-18",
+            "transactions": [
+                {
+                    "date": "2024-01-01",
+                    "description": "2024 Site Deposits",
+                    "account": 2109,
+                    "amt": -200
+                },
+                {
+                    "date": "2024-01-01",
+                    "description": "2024 Site Deposits",
+                    "account": 2118,
+                    "amt": -200
+                },
+                {
+                    "date": "2024-01-01",
+                    "description": "2024 Site Deposit",
+                    "account": 2121,
+                    "amt": -800
+                },
+                {
+                    "date": "2024-01-01",
+                    "description": "2024 Site Deposit",
+                    "account": 2125,
+                    "amt": -200
+                },
+                {
+                    "date": "2024-01-01",
+                    "description": "2024 Site Deposit",
+                    "account": 1001,
+                    "amt": 1400
+                },
+                {
+                    "date": "2024-05-03",
+                    "description": "2024 Site Deposit",
+                    "account": 2102,
+                    "amt": -1200
+                },
+                {
+                    "date": "2024-06-08",
+                    "description": "2024 Site Deposit",
+                    "account": 2103,
+                    "amt": -200
+                },
+                {
+                    "date": "2024-06-08",
+                    "description": "2024 Site Deposit",
+                    "account": 2105,
+                    "amt": -1800
+                },
+                {
+                    "date": "2024-06-08",
+                    "description": "2024 Site Deposit",
+                    "account": 2104,
+                    "amt": -1800
+                },
+                {
+                    "date": "2024-06-02",
+                    "description": "2024 Site Deposit",
+                    "account": 2107,
+                    "amt": -1800
+                },
+                {
+                    "date": "2024-05-24",
+                    "description": "2024 Site Deposit",
+                    "account": 2108,
+                    "amt": -1800
+                },
+                {
+                    "date": "2024-05-11",
+                    "description": "2024 Site Deposit",
+                    "account": 2110,
+                    "amt": -500
+                },
+                {
+                    "date": "2024-05-04",
+                    "description": "2024 Site Deposit",
+                    "account": 2114,
+                    "amt": -500
+                },
+                {
+                    "date": "2024-05-16",
+                    "description": "2024 Site Deposit",
+                    "account": 2117,
+                    "amt": -1800
+                },
+                {
+                    "date": "2024-05-26",
+                    "description": "2024 Site Deposit",
+                    "account": 2120,
+                    "amt": -900
+                },
+                {
+                    "date": "2024-05-03",
+                    "description": "2024 Site Deposit",
+                    "account": 2122,
+                    "amt": -1800
+                },
+                {
+                    "date": "2024-06-03",
+                    "description": "2024 Site Deposit",
+                    "account": 2123,
+                    "amt": -1600
+                },
+                {
+                    "date": "2024-05-26",
+                    "description": "2024 Site Deposit",
+                    "account": 2124,
+                    "amt": -1800
+                },
+                {
+                    "date": "2024-05-04",
+                    "description": "2024 Site Deposit",
+                    "account": 2128,
+                    "amt": -300
+                },
+                {
+                    "date": "2024-06-01",
+                    "description": "2024 Site Deposit",
+                    "account": 2113,
+                    "amt": -1000
+                },
+                {
+                    "date": "2024-06-09",
+                    "description": "2024 Site Deposit",
+                    "account": 2103,
+                    "amt": -300
+                },
+                {
+                    "date": "2024-05-03",
+                    "description": "2024 Site Deposit",
+                    "account": 2109,
+                    "amt": -900
+                },
+                {
+                    "date": "2024-06-01",
+                    "description": "2024 Site Deposit",
+                    "account": 2110,
+                    "amt": -500
+                },
+                {
+                    "date": "2024-06-11",
+                    "description": "2024 Site Deposit",
+                    "account": 2114,
+                    "amt": -500
+                },
+                {
+                    "date": "2024-05-25",
+                    "description": "2024 Site Deposit",
+                    "account": 2118,
+                    "amt": -450
+                },
+                {
+                    "date": "2024-05-15",
+                    "description": "2024 Site Deposit",
+                    "account": 2121,
+                    "amt": -200
+                },
+                {
+                    "date": "2024-06-06",
+                    "description": "2024 Site Deposit",
+                    "account": 2123,
+                    "amt": -200
+                },
+                {
+                    "date": "2024-05-03",
+                    "description": "2024 Site Deposit",
+                    "account": 2125,
+                    "amt": -1600
+                },
+                {
+                    "date": "2024-02-03",
+                    "description": "2024 Site Deposit",
+                    "account": 2128,
+                    "amt": -300
+                },
+                {
+                    "date": "2024-05-31",
+                    "description": "2024 Site Deposit",
+                    "account": 2109,
+                    "amt": -500
+                },
+                {
+                    "date": "2024-06-11",
+                    "description": "2024 Site Deposit",
+                    "account": 2121,
+                    "amt": -200
+                },
+                {
+                    "date": "2024-06-14",
+                    "description": "2024 Site Deposit",
+                    "account": 2109,
+                    "amt": -200
+                },
+                {
+                    "date": "2024-04-28",
+                    "description": "2024 Site Deposit",
+                    "account": 2126,
+                    "amt": -1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "2024 Site Deposit",
+                    "account": 1001,
+                    "amt": 26450
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "date": "2024-06-18",
+            "transactions": [
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2101,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2102,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2103,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2104,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2105,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2106,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2107,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2108,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2109,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2110,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2113,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2114,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2115,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2117,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2118,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2120,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2121,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2122,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2123,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2124,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2125,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2126,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2128,
+                    "amt": 1600
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Sales",
+                    "account": 2001,
+                    "amt": -41200
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "date": "2024-06-18",
+            "transactions": [
+                {
+                    "date": "2024-06-18",
+                    "description": "Taxes (May->June 18)",
+                    "account": 3001,
+                    "amt": 2299.54
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Taxes (May->June 18)",
+                    "account": 1001,
+                    "amt": -2299.54
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "date": "2024-06-18",
+            "transactions": [
+                {
+                    "date": "2024-05-22",
+                    "description": "Deposits",
+                    "account": 1002,
+                    "amt": 2445
+                },
+                {
+                    "date": "2024-05-22",
+                    "description": "Deposits",
+                    "account": 1001,
+                    "amt": -2445
+                },
+                {
+                    "date": "2024-05-30",
+                    "description": "Deposits",
+                    "account": 1002,
+                    "amt": 2116
+                },
+                {
+                    "date": "2024-05-30",
+                    "description": "Deposits",
+                    "account": 1001,
+                    "amt": -2116
+                },
+                {
+                    "date": "2024-06-04",
+                    "description": "Deposits",
+                    "account": 1002,
+                    "amt": 3695
+                },
+                {
+                    "date": "2024-06-04",
+                    "description": "Deposits",
+                    "account": 1001,
+                    "amt": -3695
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Deposits",
+                    "account": 1002,
+                    "amt": 3168.53
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Deposits",
+                    "account": 1001,
+                    "amt": -3168.53
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Deposits",
+                    "account": 1002,
+                    "amt": 8548.75
+                },
+                {
+                    "date": "2024-06-18",
+                    "description": "Deposits",
+                    "account": 1001,
+                    "amt": -8548.75
+                },
+                {
+                    "date": "2024-05-06",
+                    "description": "Deposits",
+                    "account": 1002,
+                    "amt": 900
+                },
+                {
+                    "date": "2024-05-06",
+                    "description": "Deposits",
+                    "account": 1002,
+                    "amt": 7300
+                },
+                {
+                    "date": "2024-05-06",
+                    "description": "Deposits",
+                    "account": 1001,
+                    "amt": -8200
+                },
+                {
+                    "date": "2024-05-17",
+                    "description": "Deposits",
+                    "account": 1002,
+                    "amt": 1800
+                },
+                {
+                    "date": "2024-05-17",
+                    "description": "Deposits",
+                    "account": 1002,
+                    "amt": 200
+                },
+                {
+                    "date": "2024-05-17",
+                    "description": "Deposits",
+                    "account": 1002,
+                    "amt": 4251
+                },
+                {
+                    "date": "2024-05-17",
+                    "description": "Deposits",
+                    "account": 1002,
+                    "amt": 25
+                },
+                {
+                    "date": "2024-05-17",
+                    "description": "Deposits",
+                    "account": 1001,
+                    "amt": -6276
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "date": "2024-06-19",
+            "transactions": [
+                {
+                    "date": "2024-01-01",
+                    "description": "Beginning Balance",
+                    "account": 1002,
+                    "amt": 2405
+                },
+                {
+                    "date": "2024-01-01",
+                    "description": "Beginning Balance",
+                    "account": 1001,
+                    "amt": -2405
+                }
+            ]
+        }
+    ]
+}

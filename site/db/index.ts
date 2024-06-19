@@ -50,6 +50,7 @@ export class Database {
   getCurrentTransactions() {
     return this.#data.transactions || [];
   }
+  
   getAccounts() {
     return this.#data.accounts || [];
   }
