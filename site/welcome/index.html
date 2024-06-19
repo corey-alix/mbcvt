@@ -8,6 +8,18 @@
     <title>Reservation</title>
     <link rel="stylesheet" href="../index.css">
     <link rel="author" href="mailto:coreyalix@gmail.com">
+    <style>
+        .map {
+            /* align content to the center */
+            display: flex;
+            justify-content: center;
+            background-color: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            margin: 2rem;
+            border: 2px dashed #333;
+        }
+    </style>
 </head>
 
 <body>
@@ -22,6 +34,9 @@
         <p>About...</p>
     </section>
 
+    <section class="map">
+        <img src="../assets/map.svg" alt="Millbrook Campground Map" />
+    </section>
 
     <script type="module">
         import { setupWelcomeForm } from "../index.js";
