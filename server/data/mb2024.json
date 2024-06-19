@@ -3,7 +3,7 @@
         {
             "id": 1001,
             "name": "Cash",
-            "balance": -11303.820000000002
+            "balance": -8737.130000000001
         },
         {
             "id": 2001,
@@ -63,12 +63,12 @@
         {
             "id": 2111,
             "name": "Site B3",
-            "balance": 0
+            "balance": -394.74
         },
         {
             "id": 2112,
             "name": "Site Pullout",
-            "balance": 0
+            "balance": -127.53
         },
         {
             "id": 2113,
@@ -88,7 +88,7 @@
         {
             "id": 2116,
             "name": "Site 6",
-            "balance": 0
+            "balance": -626.75
         },
         {
             "id": 2117,
@@ -103,7 +103,7 @@
         {
             "id": 2119,
             "name": "Site 8",
-            "balance": 0
+            "balance": -170.04
         },
         {
             "id": 2120,
@@ -143,7 +143,7 @@
         {
             "id": 2127,
             "name": "Site H17",
-            "balance": 0
+            "balance": -31.61
         },
         {
             "id": 2128,
@@ -153,7 +153,7 @@
         {
             "id": 2129,
             "name": "Site H19",
-            "balance": 0
+            "balance": -94.83
         },
         {
             "id": 2130,
@@ -173,7 +173,7 @@
         {
             "id": 3001,
             "name": "Taxes",
-            "balance": 2299.54
+            "balance": 2411.9
         },
         {
             "id": 1002,
@@ -690,6 +690,96 @@
                     "description": "Beginning Balance",
                     "account": 1001,
                     "amt": -2405
+                }
+            ]
+        },
+        {
+            "id": 6,
+            "date": "2024-06-19",
+            "transactions": [
+                {
+                    "date": "2024-05-25",
+                    "description": "May Daily",
+                    "account": 2111,
+                    "amt": -42.51
+                },
+                {
+                    "date": "2024-05-24",
+                    "description": "May Daily",
+                    "account": 2112,
+                    "amt": -127.53
+                },
+                {
+                    "date": "2024-05-24",
+                    "description": "May Daily",
+                    "account": 2119,
+                    "amt": -127.53
+                },
+                {
+                    "date": "2024-05-24",
+                    "description": "May Daily",
+                    "account": 2129,
+                    "amt": -63.22
+                },
+                {
+                    "date": "2024-05-08",
+                    "description": "May Daily",
+                    "account": 2111,
+                    "amt": -42.51
+                },
+                {
+                    "date": "2024-05-18",
+                    "description": "May Daily",
+                    "account": 2129,
+                    "amt": -31.61
+                },
+                {
+                    "date": "2024-05-18",
+                    "description": "May Daily",
+                    "account": 2127,
+                    "amt": -31.61
+                },
+                {
+                    "date": "2024-05-31",
+                    "description": "May Daily",
+                    "account": 2111,
+                    "amt": -225
+                },
+                {
+                    "date": "2024-05-31",
+                    "description": "May Daily",
+                    "account": 2116,
+                    "amt": -626.75
+                },
+                {
+                    "date": "2024-05-26",
+                    "description": "May Daily",
+                    "account": 2111,
+                    "amt": -42.51
+                },
+                {
+                    "date": "2024-05-26",
+                    "description": "May Daily",
+                    "account": 1001,
+                    "amt": 1360.78
+                }
+            ]
+        },
+        {
+            "id": 7,
+            "date": "2024-06-19",
+            "transactions": [
+                {
+                    "date": "2024-06-19",
+                    "description": "May Tax",
+                    "account": 3001,
+                    "amt": 112.36
+                },
+                {
+                    "date": "2024-06-19",
+                    "description": "May Tax",
+                    "account": 1001,
+                    "amt": -112.36
                 }
             ]
         }
