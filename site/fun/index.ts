@@ -15,3 +15,12 @@ export function readQueryString(name: string) {
   const url = new URL(window.location.href);
   return url.searchParams.get(name);
 }
+
+export function asLinkToAccountHistory(account: number) {
+  const database = readQueryString("database") || "test";
+  const queryString = new URLSearchParams({
+    account: account.toString(),
+    database,
+  });
+  return `<a href="account-history.html?${queryString.toString()}">${account}</a>`;
+}

@@ -32,7 +32,6 @@ export async function setupAccountHistoryForm() {
   table.innerHTML = `
         <thead>
             <tr>
-                <th>Batch</th>
                 <th>Date</th>
                 <th>Description</th>
                 <th class="align-right">Amount</th>
@@ -41,26 +40,32 @@ export async function setupAccountHistoryForm() {
         </thead>
         <tbody>
             ${transactions
-      .map(
-        (transaction) => `
+              .map(
+                (transaction) => `
                 <tr>
-                    <td>${asBatchLink(transaction.batchId)}</td>
-                    <td>${transaction.date}</td>
+                    <td>${asBatchLink(
+                      transaction.batchId,
+                      transaction.date
+                    )}</td>
                     <td>${transaction.description}</td>
                     <td class="align-right">${asCurrency(transaction.amt)}</td>
-                    <td class="align-right">${asCurrency(balance += transaction.amt)}</td>
+                    <td class="align-right">${asCurrency(
+                      (balance += transaction.amt)
+                    )}</td>
                 </tr>
             `
-      )
-      .join("")}
+              )
+              .join("")}
         </tbody>
     `;
   target.appendChild(table);
 }
 
-function asBatchLink(batchId: number) {
+function asBatchLink(batchId: number, label: string) {
   const database = readQueryString("database") || "test";
-  const queryString = new URLSearchParams({ database, batch: batchId.toString() });
-  return `<a href=./index.html?${queryString.toString()}>${batchId}</a>`;
+  const queryString = new URLSearchParams({
+    database,
+    batch: batchId.toString(),
+  });
+  return `<a href=./general-ledger.html?${queryString.toString()}>${label}</a>`;
 }
-

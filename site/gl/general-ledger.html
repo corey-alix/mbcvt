@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" class="gl">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- mobile friendly -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reservation</title>
+    <link rel="stylesheet" href="../index.css" />
+    <link rel="author" href="mailto:coreyalix@gmail.com" />
+  </head>
+
+  <body>
+    <section>
+      <h1>General Ledger</h1>
+      <form id="general-ledger-form">
+        <div class="gl-header">
+          <fieldset>
+            <label for="date">Date</label>
+            <input type="date" name="date" id="date" required />
+          </fieldset>
+          <fieldset>
+            <label for="description">Description</label>
+            <input
+              type="text"
+              name="description"
+              id="description"
+              placeholder="Purpose of this transaction"
+              value=""
+              required
+            />
+          </fieldset>
+        </div>
+        <div class="spacer" />
+        <div class="gl-header-grid">
+          <label class="align-left">Account Number</label>
+          <label class="align-right">Debit</label>
+          <label class="align-right">Credit</label>
+          <fieldset>
+            <input
+              type="number"
+              id="account-number"
+              class="align-left w-4"
+              value=""
+              required
+            />
+            <p id="account-description"></p>
+            <button id="add-account" disabled>Add Account</button>
+          </fieldset>
+          <fieldset>
+            <input
+              type="number"
+              id="amount-debit"
+              class="w-usd align-right"
+              value=""
+            />
+          </fieldset>
+          <fieldset>
+            <input type="number" id="amount-credit" class="w-usd align-right" />
+          </fieldset>
+        </div>
+        <button id="add-entry">Add Entry</button>
+      </form>
+    </section>
+    <section>
+      <div class="spacer" />
+      <div id="general-ledger" class="gl-grid"></div>
+    </section>
+    <section>
+      <hr />
+      <div class="spacer"></div>
+      <div id="general-ledger-total" class="gl-grid">
+        <div>Total</div>
+        <div></div>
+        <div></div>
+        <div id="total-debit" class="align-right">$0.00</div>
+        <div id="total-credit" class="align-right">$0.00</div>
+      </div>
+    </section>
+    <div class="spacer"></div>
+    <button id="save-button">Apply</button>
+    <button id="batch-prev">Prior</button>
+    <button id="batch-next">Next</button>
+
+    <span id="toaster"></span>
+
+    <script type="module">
+      import { setupGeneralLedgerForm } from "./index.js";
+      setupGeneralLedgerForm();
+    </script>
+  </body>
+</html>

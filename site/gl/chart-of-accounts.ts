@@ -1,5 +1,5 @@
 import { Database, type AccountModel } from "../db/index.js";
-import { asCurrency } from "../fun/index.js";
+import { asCurrency, asLinkToAccountHistory } from "../fun/index.js";
 
 const db = new Database();
 
@@ -33,7 +33,7 @@ export class ChartOfAccounts {
           .map(
             (account) => `
           <tr>
-            <td>${account.id}</td>
+            <td>${asLinkToAccountHistory(account.id)}</td>
             <td><input data-account-id="${account.id}" value="${
               account.name
             }"/></td>

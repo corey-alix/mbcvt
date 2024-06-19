@@ -1,4 +1,5 @@
 import { AccountModel, Database, TransactionModel } from "../db/index.js";
+import { asLinkToAccountHistory } from "../fun/index.js";
 import { readQueryString, safeHtml, asCurrency } from "../fun/index.js";
 
 export async function setupGeneralLedgerForm() {
@@ -145,8 +146,8 @@ export async function setupGeneralLedgerForm() {
     const target = document.getElementById("general-ledger") as HTMLDivElement;
     target.innerHTML = `
     <div class="header">Date</div>
-    <div class="header align-left">Description</div>
     <div class="header align-left">Account Number</div>
+    <div class="header align-left">Description</div>
     <div class="header align-right">Debit</div>
     <div class="header align-right">Credit</div>
     <div></div>`;
@@ -262,15 +263,16 @@ function renderTransaction(
   const credit = amt < 0 ? -amt : 0;
 
   const template = `
-  <div>${date}</div>
-  <div>${safeHtml(description)}</div>
+  <div>${asShortDate(date)}</div>
   <div class="align-left">${asLinkToAccountHistory(account)}</div>
+  <div>${safeHtml(description)}</div>
   <div class="align-right">${debit ? asCurrency(debit) : ""}</div>
   <div class="align-right">${credit ? asCurrency(credit) : ""}</div>
-  ${transactionIndex != null
+  ${
+    transactionIndex != null
       ? `<button class="delete-button" data-action="delete-row" data-id="${transactionIndex}">X</button>`
       : "<div></div>"
-    }
+  }
   `;
   const target = document.getElementById("general-ledger") as HTMLDivElement;
   target.insertAdjacentHTML("beforeend", template);
@@ -316,9 +318,7 @@ function on(topic: string, callback: (event?: CustomEvent) => void) {
   window.addEventListener(topic, (event) => callback(event as CustomEvent));
 }
 
-function asLinkToAccountHistory(account: number) {
-  const database = readQueryString("database") || "test";
-  const queryString = new URLSearchParams({ account: account.toString(), database });
-  return `<a href="account-history.html?${queryString.toString()}">${account}</a>`;
+function asShortDate(date: string) {
+  return date.substring(5, 10);
 }
 
