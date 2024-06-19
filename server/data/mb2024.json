@@ -567,109 +567,109 @@
             "transactions": [
                 {
                     "date": "2024-05-22",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1002,
                     "amt": 2445
                 },
                 {
                     "date": "2024-05-22",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1001,
                     "amt": -2445
                 },
                 {
                     "date": "2024-05-30",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1002,
                     "amt": 2116
                 },
                 {
                     "date": "2024-05-30",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1001,
                     "amt": -2116
                 },
                 {
                     "date": "2024-06-04",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1002,
                     "amt": 3695
                 },
                 {
                     "date": "2024-06-04",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1001,
                     "amt": -3695
                 },
                 {
                     "date": "2024-06-18",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1002,
                     "amt": 3168.53
                 },
                 {
                     "date": "2024-06-18",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1001,
                     "amt": -3168.53
                 },
                 {
                     "date": "2024-06-18",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1002,
                     "amt": 8548.75
                 },
                 {
                     "date": "2024-06-18",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1001,
                     "amt": -8548.75
                 },
                 {
                     "date": "2024-05-06",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1002,
                     "amt": 900
                 },
                 {
                     "date": "2024-05-06",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1002,
                     "amt": 7300
                 },
                 {
                     "date": "2024-05-06",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1001,
                     "amt": -8200
                 },
                 {
                     "date": "2024-05-17",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1002,
                     "amt": 1800
                 },
                 {
                     "date": "2024-05-17",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1002,
                     "amt": 200
                 },
                 {
                     "date": "2024-05-17",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1002,
                     "amt": 4251
                 },
                 {
                     "date": "2024-05-17",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1002,
                     "amt": 25
                 },
                 {
                     "date": "2024-05-17",
-                    "description": "Deposits",
+                    "description": "Bank Deposits",
                     "account": 1001,
                     "amt": -6276
                 }
