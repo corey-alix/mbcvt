@@ -5,7 +5,13 @@ export function asCurrency(amount: number) {
     currency: "USD",
   }).format(amount);
 }
+
 export function safeHtml(description: string) {
   // prevent XSS attacks
   return description.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+export function readQueryString(name: string) {
+  const url = new URL(window.location.href);
+  return url.searchParams.get(name);
 }

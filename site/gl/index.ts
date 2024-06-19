@@ -1,5 +1,5 @@
 import { Database, TransactionModel } from "../db/index.js";
-import { asCurrency } from "../fun/index.js";
+import { asCurrency, readQueryString } from "../fun/index.js";
 
 export { setupChartOfAccountsForm } from "./chart-of-accounts.js";
 export { setupGeneralLedgerForm } from "./gl.js";
@@ -15,11 +15,11 @@ export async function setupAccountHistoryForm() {
     throw "'account' is a required query string parameter";
   }
 
-  const transactions = [] as TransactionModel[];
+  const transactions = [] as Array<TransactionModel & { batchId: number }>;
   db.getBatches().forEach((batch) => {
     db.getTransactions(batch.id).forEach((transaction) => {
       if (transaction.account === parseInt(accountNumber)) {
-        transactions.push(transaction);
+        transactions.push({ batchId: batch.id, ...transaction });
       }
     });
   });
@@ -32,6 +32,7 @@ export async function setupAccountHistoryForm() {
   table.innerHTML = `
         <thead>
             <tr>
+                <th>Batch</th>
                 <th>Date</th>
                 <th>Description</th>
                 <th class="align-right">Amount</th>
@@ -40,18 +41,26 @@ export async function setupAccountHistoryForm() {
         </thead>
         <tbody>
             ${transactions
-              .map(
-                (transaction) => `
+      .map(
+        (transaction) => `
                 <tr>
+                    <td>${asBatchLink(transaction.batchId)}</td>
                     <td>${transaction.date}</td>
                     <td>${transaction.description}</td>
                     <td class="align-right">${asCurrency(transaction.amt)}</td>
                     <td class="align-right">${asCurrency(balance += transaction.amt)}</td>
                 </tr>
             `
-              )
-              .join("")}
+      )
+      .join("")}
         </tbody>
     `;
   target.appendChild(table);
 }
+
+function asBatchLink(batchId: number) {
+  const database = readQueryString("database") || "test";
+  const queryString = new URLSearchParams({ database, batch: batchId.toString() });
+  return `<a href=./index.html?${queryString.toString()}>${batchId}</a>`;
+}
+

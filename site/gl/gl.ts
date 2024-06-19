@@ -1,6 +1,5 @@
 import { AccountModel, Database, TransactionModel } from "../db/index.js";
-import { safeHtml } from "../fun/index.js";
-import { asCurrency } from "../fun/index.js";
+import { readQueryString, safeHtml, asCurrency } from "../fun/index.js";
 
 export async function setupGeneralLedgerForm() {
   const db = new Database();
@@ -9,6 +8,10 @@ export async function setupGeneralLedgerForm() {
   const state = {
     batchId: 0,
   };
+
+  if (readQueryString("batch")) {
+    state.batchId = parseInt(readQueryString("batch")!);
+  }
 
   const ux = {
     form: document.getElementById("general-ledger-form") as HTMLFormElement,
@@ -150,6 +153,7 @@ export async function setupGeneralLedgerForm() {
 
     if (state.batchId) {
       const transactions = db.getTransactions(state.batchId);
+      transactions.sort((a, b) => a.date.localeCompare(b.date));
       transactions.forEach((transactionInfo) => {
         renderTransaction(transactionInfo);
       });
@@ -260,14 +264,13 @@ function renderTransaction(
   const template = `
   <div>${date}</div>
   <div>${safeHtml(description)}</div>
-  <div class="align-left">${account}</div>
+  <div class="align-left">${asLinkToAccountHistory(account)}</div>
   <div class="align-right">${debit ? asCurrency(debit) : ""}</div>
   <div class="align-right">${credit ? asCurrency(credit) : ""}</div>
-  ${
-    transactionIndex != null
+  ${transactionIndex != null
       ? `<button class="delete-button" data-action="delete-row" data-id="${transactionIndex}">X</button>`
       : "<div></div>"
-  }
+    }
   `;
   const target = document.getElementById("general-ledger") as HTMLDivElement;
   target.insertAdjacentHTML("beforeend", template);
@@ -312,3 +315,10 @@ function trigger(topic: string, data?: any) {
 function on(topic: string, callback: (event?: CustomEvent) => void) {
   window.addEventListener(topic, (event) => callback(event as CustomEvent));
 }
+
+function asLinkToAccountHistory(account: number) {
+  const database = readQueryString("database") || "test";
+  const queryString = new URLSearchParams({ account: account.toString(), database });
+  return `<a href="account-history.html?${queryString.toString()}">${account}</a>`;
+}
+

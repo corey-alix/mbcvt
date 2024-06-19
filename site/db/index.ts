@@ -1,3 +1,5 @@
+import { readQueryString } from "../fun/index.js";
+
 export const PUBLIC_KEY = "123";
 export const DATABASE_NAME = readQueryString("database") || "test";
 export const API_URL = "/api";
@@ -50,7 +52,7 @@ export class Database {
   getCurrentTransactions() {
     return this.#data.transactions || [];
   }
-  
+
   getAccounts() {
     return this.#data.accounts || [];
   }
@@ -65,7 +67,7 @@ export class Database {
     transactions: [] as TransactionModel[],
   } satisfies DatabaseSchema;
 
-  constructor() {}
+  constructor() { }
 
   async init() {
     const data = localStorage.getItem(DATABASE_NAME);
@@ -132,7 +134,3 @@ export class Database {
   }
 }
 
-function readQueryString(name: string) {
-  const url = new URL(window.location.href);
-  return url.searchParams.get(name);
-}
