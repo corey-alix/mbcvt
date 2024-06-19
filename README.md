@@ -37,6 +37,30 @@ Stripe also has a tap-to-pay phone app.  I will use this to accept payments in p
 - Install the FaunaDB CLI
 - Setup a FaunaDB database
 
+## Copy Existing Site
+
+To download all the files from http://www.millbrookcampground.com/ I will do the following:
+
+```bash
+wget --recursive --no-clobber --page-requisites --html-extension --convert-links --restrict-file-names=windows --domains millbrookcampground.com --no-parent http://www.millbrookcampground.com/
+```
+
+The `--convert-links` option will convert the links to point to the local files.  
+The `--domains` option will restrict the download to the specified domain.  
+The `--no-parent` option will prevent the download of the parent directory.  
+The `--restrict-file-names=windows` option will restrict the file names to windows.  
+The `--recursive` option will download all the files.  
+The `--no-clobber` option will prevent the download of files that already exist.  
+The `--page-requisites` option will download all the files needed to display the page.  
+The `--html-extension` option will add the html extension to the files.
+
+So a more complete download using `wget` would be:
+
+```bash
+wget --recursive --no-clobber --page-requisites --html-extension --convert-links --restrict-file-names=windows http://www.millbrookcampground.com/
+```
+
+
 ## Mock Server
 
 For the time being I will use a file-based service for the backend.  The server will be a simple express server that serves json files.  To deploy the server to Digital Ocean, I will use the Digital Ocean Console to pull changes using git.  The server will run as a daemon.  To ensure the server is always running, I will use the following:

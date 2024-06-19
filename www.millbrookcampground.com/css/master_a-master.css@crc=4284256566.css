@@ -1,0 +1,35 @@
+#u7601 {
+  transition-duration: 1s;
+  -webkit-transition-delay: 0s;
+  transition-delay: 0s;
+  -webkit-transition-duration: 1s;
+  transition-timing-function: ease;
+  vertical-align: top;
+  -webkit-transition-timing-function: ease;
+  background: transparent url("../images/u7601.png@crc=141405023") no-repeat 0px
+    0px;
+}
+#u7601:hover {
+  transition-duration: 1s;
+  -webkit-transition-delay: 0s;
+  transition-delay: 0s;
+  -webkit-transition-duration: 1s;
+  transition-timing-function: ease;
+  -webkit-transition-timing-function: ease;
+  background: transparent url("../images/u7601-r.png@crc=4283582287") no-repeat
+    0px 0px;
+}
+#u7463-16 {
+  background-color: transparent;
+}
+#u7463-6 {
+  text-align: center;
+  line-height: 19px;
+  font-size: 16px;
+}
+#u7463-7,
+#u7463-13 {
+  text-align: center;
+  line-height: 14px;
+  font-size: 12px;
+}
