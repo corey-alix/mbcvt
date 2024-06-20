@@ -40,7 +40,7 @@ export async function setupPointOfSaleForm() {
     container.classList.add("incrementor");
 
     const decrementButton = document.createElement("button");
-    decrementButton.textContent = "-";
+    decrementButton.textContent = "−";
 
     const incrementButton = document.createElement("button");
     incrementButton.textContent = "+";

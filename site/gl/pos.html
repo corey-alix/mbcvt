@@ -10,30 +10,42 @@
     <style>
         .incrementor {
             display: grid;
-            grid-template-columns: 2rem 4rem 2rem;
+            grid-template-columns: 2em 4em 2em;
             gap: 1rem;
+            justify-content: right;
             align-items: center;
-            justify-content: center;
+
             button {
                 margin: 0;
                 padding: 0;
                 border: none;
                 border-radius: 50%;
-                width: 2rem;
-                height: 2rem;
+                width: 1.5em;
+                height: auto;
+                aspect-ratio: 1/1;
                 text-align: center;
                 font-weight: bolder;
             }
         }
 
+        form {
+            display: grid;
+            gap: 0.25em;
+        }
+
+        button,
+        input {
+            font-size: inherit;
+        }
+
         form>fieldset {
             display: grid;
-            grid-template-columns: 8rem auto;
+            grid-template-columns: 8em auto;
         }
 
         details>summary {
             font-weight: bold;
-            font-size: 1.5rem;
+            font-size: 1.5em;
             cursor: pointer;
         }
 
@@ -52,6 +64,18 @@
 
         input[type="number"] {
             text-align: right;
+        }
+
+        #quickReservationForm {
+            margin: 1rem;
+        }
+
+        @media screen and (min-width: 768px) {
+
+            /* increase the font size as the screen gets larger */
+            body {
+                font-size: 3vmin;
+            }
         }
     </style>
 </head>
@@ -108,7 +132,9 @@
                 <label>Total Due</label>
                 <input type="number" id="totalDue" step="0.01" readonly min="0" tabindex="-1" />
             </fieldset>
-            <button type="submit">Submit</button>
+            <fieldset>
+                <button type="submit">Submit</button>
+            </fieldset>
         </form>
     </details>
 </body>
