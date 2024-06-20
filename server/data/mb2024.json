@@ -604,10 +604,16 @@
           "amt": 2299.54
         },
         {
-          "date": "2024-06-18",
-          "description": "Taxes (Seasonal->June 18)",
+          "date": "2024-06-19",
+          "description": "May Tax (Daily)",
+          "account": 3001,
+          "amt": 112.36
+        },
+        {
+          "date": "2024-06-19",
+          "description": "Check 545",
           "account": 1001,
-          "amt": -2299.54
+          "amt": -2411.9
         }
       ]
     },
@@ -872,18 +878,6 @@
           "description": "May Daily Tax",
           "account": 3001,
           "amt": -51.75
-        },
-        {
-          "date": "2024-06-19",
-          "description": "May Tax (Daily)",
-          "account": 3001,
-          "amt": 112.36
-        },
-        {
-          "date": "2024-06-19",
-          "description": "May Tax (Daily)",
-          "account": 1001,
-          "amt": -112.36
         }
       ]
     },

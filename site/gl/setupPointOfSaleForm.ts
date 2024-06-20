@@ -9,19 +9,22 @@ type Counter = {
 };
 
 // move into DB
+const scale = 1 / 1.09;
+const baseRate = 31.50;
+
 const magic = {
-  tentRate: 29.0,
-  rvRate: 39.0,
-  tentWeeklyRate: 29 * 6,
-  rvWeeklyRate: 39 * 6,
-  tentMonthlyRate: 29 * 23,
-  rvMonthlyRate: 39 * 23,
-  tentSeasonalRate: 29 * 49.5,
-  rvSeasonalRate: 39 * 49.5,
-  extraAdult: 5,
-  extraChild: 5,
-  extraVisitor: 2,
-  woodBundle: 5,
+  tentRate: baseRate * scale,
+  rvRate: (baseRate + 10) * scale,
+  tentWeeklyRate: baseRate * 6 * scale,
+  rvWeeklyRate: (baseRate + 10) * 6 * scale,
+  tentMonthlyRate: baseRate * 23 * scale,
+  rvMonthlyRate: (baseRate + 10) * 23 * scale,
+  tentSeasonalRate: baseRate * 49.5 * scale,
+  rvSeasonalRate: (baseRate + 10) * 49.5 * scale,
+  extraAdult: 5 * scale,
+  extraChild: 5 * scale,
+  extraVisitor: 2 * scale,
+  woodBundle: 5 * scale,
   maxAdults: 2,
   maxChildren: 2,
   minSite: 2101,
@@ -430,6 +433,7 @@ export async function setupPointOfSaleForm() {
 
   inputs.partyName.focus();
 }
+
 function round(value: number, places: number) {
   const multiplier = Math.pow(10, places);
   return Math.round(value * multiplier) / multiplier;
