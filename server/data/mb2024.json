@@ -49,25 +49,49 @@
           "date": "2024-01-01",
           "description": "2024 Site Deposits",
           "account": 2109,
-          "amt": -200
+          "amt": -183.49
+        },
+        {
+          "date": "2024-01-01",
+          "description": "2024 Site Deposits Tax",
+          "account": 3001,
+          "amt": -16.51
         },
         {
           "date": "2024-01-01",
           "description": "2024 Site Deposits",
           "account": 2118,
-          "amt": -200
+          "amt": -183.49
+        },
+        {
+          "date": "2024-01-01",
+          "description": "2024 Site Deposits Tax",
+          "account": 3001,
+          "amt": -16.51
         },
         {
           "date": "2024-01-01",
           "description": "2024 Site Deposit",
           "account": 2121,
-          "amt": -800
+          "amt": -733.95
+        },
+        {
+          "date": "2024-01-01",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -66.05
         },
         {
           "date": "2024-01-01",
           "description": "2024 Site Deposit",
           "account": 2125,
-          "amt": -200
+          "amt": -183.49
+        },
+        {
+          "date": "2024-01-01",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -16.51
         },
         {
           "date": "2024-01-01",
@@ -79,169 +103,337 @@
           "date": "2024-05-03",
           "description": "2024 Site Deposit",
           "account": 2102,
-          "amt": -1200
+          "amt": -1100.92
+        },
+        {
+          "date": "2024-05-03",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -99.08
         },
         {
           "date": "2024-06-08",
           "description": "2024 Site Deposit",
           "account": 2103,
-          "amt": -200
+          "amt": -183.49
+        },
+        {
+          "date": "2024-06-08",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -16.51
         },
         {
           "date": "2024-06-08",
           "description": "2024 Site Deposit",
           "account": 2105,
-          "amt": -1800
+          "amt": -1651.38
+        },
+        {
+          "date": "2024-06-08",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -148.62
         },
         {
           "date": "2024-06-08",
           "description": "2024 Site Deposit",
           "account": 2104,
-          "amt": -1800
+          "amt": -1651.38
+        },
+        {
+          "date": "2024-06-08",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -148.62
         },
         {
           "date": "2024-06-02",
           "description": "2024 Site Deposit",
           "account": 2107,
-          "amt": -1800
+          "amt": -1651.38
+        },
+        {
+          "date": "2024-06-02",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -148.62
         },
         {
           "date": "2024-05-24",
           "description": "2024 Site Deposit",
           "account": 2108,
-          "amt": -1800
+          "amt": -1651.38
+        },
+        {
+          "date": "2024-05-24",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -148.62
         },
         {
           "date": "2024-05-11",
           "description": "2024 Site Deposit",
           "account": 2110,
-          "amt": -500
+          "amt": -458.72
+        },
+        {
+          "date": "2024-05-11",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -41.28
         },
         {
           "date": "2024-05-04",
           "description": "2024 Site Deposit",
           "account": 2114,
-          "amt": -500
+          "amt": -458.72
+        },
+        {
+          "date": "2024-05-04",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -41.28
         },
         {
           "date": "2024-05-16",
           "description": "2024 Site Deposit",
           "account": 2117,
-          "amt": -1800
+          "amt": -1651.38
+        },
+        {
+          "date": "2024-05-16",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -148.62
         },
         {
           "date": "2024-05-26",
           "description": "2024 Site Deposit",
           "account": 2120,
-          "amt": -900
+          "amt": -825.69
+        },
+        {
+          "date": "2024-05-26",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -74.31
         },
         {
           "date": "2024-05-03",
           "description": "2024 Site Deposit",
           "account": 2122,
-          "amt": -1800
+          "amt": -1651.38
+        },
+        {
+          "date": "2024-05-03",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -148.62
         },
         {
           "date": "2024-06-03",
           "description": "2024 Site Deposit",
           "account": 2123,
-          "amt": -1600
+          "amt": -1467.89
+        },
+        {
+          "date": "2024-06-03",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -132.11
         },
         {
           "date": "2024-05-26",
           "description": "2024 Site Deposit",
           "account": 2124,
-          "amt": -1800
+          "amt": -1651.38
+        },
+        {
+          "date": "2024-05-26",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -148.62
         },
         {
           "date": "2024-05-04",
           "description": "2024 Site Deposit",
           "account": 2128,
-          "amt": -300
+          "amt": -275.23
+        },
+        {
+          "date": "2024-05-04",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -24.77
         },
         {
           "date": "2024-06-01",
           "description": "2024 Site Deposit",
           "account": 2113,
-          "amt": -1000
+          "amt": -917.43
+        },
+        {
+          "date": "2024-06-01",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -82.57
         },
         {
           "date": "2024-06-09",
           "description": "2024 Site Deposit",
           "account": 2103,
-          "amt": -300
+          "amt": -275.23
+        },
+        {
+          "date": "2024-06-09",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -24.77
         },
         {
           "date": "2024-05-03",
           "description": "2024 Site Deposit",
           "account": 2109,
-          "amt": -900
+          "amt": -825.69
+        },
+        {
+          "date": "2024-05-03",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -74.31
         },
         {
           "date": "2024-06-01",
           "description": "2024 Site Deposit",
           "account": 2110,
-          "amt": -500
+          "amt": -458.72
+        },
+        {
+          "date": "2024-06-01",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -41.28
         },
         {
           "date": "2024-06-11",
           "description": "2024 Site Deposit",
           "account": 2114,
-          "amt": -500
+          "amt": -458.72
+        },
+        {
+          "date": "2024-06-11",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -41.28
         },
         {
           "date": "2024-05-25",
           "description": "2024 Site Deposit",
           "account": 2118,
-          "amt": -450
+          "amt": -412.84
+        },
+        {
+          "date": "2024-05-25",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -37.16
         },
         {
           "date": "2024-05-15",
           "description": "2024 Site Deposit",
           "account": 2121,
-          "amt": -200
+          "amt": -183.49
+        },
+        {
+          "date": "2024-05-15",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -16.51
         },
         {
           "date": "2024-06-06",
           "description": "2024 Site Deposit",
           "account": 2123,
-          "amt": -200
+          "amt": -183.49
+        },
+        {
+          "date": "2024-06-06",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -16.51
         },
         {
           "date": "2024-05-03",
           "description": "2024 Site Deposit",
           "account": 2125,
-          "amt": -1600
+          "amt": -1467.89
+        },
+        {
+          "date": "2024-05-03",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -132.11
         },
         {
           "date": "2024-02-03",
           "description": "2024 Site Deposit",
           "account": 2128,
-          "amt": -300
+          "amt": -275.23
+        },
+        {
+          "date": "2024-02-03",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -24.77
         },
         {
           "date": "2024-05-31",
           "description": "2024 Site Deposit",
           "account": 2109,
-          "amt": -500
+          "amt": -458.72
+        },
+        {
+          "date": "2024-05-31",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -41.28
         },
         {
           "date": "2024-06-11",
           "description": "2024 Site Deposit",
           "account": 2121,
-          "amt": -200
+          "amt": -183.49
+        },
+        {
+          "date": "2024-06-11",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -16.51
         },
         {
           "date": "2024-06-14",
           "description": "2024 Site Deposit",
           "account": 2109,
-          "amt": -200
+          "amt": -183.49
+        },
+        {
+          "date": "2024-06-14",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -16.51
         },
         {
           "date": "2024-04-28",
           "description": "2024 Site Deposit",
           "account": 2126,
-          "amt": -1800
+          "amt": -1651.38
+        },
+        {
+          "date": "2024-04-28",
+          "description": "2024 Site Deposit Tax",
+          "account": 3001,
+          "amt": -148.62
         },
         {
           "date": "2024-06-18",
