@@ -10,7 +10,7 @@ type Counter = {
 
 // move into DB
 const scale = 1 / 1.09;
-const baseRate = 31.50;
+const baseRate = 32;
 
 const magic = {
   tentRate: baseRate * scale,
