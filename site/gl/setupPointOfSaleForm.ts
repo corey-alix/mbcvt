@@ -386,10 +386,11 @@ export async function setupPointOfSaleForm() {
     const totalCash = totalNet + totalTax;
 
     const nameOfParty = inputs.partyName.value;
+    const dates = `${inputs.checkIn.value} to ${inputs.checkOut.value}`;
 
     await db.addTransaction({
       date: transactionDate,
-      description: `POS: ${nameOfParty}`,
+      description: `${nameOfParty}, ${dates}`,
       account: cashAccount.id,
       amt: totalCash,
     });
@@ -397,7 +398,7 @@ export async function setupPointOfSaleForm() {
     await db.addTransaction({
       account: taxAccount.id,
       date: transactionDate,
-      description: "POS: Tax Received",
+      description: "Tax Collected",
       amt: -totalTax,
     });
 
@@ -405,7 +406,7 @@ export async function setupPointOfSaleForm() {
       await db.addTransaction({
         account: firewoodAccount.id,
         date: transactionDate,
-        description: "POS: Wood Bundles",
+        description: "Firewood",
         amt: -expenses.woodBundles,
       });
     }
@@ -414,7 +415,7 @@ export async function setupPointOfSaleForm() {
       await db.addTransaction({
         account: peopleAccount.id,
         date: transactionDate,
-        description: "Additional People",
+        description: "Guests",
         amt: -(expenses.children + expenses.adults + expenses.visitors),
       });
     }
@@ -422,7 +423,7 @@ export async function setupPointOfSaleForm() {
     await db.addTransaction({
       account: siteAccount.id,
       date: transactionDate,
-      description: `POS: ${siteAccount.name}`,
+      description: `Site ${siteAccount.name}`,
       amt: -expenses.basePrice,
     });
 
