@@ -40,17 +40,25 @@ export class Database {
 
   async createBatch() {
     this.#data.batches = this.#data.batches || [];
+    const id = this.#data.batches.length + 1;
     this.#data.batches.push({
-      id: this.#data.batches.length + 1,
+      id,
       date: new Date().toISOString().substring(0, 10),
       transactions: this.#data.transactions,
     });
     this.#data.transactions = [];
     await this.#save();
+    return id;
   }
 
   getCurrentTransactions() {
     return this.#data.transactions || [];
+  }
+
+  getAccount(accountId: number) {
+    const result = this.#data.accounts.find((a) => a.id === accountId);
+    if (!result) throw `Account not found`;
+    return result;
   }
 
   getAccounts() {

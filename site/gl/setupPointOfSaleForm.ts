@@ -27,6 +27,10 @@ const magic = {
   minSite: 2101,
   maxSite: 2199,
   minTentSite: 2127,
+  firewoodAccount: 2201,
+  peopleAccount: 2202,
+  taxAccount: 3001,
+  cashAccount: 1001,
   taxRate: 0.09,
 };
 
@@ -91,7 +95,7 @@ export async function setupPointOfSaleForm() {
     return newDate;
   }
 
-  function applyCalculator() {
+  function getExpenses() {
     const inDate = new Date(inputs.checkIn.value);
     const outDate = new Date(inputs.checkOut.value);
     const actualDays = Math.round(
@@ -174,25 +178,25 @@ export async function setupPointOfSaleForm() {
       return counter;
     }
 
-    let bestPrice = 0;
+    let basePrice = 0;
 
     while (true) {
-      bestPrice = computePrice(counter);
+      basePrice = computePrice(counter);
       const weekly = convertToWeek({ ...counter });
 
-      if (computePrice(weekly) < bestPrice) {
+      if (computePrice(weekly) < basePrice) {
         convertToWeek(counter);
         continue;
       }
 
       const monthly = convertToMonth({ ...counter });
-      if (computePrice(monthly) < bestPrice) {
+      if (computePrice(monthly) < basePrice) {
         convertToMonth(counter);
         continue;
       }
 
       const seasonal = convertToSeasonal({ ...counter });
-      if (computePrice(seasonal) < bestPrice) {
+      if (computePrice(seasonal) < basePrice) {
         convertToSeasonal(counter);
         continue;
       }
@@ -219,30 +223,45 @@ export async function setupPointOfSaleForm() {
     }
 
     const adults = inputs.adults.valueAsNumber;
+    const children = inputs.children.valueAsNumber;
+
+    const expenses = {
+      basePrice,
+      adults: 0,
+      children: 0,
+      visitors: 0,
+      woodBundles: 0,
+    };
 
     if (adults > magic.maxAdults) {
-      bestPrice += magic.extraAdult * (adults - magic.maxAdults) * actualDays;
+      expenses.adults =
+        magic.extraAdult * (adults - magic.maxAdults) * actualDays;
     }
 
-    const children = inputs.children.valueAsNumber;
     if (children > magic.maxChildren) {
-      bestPrice +=
+      expenses.children =
         magic.extraChild * (children - magic.maxChildren) * actualDays;
     }
 
     const visitors = inputs.visitors.valueAsNumber;
     if (visitors > 0) {
-      bestPrice += magic.extraVisitor * visitors;
+      expenses.visitors = magic.extraVisitor * visitors;
     }
 
     const woodBundles = inputs.woodBundles.valueAsNumber;
     if (woodBundles > 0) {
-      bestPrice += magic.woodBundle * woodBundles;
+      expenses.woodBundles = magic.woodBundle * woodBundles;
     }
 
-    inputs.baseDue.value = bestPrice.toFixed(2);
-    inputs.totalTax.value = (magic.taxRate * bestPrice).toFixed(2);
-    inputs.totalDue.value = ((1 + magic.taxRate) * bestPrice).toFixed(2);
+    return expenses;
+  }
+
+  function updateTotals() {
+    const expenses = getExpenses();
+    const basePrice = Object.values(expenses).reduce((a, b) => a + b, 0);
+    inputs.baseDue.value = basePrice.toFixed(2);
+    inputs.totalTax.value = (magic.taxRate * basePrice).toFixed(2);
+    inputs.totalDue.value = ((1 + magic.taxRate) * basePrice).toFixed(2);
   }
 
   await db.init();
@@ -306,39 +325,39 @@ export async function setupPointOfSaleForm() {
       inputs.checkOut.value = addDay(inputs.checkIn.value, 1);
       inputs.checkOut.dispatchEvent(new Event("change"));
     }
-    applyCalculator();
+    updateTotals();
   });
 
   inputs.siteNumber.addEventListener("change", () => {
-    applyCalculator();
+    updateTotals();
   });
 
   inputs.checkOut.addEventListener("change", () => {
-    applyCalculator();
+    updateTotals();
   });
 
   inputs.children.addEventListener("change", () => {
-    applyCalculator();
+    updateTotals();
   });
 
   inputs.adults.addEventListener("change", () => {
-    applyCalculator();
+    updateTotals();
   });
 
   inputs.visitors.addEventListener("change", () => {
-    applyCalculator();
+    updateTotals();
   });
 
   inputs.visitors.addEventListener("change", () => {
-    applyCalculator();
+    updateTotals();
   });
 
   inputs.visitors.addEventListener("change", () => {
-    applyCalculator();
+    updateTotals();
   });
 
   inputs.woodBundles.addEventListener("change", () => {
-    applyCalculator();
+    updateTotals();
   });
 
   inputs.checkIn.value = new Date().toISOString().split("T")[0];
@@ -348,21 +367,20 @@ export async function setupPointOfSaleForm() {
     event.preventDefault();
     inputs.quickReservationForm.reportValidity();
 
-    const cashAccount = db.getAccounts().find((a) => a.id === 1001);
-    if (!cashAccount) throw "Cash account not found";
-
-    const taxAccount = db.getAccounts().find((a) => a.id === 3001);
-    if (!taxAccount) throw "Tax account not found";
+    const cashAccount = db.getAccount(magic.cashAccount);
+    const taxAccount = db.getAccount(magic.taxAccount);
+    const firewoodAccount = db.getAccount(magic.firewoodAccount);
+    const peopleAccount = db.getAccount(magic.peopleAccount);
 
     const siteNumber = inputs.siteNumber.value;
-    const siteAccount = db
-      .getAccounts()
-      .find((a) => a.id === parseInt(siteNumber));
-    if (!siteAccount) throw "Invalid site number";
+    const siteAccount = db.getAccount(parseInt(siteNumber));
 
     const transactionDate = new Date().toISOString().split("T")[0];
-    const totalCash = inputs.totalDue.valueAsNumber;
-    const totalTax = inputs.totalTax.valueAsNumber;
+
+    const expenses = getExpenses();
+    const totalNet = Object.values(expenses).reduce((a, b) => a + b, 0);
+    const totalTax = round(totalNet * magic.taxRate, 2);
+    const totalCash = totalNet + totalTax;
 
     const nameOfParty = inputs.partyName.value;
 
@@ -374,21 +392,43 @@ export async function setupPointOfSaleForm() {
     });
 
     await db.addTransaction({
+      account: taxAccount.id,
       date: transactionDate,
       description: "POS: Tax Received",
-      account: taxAccount.id,
       amt: -totalTax,
     });
 
+    if (expenses.woodBundles) {
+      await db.addTransaction({
+        account: firewoodAccount.id,
+        date: transactionDate,
+        description: "POS: Wood Bundles",
+        amt: -expenses.woodBundles,
+      });
+    }
+
+    if (expenses.children + expenses.adults + expenses.visitors) {
+      await db.addTransaction({
+        account: peopleAccount.id,
+        date: transactionDate,
+        description: "Additional People",
+        amt: -(expenses.children + expenses.adults + expenses.visitors),
+      });
+    }
+
     await db.addTransaction({
+      account: siteAccount.id,
       date: transactionDate,
       description: `POS: ${siteAccount.name}`,
-      account: siteAccount.id,
-      amt: -(totalCash - totalTax),
+      amt: -expenses.basePrice,
     });
 
-    await db.createBatch();
+    const batchId = await db.createBatch();
 
-    inputs.quickReservationForm.reset();
+    window.location.href = `./general-ledger.html?batch=${batchId}`;
   });
+}
+function round(value: number, places: number) {
+  const multiplier = Math.pow(10, places);
+  return Math.round(value * multiplier) / multiplier;
 }
