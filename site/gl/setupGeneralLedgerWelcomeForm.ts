@@ -1,4 +1,8 @@
-import { getStickyValue, setStickyValue } from "../fun/index.js";
+import {
+  getStickyValue,
+  readQueryString,
+  setStickyValue,
+} from "../fun/index.js";
 
 export function setupGeneralLedgerWelcomeForm() {
   const dbNameInput = document.getElementById("dbName") as HTMLInputElement;
@@ -20,4 +24,11 @@ export function setupGeneralLedgerWelcomeForm() {
       setStickyValue(key, input.value);
     });
   });
+
+  // if there is a "database" query string, update the sticky value
+  const databaseName = readQueryString("database");
+  if (databaseName) {
+    dbNameInput.value = databaseName;
+    dbNameInput.dispatchEvent(new Event("change"));
+  }
 }
