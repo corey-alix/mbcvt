@@ -1,149 +1,131 @@
 <!DOCTYPE html>
 <html lang="en" class="gl">
-  <head>
-    <meta charset="UTF-8" />
-    <!-- mobile friendly -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reservation</title>
-    <link rel="stylesheet" href="../index.css" />
-    <link rel="author" href="mailto:coreyalix@gmail.com" />
-    <style>
 
-      a {
-        color: inherit;
-        margin: 0.5rem;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <!-- mobile friendly -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reservation</title>
+  <link rel="stylesheet" href="../index.css" />
+  <link rel="author" href="mailto:coreyalix@gmail.com" />
+  <style>
+    #general-ledger-form {
+      margin: 0.5rem;
+    }
 
-      a:hover {
-        color: white;
-      }
+    .spacer {
+      height: 1rem;
+      display: inline-block;
+    }
 
-      #general-ledger-form {
-        margin: 0.5rem;
-      }
+    .yes-batch {
+      display: none;
+    }
 
-      .spacer {
-        height: 1rem;
-      }
-      .yes-batch {
-        display: none;
-      }
-      .batch-mode .no-batch {
-        display: none;
-      }
-      .batch-mode .yes-batch {
-        display: initial;
-      }
+    .batch-mode .no-batch {
+      display: none;
+    }
 
-      #toaster {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        background-color: #333;
-        color: white;
-        margin: 0;
-        padding: 1rem;
-        border: 1px solid white;
-        min-width: 10rem;
-        min-height: 4rem;
-        overflow: visible;
-        border-radius: 0;
-        border-top-left-radius: 1rem;
-      }
+    .batch-mode .yes-batch {
+      display: initial;
+    }
 
-      .dock-bottom {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-      }
-      .hidden {
-        display: none;
-      }
-    </style>
-  </head>
+    #toaster {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background-color: #333;
+      color: white;
+      margin: 0;
+      padding: 1rem;
+      border: 1px solid white;
+      min-width: 10rem;
+      min-height: 4rem;
+      overflow: visible;
+      border-radius: 0;
+      border-top-left-radius: 1rem;
+    }
 
-  <body>
-    <h1>General Ledger</h1>
-    <h2 id="batch-date">Batch Date</h2>
-    <section>
-      <div id="general-ledger" class="gl-grid"></div>
-      <div class="spacer"></div>
-    </section>
-    <section>
-      <hr />
-      <div id="general-ledger-total" class="gl-grid">
-        <div>Total</div>
-        <div></div>
-        <div></div>
-        <div id="total-debit" class="align-right">$0.00</div>
-        <div id="total-credit" class="align-right">$0.00</div>
+    .dock-bottom {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>General Ledger</h1>
+  <h2 id="batch-date">Batch Date</h2>
+  <section>
+    <div id="general-ledger" class="gl-grid"></div>
+    <div class="spacer"></div>
+  </section>
+  <section>
+    <hr />
+    <div id="general-ledger-total" class="gl-grid">
+      <div>Total</div>
+      <div></div>
+      <div></div>
+      <div id="total-debit" class="align-right">$0.00</div>
+      <div id="total-credit" class="align-right">$0.00</div>
+    </div>
+    <div class="spacer"></div>
+  </section>
+
+  <section class="no-batch">
+    <form id="general-ledger-form">
+      <div class="gl-header">
+        <fieldset>
+          <label for="date">Date</label>
+          <input type="date" name="date" id="date" required />
+        </fieldset>
+        <fieldset>
+          <label for="description">Description</label>
+          <input type="text" name="description" id="description" placeholder="Purpose of this transaction" value=""
+            required />
+        </fieldset>
       </div>
       <div class="spacer"></div>
-    </section>
+      <div class="gl-header-grid">
+        <label class="align-left">Account Number</label>
+        <label class="align-right">Debit</label>
+        <label class="align-right">Credit</label>
+        <fieldset>
+          <input type="number" id="account-number" class="align-left w-4" value="" required />
+          <p id="account-description"></p>
+          <button id="add-account" disabled>Add Account</button>
+        </fieldset>
+        <fieldset>
+          <input type="number" id="amount-debit" class="w-usd align-right" value="" />
+        </fieldset>
+        <fieldset>
+          <input type="number" id="amount-credit" class="w-usd align-right" />
+        </fieldset>
+      </div>
+      <button id="add-entry">Add Entry</button>
+    </form>
+  </section>
 
-    <section class="no-batch">
-      <form id="general-ledger-form">
-        <div class="gl-header">
-          <fieldset>
-            <label for="date">Date</label>
-            <input type="date" name="date" id="date" required />
-          </fieldset>
-          <fieldset>
-            <label for="description">Description</label>
-            <input
-              type="text"
-              name="description"
-              id="description"
-              placeholder="Purpose of this transaction"
-              value=""
-              required
-            />
-          </fieldset>
-        </div>
-        <div class="spacer"></div>
-        <div class="gl-header-grid">
-          <label class="align-left">Account Number</label>
-          <label class="align-right">Debit</label>
-          <label class="align-right">Credit</label>
-          <fieldset>
-            <input
-              type="number"
-              id="account-number"
-              class="align-left w-4"
-              value=""
-              required
-            />
-            <p id="account-description"></p>
-            <button id="add-account" disabled>Add Account</button>
-          </fieldset>
-          <fieldset>
-            <input
-              type="number"
-              id="amount-debit"
-              class="w-usd align-right"
-              value=""
-            />
-          </fieldset>
-          <fieldset>
-            <input type="number" id="amount-credit" class="w-usd align-right" />
-          </fieldset>
-        </div>
-        <button id="add-entry">Add Entry</button>
-      </form>
-    </section>
+  <div class="spacer"></div>
 
-    <section class="dock-bottom">
-      <button class="no-batch" id="save-button">Apply</button>
-      <button id="batch-prev">Prior</button>
-      <button class="yes-batch" id="batch-next">Next</button>
-    </section>
+  <section class="dock-bottom">
+    <button class="no-batch" id="save-button">Apply</button>
+    <button id="batch-prev">Prior</button>
+    <button class="yes-batch" id="batch-next">Next</button>
+  </section>
 
-    <span class="hidden" id="toaster"></span>
+  <span class="hidden" id="toaster"></span>
 
-    <script type="module">
-      import { setupGeneralLedgerForm } from "./index.js";
-      setupGeneralLedgerForm();
-    </script>
-  </body>
+  <script type="module">
+    import { setupGeneralLedgerForm } from "./index.js";
+    setupGeneralLedgerForm();
+  </script>
+</body>
+
 </html>
