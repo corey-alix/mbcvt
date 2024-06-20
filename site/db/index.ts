@@ -1,7 +1,7 @@
-import { readQueryString } from "../fun/index.js";
+import { getStickyValue, readQueryString } from "../fun/index.js";
 
 export const PUBLIC_KEY = "123";
-export const DATABASE_NAME = readQueryString("database") || "test";
+export const DATABASE_NAME = getStickyValue("database-name", "test");
 export const API_URL = "/api";
 
 export type TransactionModel = {
@@ -67,7 +67,7 @@ export class Database {
     transactions: [] as TransactionModel[],
   } satisfies DatabaseSchema;
 
-  constructor() { }
+  constructor() {}
 
   async init() {
     const data = localStorage.getItem(DATABASE_NAME);
@@ -130,7 +130,5 @@ export class Database {
     });
     const data = (await response.json()) as DatabaseSchema;
     this.#data = data;
-    console.log(`Data updated from server: ${JSON.stringify(this.#data)}`);
   }
 }
-

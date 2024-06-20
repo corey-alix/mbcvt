@@ -11,19 +11,12 @@
 
   <body>
     <h1>General Ledger</h1>
+    <input id="dbName" type="text" placeholder="Database" data-sticky-key="database-name" />
     <a href="./general-ledger.html">General Ledger</a>
     <a href="./chart-of-accounts.html">Chart of Accounts</a>
   </body>
-  <script>
-    const url = new URL(window.location.href);
-    const database = url.searchParams.get("database");
-    if (database) {
-      // update the href to include the database
-      document.querySelectorAll("a").forEach((a) => {
-        const query = new URLSearchParams(window.location.search);
-        query.set("database", database);
-        a.href = a.href + "?" + query.toString();
-      });
-    }
+  <script type="module">
+      import { setupGeneralLedgerWelcomeForm } from "./index.js";
+      setupGeneralLedgerWelcomeForm();
   </script>
 </html>

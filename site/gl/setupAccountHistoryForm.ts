@@ -1,11 +1,8 @@
 import { Database, TransactionModel } from "../db/index.js";
 import { asCurrency } from "../fun/index.js";
-import { readQueryString } from "../fun/index.js";
 
 function asBatchLink(batchId: number, label: string) {
-  const database = readQueryString("database") || "test";
   const queryString = new URLSearchParams({
-    database,
     batch: batchId.toString(),
   });
   return `<a href=./general-ledger.html?${queryString.toString()}>${label}</a>`;

@@ -17,10 +17,20 @@ export function readQueryString(name: string) {
 }
 
 export function asLinkToAccountHistory(account: number, text: string) {
-  const database = readQueryString("database") || "test";
   const queryString = new URLSearchParams({
     account: account.toString(),
-    database,
   });
   return `<a href="account-history.html?${queryString.toString()}">${text}</a>`;
+}
+
+export function getStickyValue<T>(name: string, defaultValue: T) {
+  const key = `sticky-${name}`;
+  const value = localStorage.getItem(key);
+  if (!value) return defaultValue;
+  return JSON.parse(value) as T;
+}
+
+export function setStickyValue<T>(name: string, value: T) {
+  const key = `sticky-${name}`;
+  localStorage.setItem(key, JSON.stringify(value));
 }
