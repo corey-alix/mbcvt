@@ -4,6 +4,10 @@ import { Database } from "../db/index.js";
 const magic = {
   tentRate: 29.0,
   rvRate: 39.0,
+  tentWeeklyRate: 29 * 6,
+  rvWeeklyRate: 39 * 6,
+  tentMonthlyRate: 29 * 20,
+  rvMonthlyRate: 39 * 20,
   extraAdult: 5,
   extraChild: 5,
   extraVisitor: 2,
@@ -73,44 +77,123 @@ export async function setupPointOfSaleForm() {
     return newDate;
   }
 
-  function updateTotalDue() {
+  function applyCalculator() {
     const inDate = new Date(inputs.checkIn.value);
     const outDate = new Date(inputs.checkOut.value);
-    const days = Math.round(
+    const actualDays = Math.round(
       (outDate.getTime() - inDate.getTime()) / (1000 * 60 * 60 * 24)
     );
+
+    const partialWeeks = Math.ceil(actualDays / 7);
+    const partialMonths = Math.ceil(actualDays / 28);
+    const partialDays = actualDays;
 
     const siteNumber = parseInt(inputs.siteNumber.value);
     const isSite = magic.minSite <= siteNumber && siteNumber <= magic.maxSite;
     const isTentSite = isSite && siteNumber > magic.minTentSite;
 
-    let basePrice = (isTentSite ? magic.tentRate : magic.rvRate) * days;
-    console.log({ isSite, isTentSite, siteNumber, basePrice });
+    let dailyRate = isTentSite ? magic.tentRate : magic.rvRate;
+    let weeklyRate = isTentSite ? magic.tentWeeklyRate : magic.rvWeeklyRate;
+    let monthlyRate = isTentSite ? magic.tentMonthlyRate : magic.rvMonthlyRate;
+
+    const counter = {
+      days: partialDays,
+      weeks: 0,
+      months: 0,
+    };
+
+    type Counter = typeof counter;
+
+    function computePrice(counter: Counter) {
+      if (counter.days < 0) throw new Error("Negative days");
+      if (counter.weeks < 0) throw new Error("Negative weeks");
+      if (counter.months < 0) throw new Error("Negative months");
+
+      return (
+        counter.days * dailyRate +
+        counter.weeks * weeklyRate +
+        counter.months * monthlyRate
+      );
+    }
+
+    function totalDays(counter: Counter) {
+      return counter.days + counter.weeks * 7 + counter.months * 28;
+    }
+
+    function convertToWeek(counter: Counter) {
+      if (counter.days) {
+        counter.weeks += 1;
+        counter.days = Math.max(0, counter.days - 7);
+      }
+      return counter;
+    }
+
+    function convertToMonth(counter: Counter) {
+      convertToWeek(counter);
+      if (counter.weeks) {
+        counter.months += 1;
+        counter.weeks = Math.max(0, counter.weeks - 4);
+      }
+
+      while (true) {
+        const freeDays = totalDays(counter) - partialDays;
+        if (!freeDays) break;
+        if (counter.days) {
+          counter.days = Math.max(0, counter.days - freeDays);
+          continue;
+        }
+        if (counter.weeks) {
+          counter.weeks--;
+          counter.days += Math.max(0, 7 - freeDays);
+          continue;
+        }
+        break;
+      }
+      return counter;
+    }
+
+    let bestPrice = 0;
+
+    while (true) {
+      bestPrice = computePrice(counter);
+      const weekly = convertToWeek({ ...counter });
+      const monthly = convertToMonth({ ...counter });
+      if (computePrice(weekly) < bestPrice) {
+        convertToWeek(counter);
+        continue;
+      }
+      if (computePrice(monthly) < bestPrice) {
+        convertToMonth(counter);
+        continue;
+      }
+      break;
+    }
 
     const adults = inputs.adults.valueAsNumber;
 
     if (adults > magic.maxAdults) {
-      basePrice += magic.extraAdult * (adults - magic.maxAdults) * days;
+      bestPrice += magic.extraAdult * (adults - magic.maxAdults) * partialDays;
     }
 
     const children = inputs.children.valueAsNumber;
     if (children > magic.maxChildren) {
-      basePrice += magic.extraChild * (children - magic.maxChildren) * days;
+      bestPrice +=
+        magic.extraChild * (children - magic.maxChildren) * partialDays;
     }
 
     const visitors = inputs.visitors.valueAsNumber;
     if (visitors > 0) {
-      basePrice += magic.extraVisitor * visitors;
+      bestPrice += magic.extraVisitor * visitors;
     }
 
     const woodBundles = inputs.woodBundles.valueAsNumber;
     if (woodBundles > 0) {
-      basePrice += magic.woodBundle * woodBundles;
+      bestPrice += magic.woodBundle * woodBundles;
     }
 
-    inputs.baseDue.value = basePrice.toFixed(2);
-    inputs.totalTax.value = (magic.taxRate * basePrice).toFixed(2);
-    inputs.totalDue.value = ((1 + magic.taxRate) * basePrice).toFixed(2);
+    inputs.baseDue.value = bestPrice.toFixed(2);
+    inputs.totalTax.value = (magic.taxRate * bestPrice).toFixed(2);
+    inputs.totalDue.value = ((1 + magic.taxRate) * bestPrice).toFixed(2);
   }
 
   await db.init();
@@ -174,39 +257,39 @@ export async function setupPointOfSaleForm() {
       inputs.checkOut.value = addDay(inputs.checkIn.value, 1);
       inputs.checkOut.dispatchEvent(new Event("change"));
     }
-    updateTotalDue();
+    applyCalculator();
   });
 
   inputs.siteNumber.addEventListener("change", () => {
-    updateTotalDue();
+    applyCalculator();
   });
 
   inputs.checkOut.addEventListener("change", () => {
-    updateTotalDue();
+    applyCalculator();
   });
 
   inputs.children.addEventListener("change", () => {
-    updateTotalDue();
+    applyCalculator();
   });
 
   inputs.adults.addEventListener("change", () => {
-    updateTotalDue();
+    applyCalculator();
   });
 
   inputs.visitors.addEventListener("change", () => {
-    updateTotalDue();
+    applyCalculator();
   });
 
   inputs.visitors.addEventListener("change", () => {
-    updateTotalDue();
+    applyCalculator();
   });
 
   inputs.visitors.addEventListener("change", () => {
-    updateTotalDue();
+    applyCalculator();
   });
 
   inputs.woodBundles.addEventListener("change", () => {
-    updateTotalDue();
+    applyCalculator();
   });
 
   inputs.checkIn.value = new Date().toISOString().split("T")[0];
