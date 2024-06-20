@@ -2,8 +2,8 @@ import { Database } from "../db/index.js";
 
 // move into DB
 const magic = {
-  tentRate: 29,
-  rvRate: 39,
+  tentRate: 29.0,
+  rvRate: 39.0,
   extraAdult: 5,
   extraChild: 5,
   extraVisitor: 2,
@@ -18,6 +18,49 @@ const magic = {
 
 export async function setupPointOfSaleForm() {
   const db = new Database();
+
+  function selectAllOnFocus(input: HTMLInputElement) {
+    input.addEventListener("focus", () => {
+      input.select();
+    });
+  }
+
+  function injectIncrementorButtons(input: HTMLInputElement) {
+    // wrap an input in a container element that also contains a + and - button
+    if (!input) throw new Error("Input not found");
+    if (input.type !== "number") throw new Error("Input must be a number");
+
+    const target = input.parentElement;
+    if (!target)
+      throw new Error("Input must be a child of a container element");
+
+    const insertBefore = input.nextElementSibling;
+
+    const container = document.createElement("div");
+    container.classList.add("incrementor");
+
+    const decrementButton = document.createElement("button");
+    decrementButton.textContent = "-";
+
+    const incrementButton = document.createElement("button");
+    incrementButton.textContent = "+";
+
+    // do not submit
+    decrementButton.type = incrementButton.type = "button";
+
+    container.append(decrementButton, input, incrementButton);
+    incrementButton.addEventListener("click", () => {
+      input.stepUp();
+      input.dispatchEvent(new Event("change"));
+    });
+    decrementButton.addEventListener("click", () => {
+      input.stepDown();
+      input.dispatchEvent(new Event("change"));
+    });
+
+    // place the container back in the DOM
+    target.insertBefore(container, insertBefore);
+  }
 
   function addDay(value: string, days: number): string {
     const date = new Date(value);
@@ -93,6 +136,17 @@ export async function setupPointOfSaleForm() {
     (inputs as any)[key] = input;
   });
 
+  injectIncrementorButtons(inputs.visitors);
+  injectIncrementorButtons(inputs.adults);
+  injectIncrementorButtons(inputs.children);
+  injectIncrementorButtons(inputs.woodBundles);
+
+  selectAllOnFocus(inputs.siteNumber);
+  selectAllOnFocus(inputs.visitors);
+  selectAllOnFocus(inputs.adults);
+  selectAllOnFocus(inputs.children);
+  selectAllOnFocus(inputs.woodBundles);
+
   inputs.siteNumber.addEventListener("input", () => {
     const siteNumber = inputs.siteNumber.value.toUpperCase();
     if (!siteNumber) {
@@ -119,6 +173,7 @@ export async function setupPointOfSaleForm() {
       inputs.checkOut.value = addDay(inputs.checkIn.value, 1);
       inputs.checkOut.dispatchEvent(new Event("change"));
     }
+    updateTotalDue();
   });
 
   inputs.siteNumber.addEventListener("change", () => {
