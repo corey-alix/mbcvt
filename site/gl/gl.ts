@@ -38,6 +38,7 @@ export async function setupGeneralLedgerForm() {
       "batch-prev"
     ) as HTMLButtonElement,
     nextBatchButton: document.getElementById("batch-next") as HTMLButtonElement,
+    batchDate: document.getElementById("batch-date") as HTMLElement,
   };
 
   // set window title
@@ -145,6 +146,10 @@ export async function setupGeneralLedgerForm() {
     document.body.classList.toggle("batch-mode", !!state.batchId);
 
     if (state.batchId) {
+      const batch = db.getBatches().find((b) => b.id === state.batchId);
+      if (!batch) throw new Error(`Batch not found: ${state.batchId}`);
+      ux.batchDate.textContent = batch.date.toString();
+
       const transactions = db.getTransactions(state.batchId);
       transactions.sort((a, b) => a.date.localeCompare(b.date));
       transactions.forEach((transactionInfo) => {
@@ -156,6 +161,7 @@ export async function setupGeneralLedgerForm() {
       url.searchParams.set("batch", state.batchId.toString());
       window.history.replaceState({}, "", url.toString());
     } else {
+      ux.batchDate.textContent = "";
       const transactions = db.getCurrentTransactions();
       transactions.forEach((transactionInfo, index) => {
         renderTransaction(transactionInfo, index);

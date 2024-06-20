@@ -13,6 +13,14 @@
     --border-radius: 0.25rem;
     --padding-slim: 0.25rem;
   }
+  a {
+    color: inherit;
+    margin: 0.5rem;
+  }
+
+  a:hover {
+    color: var(--white);
+  }
 }
 
 @media (prefers-color-scheme: light) {
