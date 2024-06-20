@@ -559,49 +559,97 @@
           "date": "2024-05-08",
           "description": "May Daily",
           "account": 2111,
-          "amt": -42.51
+          "amt": -39
+        },
+        {
+          "date": "2024-05-08",
+          "description": "May Daily Tax",
+          "account": 3001,
+          "amt": -3.51
         },
         {
           "date": "2024-05-18",
           "description": "May Daily",
           "account": 2129,
-          "amt": -31.61
+          "amt": -29
+        },
+        {
+          "date": "2024-05-18",
+          "description": "May Daily Tax",
+          "account": 3001,
+          "amt": -2.61
         },
         {
           "date": "2024-05-18",
           "description": "May Daily",
           "account": 2127,
-          "amt": -31.61
+          "amt": -29
+        },
+        {
+          "date": "2024-05-18",
+          "description": "May Daily Tax",
+          "account": 3001,
+          "amt": -2.61
         },
         {
           "date": "2024-05-24",
           "description": "May Daily",
           "account": 2112,
-          "amt": -127.53
+          "amt": -117
+        },
+        {
+          "date": "2024-05-24",
+          "description": "May Daily Tax",
+          "account": 3001,
+          "amt": -10.53
         },
         {
           "date": "2024-05-24",
           "description": "May Daily",
           "account": 2119,
-          "amt": -127.53
+          "amt": -117
+        },
+        {
+          "date": "2024-05-24",
+          "description": "May Daily Tax",
+          "account": 3001,
+          "amt": -10.53
         },
         {
           "date": "2024-05-24",
           "description": "May Daily",
           "account": 2129,
-          "amt": -63.22
+          "amt": -58
+        },
+        {
+          "date": "2024-05-24",
+          "description": "May Daily Tax",
+          "account": 3001,
+          "amt": -5.22
         },
         {
           "date": "2024-05-25",
           "description": "May Daily",
           "account": 2111,
-          "amt": -42.51
+          "amt": -39
+        },
+        {
+          "date": "2024-05-25",
+          "description": "May Daily Tax",
+          "account": 3001,
+          "amt": -3.51
         },
         {
           "date": "2024-05-26",
           "description": "May Daily",
           "account": 2111,
-          "amt": -42.51
+          "amt": -39
+        },
+        {
+          "date": "2024-05-26",
+          "description": "May Daily Tax",
+          "account": 3001,
+          "amt": -3.51
         },
         {
           "date": "2024-05-26",
@@ -613,13 +661,25 @@
           "date": "2024-05-31",
           "description": "May Daily",
           "account": 2111,
-          "amt": -225
+          "amt": -206.42
+        },
+        {
+          "date": "2024-05-31",
+          "description": "May Daily Tax",
+          "account": 3001,
+          "amt": -18.58
         },
         {
           "date": "2024-05-31",
           "description": "May Daily",
           "account": 2116,
-          "amt": -626.75
+          "amt": -575
+        },
+        {
+          "date": "2024-05-31",
+          "description": "May Daily Tax",
+          "account": 3001,
+          "amt": -51.75
         },
         {
           "date": "2024-06-19",
@@ -680,6 +740,198 @@
           "date": "2024-06-20",
           "description": "POS: S08",
           "amt": -234
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "date": "2024-06-21",
+      "transactions": [
+        {
+          "date": "2024-06-21",
+          "description": "POS: Becki Aldrich, ALicia Goss",
+          "account": 1001,
+          "amt": 31.61
+        },
+        {
+          "account": 3001,
+          "date": "2024-06-21",
+          "description": "POS: Tax Received",
+          "amt": -2.61
+        },
+        {
+          "account": 2129,
+          "date": "2024-06-21",
+          "description": "POS: S19",
+          "amt": -29
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "date": "2024-06-21",
+      "transactions": [
+        {
+          "date": "2024-06-21",
+          "description": "POS: Julie Lusignan",
+          "account": 1001,
+          "amt": 127.53
+        },
+        {
+          "account": 3001,
+          "date": "2024-06-21",
+          "description": "POS: Tax Received",
+          "amt": -10.53
+        },
+        {
+          "account": 2111,
+          "date": "2024-06-21",
+          "description": "POS: S03",
+          "amt": -117
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "date": "2024-06-21",
+      "transactions": [
+        {
+          "date": "2024-06-21",
+          "description": "POS: Kim McCarthy",
+          "account": 1001,
+          "amt": 127.53
+        },
+        {
+          "account": 3001,
+          "date": "2024-06-21",
+          "description": "POS: Tax Received",
+          "amt": -10.53
+        },
+        {
+          "account": 2111,
+          "date": "2024-06-21",
+          "description": "POS: S03",
+          "amt": -117
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "date": "2024-06-21",
+      "transactions": [
+        {
+          "date": "2024-06-21",
+          "description": "POS: Tristin Webb",
+          "account": 1001,
+          "amt": 63.22
+        },
+        {
+          "account": 3001,
+          "date": "2024-06-21",
+          "description": "POS: Tax Received",
+          "amt": -5.22
+        },
+        {
+          "account": 2129,
+          "date": "2024-06-21",
+          "description": "POS: S19",
+          "amt": -58
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "date": "2024-06-21",
+      "transactions": [
+        {
+          "date": "2024-06-21",
+          "description": "POS: James Jarvis",
+          "account": 1001,
+          "amt": 31.61
+        },
+        {
+          "account": 3001,
+          "date": "2024-06-21",
+          "description": "POS: Tax Received",
+          "amt": -2.61
+        },
+        {
+          "account": 2129,
+          "date": "2024-06-21",
+          "description": "POS: S19",
+          "amt": -29
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "date": "2024-06-21",
+      "transactions": [
+        {
+          "date": "2024-06-21",
+          "description": "POS: Eliza Walters",
+          "account": 1001,
+          "amt": 127.53
+        },
+        {
+          "account": 3001,
+          "date": "2024-06-21",
+          "description": "POS: Tax Received",
+          "amt": -10.53
+        },
+        {
+          "account": 2119,
+          "date": "2024-06-21",
+          "description": "POS: S08",
+          "amt": -117
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "date": "2024-06-21",
+      "transactions": [
+        {
+          "date": "2024-06-21",
+          "description": "POS: Bob Nichols",
+          "account": 1001,
+          "amt": 170.04
+        },
+        {
+          "account": 3001,
+          "date": "2024-06-21",
+          "description": "POS: Tax Received",
+          "amt": -14.04
+        },
+        {
+          "account": 2111,
+          "date": "2024-06-21",
+          "description": "POS: S03",
+          "amt": -156
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "date": "2024-06-21",
+      "transactions": [
+        {
+          "date": "2024-06-21",
+          "description": "POS: Monica Capron",
+          "account": 1001,
+          "amt": 31.61
+        },
+        {
+          "account": 3001,
+          "date": "2024-06-21",
+          "description": "POS: Tax Received",
+          "amt": -2.61
+        },
+        {
+          "account": 2129,
+          "date": "2024-06-21",
+          "description": "POS: S19",
+          "amt": -29
         }
       ]
     }

@@ -424,9 +424,11 @@ export async function setupPointOfSaleForm() {
     });
 
     const batchId = await db.createBatch();
-
+    inputs.quickReservationForm.reset();
     window.location.href = `./general-ledger.html?batch=${batchId}`;
   });
+
+  inputs.partyName.focus();
 }
 function round(value: number, places: number) {
   const multiplier = Math.pow(10, places);
