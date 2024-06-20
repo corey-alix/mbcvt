@@ -1,5 +1,21 @@
 import { Database } from "../db/index.js";
 
+// move into DB
+const magic = {
+  tentRate: 29,
+  rvRate: 39,
+  extraAdult: 5,
+  extraChild: 5,
+  extraVisitor: 2,
+  woodBundle: 5,
+  maxAdults: 2,
+  maxChildren: 2,
+  minSite: 2101,
+  maxSite: 2199,
+  minTentSite: 2127,
+  taxRate: 0.09,
+};
+
 export async function setupPointOfSaleForm() {
   const db = new Database();
 
@@ -20,31 +36,37 @@ export async function setupPointOfSaleForm() {
       (outDate.getTime() - inDate.getTime()) / (1000 * 60 * 60 * 24)
     );
 
-    let basePrice = 39 * days;
+    const siteNumber = parseInt(inputs.siteNumber.value);
+    const isSite = magic.minSite <= siteNumber && siteNumber <= magic.maxSite;
+    const isTentSite = isSite && siteNumber > magic.minTentSite;
+
+    let basePrice = (isTentSite ? magic.tentRate : magic.rvRate) * days;
+    console.log({ isSite, isTentSite, siteNumber, basePrice });
+
     const adults = inputs.adults.valueAsNumber;
 
-    if (adults > 2) {
-      basePrice += 5 * (adults - 2) * days;
+    if (adults > magic.maxAdults) {
+      basePrice += magic.extraAdult * (adults - magic.maxAdults) * days;
     }
 
     const children = inputs.children.valueAsNumber;
-    if (children > 2) {
-      basePrice += 5 * (children - 2) * days;
+    if (children > magic.maxChildren) {
+      basePrice += magic.extraChild * (children - magic.maxChildren) * days;
     }
 
     const visitors = inputs.visitors.valueAsNumber;
     if (visitors > 0) {
-      basePrice += 2 * visitors;
+      basePrice += magic.extraVisitor * visitors;
     }
 
     const woodBundles = inputs.woodBundles.valueAsNumber;
     if (woodBundles > 0) {
-      basePrice += 5 * woodBundles;
+      basePrice += magic.woodBundle * woodBundles;
     }
 
     inputs.baseDue.value = basePrice.toFixed(2);
-    inputs.totalTax.value = (0.09 * basePrice).toFixed(2);
-    inputs.totalDue.value = ((1 + 0.09) * basePrice).toFixed(2);
+    inputs.totalTax.value = (magic.taxRate * basePrice).toFixed(2);
+    inputs.totalDue.value = ((1 + magic.taxRate) * basePrice).toFixed(2);
   }
 
   await db.init();
@@ -97,6 +119,10 @@ export async function setupPointOfSaleForm() {
       inputs.checkOut.value = addDay(inputs.checkIn.value, 1);
       inputs.checkOut.dispatchEvent(new Event("change"));
     }
+  });
+
+  inputs.siteNumber.addEventListener("change", () => {
+    updateTotalDue();
   });
 
   inputs.checkOut.addEventListener("change", () => {
