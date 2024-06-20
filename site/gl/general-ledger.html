@@ -3,8 +3,8 @@
 
 <head>
   <meta charset="UTF-8" />
-  <!-- mobile friendly -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- mobile friendly, see https://stackoverflow.com/questions/44679794/position-fixed-on-chrome-mobile-causing-element-to-move-on-scroll-up-down -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1" />
   <title>Reservation</title>
   <link rel="stylesheet" href="../index.css" />
   <link rel="author" href="mailto:coreyalix@gmail.com" />
@@ -48,7 +48,8 @@
 
     .dock-bottom {
       position: fixed;
-      bottom: 1rem;
+      top: calc(100vh - 3rem);
+      left: 0;
     }
 
     .hidden {
