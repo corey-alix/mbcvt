@@ -44,6 +44,10 @@
         <summary>Quick Reservation Entry</summary>
         <form id="quickReservationForm">
             <fieldset>
+                <label>Name of Party</label>
+                <input type="text" id="partyName" placeholder="Name of Party" required />
+            </fieldset>
+            <fieldset>
                 <label>Site Number</label>
                 <div>
                     <input type="text" id="siteNumber" placeholder="Site Number" />
@@ -52,11 +56,11 @@
             </fieldset>
             <fieldset>
                 <label>Check In</label>
-                <input type="date" id="checkIn" />
+                <input type="date" id="checkIn" required />
             </fieldset>
             <fieldset>
                 <label>Check Out</label>
-                <input type="date" id="checkOut" />
+                <input type="date" id="checkOut" required />
             </fieldset>
             <fieldset>
                 <label>Adults</label>

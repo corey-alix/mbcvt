@@ -51,6 +51,7 @@ export async function setupPointOfSaleForm() {
   console.log("Setting up point of sale form");
   const inputs = {
     quickReservationForm: null as any as HTMLFormElement,
+    partyName: null as any as HTMLInputElement,
     siteNumber: null as any as HTMLInputElement,
     siteName: null as any as HTMLInputElement,
     checkIn: null as any as HTMLInputElement,
@@ -149,9 +150,11 @@ export async function setupPointOfSaleForm() {
     const totalCash = inputs.totalDue.valueAsNumber;
     const totalTax = inputs.totalTax.valueAsNumber;
 
+    const nameOfParty = inputs.partyName.value;
+
     await db.addTransaction({
       date: transactionDate,
-      description: "POS: Cash Received",
+      description: `POS: ${nameOfParty}`,
       account: cashAccount.id,
       amt: totalCash,
     });
@@ -171,5 +174,7 @@ export async function setupPointOfSaleForm() {
     });
 
     await db.createBatch();
+
+    inputs.quickReservationForm.reset();
   });
 }
