@@ -60,6 +60,7 @@ export async function setupPointOfSaleForm() {
 
     // place the container back in the DOM
     target.insertBefore(container, insertBefore);
+    input.tabIndex = -1;
   }
 
   function addDay(value: string, days: number): string {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="gl">
+<html lang="en" class="pos">
 
 <head>
     <meta charset="UTF-8" />
@@ -8,6 +8,17 @@
     <title>General Ledger</title>
     <link rel="stylesheet" href="../index.css" />
     <style>
+        fieldset {
+            padding: 0;
+            border: none;
+        }
+
+        input {
+            border-radius: var(--border-radius);
+            padding: var(--spacer);
+            border: none;
+        }
+
         .incrementor {
             display: grid;
             grid-template-columns: 2em 4em 2em;
@@ -39,7 +50,7 @@
 
         form {
             display: grid;
-            gap: 0.25em;
+            gap: 0.5em;
         }
 
         button,
@@ -50,6 +61,7 @@
         form>fieldset {
             display: grid;
             grid-template-columns: 8em auto;
+            align-items: baseline;
         }
 
         details>summary {
