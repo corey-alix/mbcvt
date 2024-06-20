@@ -1,6 +1,7 @@
 import { AccountModel, Database, TransactionModel } from "../db/index.js";
 import { asLinkToAccountHistory } from "../fun/index.js";
 import { readQueryString, safeHtml, asCurrency } from "../fun/index.js";
+import { toast } from "./toast.js";
 
 const db = new Database();
 
@@ -304,26 +305,6 @@ window.addEventListener("error", (event) => {
   const message = `Uncaught exception: ${event.error}`;
   toast(message);
 });
-
-function toast(message: string) {
-  const toaster = document.getElementById("toaster") as HTMLElement;
-  if (!toaster) {
-    alert(message);
-    return;
-  }
-
-  const messageDiv = document.createElement("div");
-  messageDiv.textContent = message;
-  toaster.appendChild(messageDiv);
-  toaster.classList.toggle("hidden", false);
-
-  setTimeout(() => {
-    toaster.removeChild(messageDiv);
-    if (!toaster.children.length) {
-      toaster.classList.toggle("hidden", true);
-    }
-  }, 5000);
-}
 
 function trigger(topic: string, data?: any) {
   const event = new CustomEvent(topic, { detail: data || null });

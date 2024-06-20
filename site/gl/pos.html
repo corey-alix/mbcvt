@@ -103,6 +103,22 @@
                 font-size: 3vmin;
             }
         }
+
+        #toaster {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            background-color: #333;
+            color: white;
+            margin: 0;
+            padding: 1rem;
+            border: 1px solid white;
+            min-width: 10rem;
+            min-height: 4rem;
+            overflow: visible;
+            border-radius: 0;
+            border-top-left-radius: 1rem;
+        }
     </style>
 </head>
 
@@ -164,6 +180,7 @@
             </fieldset>
         </form>
     </details>
+    <div id="toaster"></div>
 </body>
 <script type="module">
     import { setupPointOfSaleForm } from "./index.js";

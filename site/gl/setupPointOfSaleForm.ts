@@ -1,4 +1,12 @@
 import { Database } from "../db/index.js";
+import { toast } from "./toast.js";
+
+type Counter = {
+  days: number;
+  weeks: number;
+  months: number;
+  season: number;
+};
 
 // move into DB
 const magic = {
@@ -6,8 +14,10 @@ const magic = {
   rvRate: 39.0,
   tentWeeklyRate: 29 * 6,
   rvWeeklyRate: 39 * 6,
-  tentMonthlyRate: 29 * 20,
-  rvMonthlyRate: 39 * 20,
+  tentMonthlyRate: 29 * 23,
+  rvMonthlyRate: 39 * 23,
+  tentSeasonalRate: 29 * 49.5,
+  rvSeasonalRate: 39 * 49.5,
   extraAdult: 5,
   extraChild: 5,
   extraVisitor: 2,
@@ -22,6 +32,10 @@ const magic = {
 
 export async function setupPointOfSaleForm() {
   const db = new Database();
+
+  const state = {
+    counter: null as Counter | null,
+  };
 
   function selectAllOnFocus(input: HTMLInputElement) {
     input.addEventListener("focus", () => {
@@ -84,40 +98,48 @@ export async function setupPointOfSaleForm() {
       (outDate.getTime() - inDate.getTime()) / (1000 * 60 * 60 * 24)
     );
 
-    const partialWeeks = Math.ceil(actualDays / 7);
-    const partialMonths = Math.ceil(actualDays / 28);
-    const partialDays = actualDays;
-
     const siteNumber = parseInt(inputs.siteNumber.value);
     const isSite = magic.minSite <= siteNumber && siteNumber <= magic.maxSite;
     const isTentSite = isSite && siteNumber > magic.minTentSite;
 
-    let dailyRate = isTentSite ? magic.tentRate : magic.rvRate;
-    let weeklyRate = isTentSite ? magic.tentWeeklyRate : magic.rvWeeklyRate;
-    let monthlyRate = isTentSite ? magic.tentMonthlyRate : magic.rvMonthlyRate;
+    const dailyRate = isTentSite ? magic.tentRate : magic.rvRate;
+    const weeklyRate = isTentSite ? magic.tentWeeklyRate : magic.rvWeeklyRate;
+    const monthlyRate = isTentSite
+      ? magic.tentMonthlyRate
+      : magic.rvMonthlyRate;
+    const seasonalRate = isTentSite
+      ? magic.tentSeasonalRate
+      : magic.rvSeasonalRate;
 
     const counter = {
-      days: partialDays,
+      days: actualDays,
       weeks: 0,
       months: 0,
+      season: 0,
     };
-
-    type Counter = typeof counter;
 
     function computePrice(counter: Counter) {
       if (counter.days < 0) throw new Error("Negative days");
       if (counter.weeks < 0) throw new Error("Negative weeks");
       if (counter.months < 0) throw new Error("Negative months");
+      if (counter.season < 0) throw new Error("Negative season");
 
       return (
         counter.days * dailyRate +
         counter.weeks * weeklyRate +
-        counter.months * monthlyRate
+        counter.months * monthlyRate +
+        counter.season * seasonalRate
       );
     }
 
     function totalDays(counter: Counter) {
       return counter.days + counter.weeks * 7 + counter.months * 28;
+    }
+
+    function convertToSeasonal(counter: Counter) {
+      counter.days = counter.weeks = counter.months = 0;
+      counter.season = 1;
+      return counter;
     }
 
     function convertToWeek(counter: Counter) {
@@ -136,7 +158,7 @@ export async function setupPointOfSaleForm() {
       }
 
       while (true) {
-        const freeDays = totalDays(counter) - partialDays;
+        const freeDays = totalDays(counter) - actualDays;
         if (!freeDays) break;
         if (counter.days) {
           counter.days = Math.max(0, counter.days - freeDays);
@@ -157,28 +179,55 @@ export async function setupPointOfSaleForm() {
     while (true) {
       bestPrice = computePrice(counter);
       const weekly = convertToWeek({ ...counter });
-      const monthly = convertToMonth({ ...counter });
+
       if (computePrice(weekly) < bestPrice) {
         convertToWeek(counter);
         continue;
       }
+
+      const monthly = convertToMonth({ ...counter });
       if (computePrice(monthly) < bestPrice) {
         convertToMonth(counter);
         continue;
       }
+
+      const seasonal = convertToSeasonal({ ...counter });
+      if (computePrice(seasonal) < bestPrice) {
+        convertToSeasonal(counter);
+        continue;
+      }
+
       break;
+    }
+
+    if (!state.counter || totalDays(counter) !== totalDays(state.counter)) {
+      const rates = [] as string[];
+      if (counter.season) {
+        rates.push("Seasonal");
+      }
+      if (counter.months) {
+        rates.push("Monthly");
+      }
+      if (counter.weeks) {
+        rates.push("Weekly");
+      }
+      if (counter.days) {
+        rates.push("Daily");
+      }
+      toast(`${rates.join(", ")} rates applied`);
+      state.counter = counter;
     }
 
     const adults = inputs.adults.valueAsNumber;
 
     if (adults > magic.maxAdults) {
-      bestPrice += magic.extraAdult * (adults - magic.maxAdults) * partialDays;
+      bestPrice += magic.extraAdult * (adults - magic.maxAdults) * actualDays;
     }
 
     const children = inputs.children.valueAsNumber;
     if (children > magic.maxChildren) {
       bestPrice +=
-        magic.extraChild * (children - magic.maxChildren) * partialDays;
+        magic.extraChild * (children - magic.maxChildren) * actualDays;
     }
 
     const visitors = inputs.visitors.valueAsNumber;
