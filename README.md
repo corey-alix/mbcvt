@@ -30,12 +30,33 @@ I will use stripe for payment processing.  Stripe charges 1.75% + 30 cents per t
 
 Stripe also has a tap-to-pay phone app.  I will use this to accept payments in person.
 
-# Development
+## Development
 
 - Create a mock Front End using TSC only
 - Install the Netlify CLI
 - Install the FaunaDB CLI
 - Setup a FaunaDB database
+
+### Digital Ocean
+
+Install the `do` command line tool using the following command:
+
+```bash
+npm install -g @digitalocean/doctl
+```
+
+To login to digital ocean use the following command:
+
+```bash
+doctl auth init
+```
+
+To run a cli command on a droplet use the following command:
+
+```bash
+doctl compute ssh --ssh-command "ls -al"
+```
+
 
 ## Copy Existing Site
 
