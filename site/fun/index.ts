@@ -34,3 +34,9 @@ export function setStickyValue<T>(name: string, value: T) {
   const key = `sticky-${name}`;
   localStorage.setItem(key, JSON.stringify(value));
 }
+export function asBatchLink(batchId: number, label: string) {
+  const queryString = new URLSearchParams({
+    batch: batchId.toString(),
+  });
+  return `<a href=./general-ledger.html?${queryString.toString()}>${label}</a>`;
+}

@@ -47,7 +47,7 @@
       "transactions": [
         {
           "date": "2024-01-01",
-          "description": "2024 Site Deposits",
+          "description": "2024 Site Deposit",
           "account": 2109,
           "amt": -183.49
         },
@@ -59,7 +59,7 @@
         },
         {
           "date": "2024-01-01",
-          "description": "2024 Site Deposits",
+          "description": "2024 Site Deposit",
           "account": 2118,
           "amt": -183.49
         },
@@ -446,152 +446,7 @@
     {
       "id": 2,
       "date": "2024-06-18",
-      "transactions": [
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2101,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2102,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2103,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2104,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2105,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2106,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2107,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2108,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2109,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2110,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2113,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2114,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2115,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2117,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2118,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2120,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2121,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2122,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2123,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2124,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2125,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2126,
-          "amt": 1800
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2128,
-          "amt": 1600
-        },
-        {
-          "date": "2024-05-01",
-          "description": "Sales",
-          "account": 2001,
-          "amt": -41200
-        }
-      ]
+      "transactions": []
     },
     {
       "id": 3,

@@ -1,4 +1,5 @@
 import { Database } from "../db/index.js";
+import { globals } from "../globals.js";
 import { toast } from "./toast.js";
 
 type Counter = {
@@ -30,11 +31,12 @@ const magic = {
   minSite: 2101,
   maxSite: 2199,
   minTentSite: 2127,
+  cashAccount: 1001,
+  saleAccount: 2001,
   firewoodAccount: 2201,
   peopleAccount: 2202,
   taxAccount: 3001,
-  cashAccount: 1001,
-  taxRate: 0.09,
+  taxRate: globals.TAX_RATE,
 };
 
 export async function setupPointOfSaleForm() {

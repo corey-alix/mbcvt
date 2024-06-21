@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sales Report</title>
+    <link rel="stylesheet" href="../index.css">
+    <style>
+        body {
+            font-size: 3vmin;
+        }
+
+        input,
+        button {
+            font-size: inherit;
+        }
+
+        .grid-3 {
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 1px solid black;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Sales Report</h1>
+        <input type="date" id="startDate" value="2021-01-01" />
+        <input type="date" id="endDate" value="2021-12-31" />
+        <button id="nextMonthButton">Next Month</button>
+        <button id="runReport">Run Report</button>
+        <div id="reportResults" class="grid-3">
+        </div>
+    </div>
+
+    <script type="module">
+        import { runSalesReport } from "./index.js";
+        runSalesReport();
+    </script>
+
+</html>

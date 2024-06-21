@@ -1,12 +1,6 @@
 import { Database, TransactionModel } from "../db/index.js";
+import { asBatchLink } from "../fun/index.js";
 import { asCurrency } from "../fun/index.js";
-
-function asBatchLink(batchId: number, label: string) {
-  const queryString = new URLSearchParams({
-    batch: batchId.toString(),
-  });
-  return `<a href=./general-ledger.html?${queryString.toString()}>${label}</a>`;
-}
 
 export async function setupAccountHistoryForm() {
   const target = document.querySelector("#general-ledger") || document.body;
@@ -28,6 +22,7 @@ export async function setupAccountHistoryForm() {
     throw `Account not found: ${accountNumber}`;
   }
   document.title = `Account History: ${account.name}`;
+  document.getElementById("title")!.textContent = document.title;
 
   const transactions = [] as Array<TransactionModel & { batchId: number }>;
   db.getBatches().forEach((batch) => {
