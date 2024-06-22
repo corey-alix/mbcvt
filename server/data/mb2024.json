@@ -443,11 +443,7 @@
         }
       ]
     },
-    {
-      "id": 2,
-      "date": "2024-06-18",
-      "transactions": []
-    },
+    { "id": 2, "date": "2024-06-18", "transactions": [] },
     {
       "id": 3,
       "date": "2024-06-18",
@@ -973,6 +969,113 @@
           "date": "2024-06-15",
           "description": "POS: S19",
           "amt": -29
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "date": "2024-06-21",
+      "transactions": [
+        {
+          "date": "2024-06-21",
+          "description": "Ariane & Guillaume, 2024-06-21 to 2024-06-24",
+          "account": 1001,
+          "amt": 96.00339449541283
+        },
+        {
+          "account": 3001,
+          "date": "2024-06-21",
+          "description": "Tax Collected",
+          "amt": -7.93
+        },
+        {
+          "account": 2129,
+          "date": "2024-06-21",
+          "description": "Site S19",
+          "amt": -88.07339449541284
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "date": "2024-06-21",
+      "transactions": [
+        {
+          "date": "2024-06-21",
+          "description": "Robert Verret, 2024-06-21 to 2024-06-26",
+          "account": 1001,
+          "amt": 210.00055045871557
+        },
+        {
+          "account": 3001,
+          "date": "2024-06-21",
+          "description": "Tax Collected",
+          "amt": -17.34
+        },
+        {
+          "account": 2111,
+          "date": "2024-06-21",
+          "description": "Site S03",
+          "amt": -192.66055045871556
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "date": "2024-06-21",
+      "transactions": []
+    },
+    {
+      "id": 20,
+      "date": "2024-06-22",
+      "transactions": [
+        {
+          "date": "2024-06-22",
+          "description": "Karen Fournier, 2024-06-21 to 2024-06-23",
+          "account": 1001,
+          "amt": 84.00422018348623
+        },
+        {
+          "account": 3001,
+          "date": "2024-06-22",
+          "description": "Tax Collected",
+          "amt": -6.94
+        },
+        {
+          "account": 2112,
+          "date": "2024-06-22",
+          "description": "Site F08-PULLOUT",
+          "amt": -77.06422018348623
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "date": "2024-06-22",
+      "transactions": [
+        {
+          "date": "2024-06-22",
+          "description": "Will Redmond, 2024-06-21 to 2024-06-22",
+          "account": 1001,
+          "amt": 37.00495412844037
+        },
+        {
+          "account": 3001,
+          "date": "2024-06-22",
+          "description": "Tax Collected",
+          "amt": -3.06
+        },
+        {
+          "account": 2202,
+          "date": "2024-06-22",
+          "description": "Guests",
+          "amt": -4.587155963302752
+        },
+        {
+          "account": 2127,
+          "date": "2024-06-22",
+          "description": "Site S17",
+          "amt": -29.357798165137613
         }
       ]
     }

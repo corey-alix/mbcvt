@@ -8,6 +8,11 @@
     <title>General Ledger</title>
     <link rel="stylesheet" href="../index.css" />
     <style>
+        #priceChart {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
         fieldset {
             padding: 0;
             border: none;
@@ -180,11 +185,18 @@
             </fieldset>
         </form>
     </details>
+    <details>
+        <summary>Price Chart</summary>
+        <h2>2024 Rates</h2>
+        <h3>Rates are based on 2 People</h3>
+        <div id="priceChart"></div>
+    </details>    
     <div id="toaster"></div>
 </body>
 <script type="module">
-    import { setupPointOfSaleForm } from "./index.js";
+    import { setupPointOfSaleForm, renderPriceChart } from "./index.js";
     setupPointOfSaleForm();
+    renderPriceChart(document.getElementById("priceChart"));
 </script>
 
 </html>

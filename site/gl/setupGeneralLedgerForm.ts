@@ -190,7 +190,7 @@ export async function setupGeneralLedgerForm() {
       ux.batchDate.textContent = batch.date.toString();
 
       const transactions = db.getTransactions(state.batchId);
-      transactions.sort((a, b) => a.date.localeCompare(b.date));
+      transactions.sort((a, b) => a.date.localeCompare(b.date) || (a.account - b.account));
       transactions.forEach((transactionInfo) => {
         renderTransaction(transactionInfo);
       });
