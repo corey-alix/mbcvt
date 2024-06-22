@@ -1,109 +1,23 @@
 import { Database } from "../db/index.js";
 import { asCurrency } from "../fun/index.js";
-import { globals } from "../globals.js";
+import { globals, magic } from "../globals.js";
+import { minimizeRate } from "./renderPriceChart.js";
 import { toast } from "./toast.js";
 
-type Counter = {
+export type Counter = {
+  actualDays: number;
   days: number;
   weeks: number;
   months: number;
   season: number;
 };
 
-type Rates = {
+export type Rates = {
   dailyRate: number;
   weeklyRate: number;
   monthlyRate: number;
   seasonalRate: number;
 };
-
-// move into DB
-const scale = 1 / 1.09;
-const baseRate = 32;
-
-const magic = {
-  tentRate: baseRate * scale,
-  rvRate: (baseRate + 10) * scale,
-  tentWeeklyRate: baseRate * 6 * scale,
-  rvWeeklyRate: (baseRate + 10) * 6 * scale,
-  tentMonthlyRate: baseRate * 23 * scale,
-  rvMonthlyRate: (baseRate + 10) * 23 * scale,
-  tentSeasonalRate: baseRate * 49.5 * scale,
-  rvSeasonalRate: (baseRate + 10) * 49.5 * scale,
-  extraAdult: 5 * scale,
-  extraChild: 5 * scale,
-  extraVisitor: 2 * scale,
-  woodBundle: 5 * scale,
-  maxAdults: 2,
-  maxChildren: 2,
-  minSite: 2101,
-  maxSite: 2199,
-  minTentSite: 2127,
-  cashAccount: 1001,
-  saleAccount: 2001,
-  firewoodAccount: 2201,
-  peopleAccount: 2202,
-  taxAccount: 3001,
-  taxRate: globals.TAX_RATE,
-};
-
-export function renderPriceChart(target: HTMLElement) {
-  const days = range(1, 14);
-  const tentPrices = priceChart(days, true);
-  const rvPrices = priceChart(days, false);
-
-  target.insertAdjacentHTML(
-    "beforeend",
-    `<div>Nights</div><div class="align-right">Tent</div><div class="align-right">RV</div>`
-  );
-
-  days.forEach((days, i) => {
-    const rv = rvPrices[i];
-    const tent = tentPrices[i];
-    target.insertAdjacentHTML(
-      "beforeend",
-      `<div>${days}</div><div class="align-right">${asCurrency(
-        tent.total
-      )}</div><div class="align-right">${asCurrency(rv.total)}</div>`
-    );
-  });
-
-  const rows = [...rvPrices, ...tentPrices]
-    .map(
-      (rv, i) =>
-        `<tr><td>${rv.days}</td><td>${asCurrency(
-          rv.price
-        )}</td><td>${asCurrency(rv.tax)}</td><td>${asCurrency(
-          rv.total
-        )}</td></tr>`
-    )
-    .join("");
-  const thead = `<thead><tr><th>Days</th><th>Rate</th><th>Tax</th><th>Total</th></tr></thead>`;
-  const table = `<table>${thead}<tbody>${rows}</tbody></table>`;
-  target.insertAdjacentHTML("beforeend", table);
-}
-
-function priceChart(days: Array<number>, isTentSite: boolean) {
-  // generate a price chart (1-14 days, price)
-  const taxRate = globals.TAX_RATE;
-  const dailyRate = isTentSite ? magic.tentRate : magic.rvRate;
-  const weeklyRate = isTentSite ? magic.tentWeeklyRate : magic.rvWeeklyRate;
-  const monthlyRate = isTentSite ? magic.tentMonthlyRate : magic.rvMonthlyRate;
-  const seasonalRate = isTentSite
-    ? magic.tentSeasonalRate
-    : magic.rvSeasonalRate;
-  const rates = { dailyRate, weeklyRate, monthlyRate, seasonalRate };
-
-  const prices = days.map((days) => {
-    const counter = { days, weeks: 0, months: 0, season: 0 };
-    const price = minimizeRate(counter, rates, days);
-    const tax = price * taxRate;
-    const total = price + tax;
-    return { days, price, tax: tax, total };
-  });
-
-  return prices;
-}
 
 export async function setupPointOfSaleForm() {
   const db = new Database();
@@ -187,17 +101,18 @@ export async function setupPointOfSaleForm() {
       : magic.rvSeasonalRate;
 
     const counter = {
+      actualDays,
       days: actualDays,
       weeks: 0,
       months: 0,
       season: 0,
-    };
+    } as Counter;
 
     const rates = { dailyRate, weeklyRate, monthlyRate, seasonalRate };
 
-    let basePrice = minimizeRate(counter, rates, actualDays);
+    let basePrice = minimizeRate(counter, rates);
 
-    if (!state.counter || totalDays(counter) !== totalDays(state.counter)) {
+    if (!state.counter || isRateClassChange(counter, state.counter)) {
       const rates = [] as string[];
       if (counter.season) {
         rates.push("Seasonal");
@@ -435,95 +350,12 @@ export async function setupPointOfSaleForm() {
   inputs.partyName.focus();
 }
 
-function minimizeRate(counter: Counter, rates: Rates, actualDays: number) {
-  while (true) {
-    let basePrice = computePrice(counter, rates);
-    const weekly = convertToWeek({ ...counter });
-
-    if (computePrice(weekly, rates) < basePrice) {
-      convertToWeek(counter);
-      continue;
-    }
-
-    const monthly = convertToMonth({ ...counter }, actualDays);
-    if (computePrice(monthly, rates) < basePrice) {
-      convertToMonth(counter, actualDays);
-      continue;
-    }
-
-    const seasonal = convertToSeasonal({ ...counter });
-    if (computePrice(seasonal, rates) < basePrice) {
-      convertToSeasonal(counter);
-      continue;
-    }
-    return basePrice;
-  }
-}
-
 function round(value: number, places: number) {
   const multiplier = Math.pow(10, places);
   return Math.round(value * multiplier) / multiplier;
 }
 
-function computePrice(counter: Counter, prices: Rates) {
-  if (counter.days < 0) throw new Error("Negative days");
-  if (counter.weeks < 0) throw new Error("Negative weeks");
-  if (counter.months < 0) throw new Error("Negative months");
-  if (counter.season < 0) throw new Error("Negative season");
-
-  const { dailyRate, weeklyRate, monthlyRate, seasonalRate } = prices;
-
-  return (
-    counter.days * dailyRate +
-    counter.weeks * weeklyRate +
-    counter.months * monthlyRate +
-    counter.season * seasonalRate
-  );
-}
-
-function totalDays(counter: Counter) {
-  return counter.days + counter.weeks * 7 + counter.months * 28;
-}
-
-function convertToSeasonal(counter: Counter) {
-  counter.days = counter.weeks = counter.months = 0;
-  counter.season = 1;
-  return counter;
-}
-
-function convertToWeek(counter: Counter) {
-  if (counter.days) {
-    counter.weeks += 1;
-    counter.days = Math.max(0, counter.days - 7);
-  }
-  return counter;
-}
-
-function convertToMonth(counter: Counter, actualDays: number) {
-  convertToWeek(counter);
-  if (counter.weeks) {
-    counter.months += 1;
-    counter.weeks = Math.max(0, counter.weeks - 4);
-  }
-
-  while (true) {
-    const freeDays = totalDays(counter) - actualDays;
-    if (!freeDays) break;
-    if (counter.days) {
-      counter.days = Math.max(0, counter.days - freeDays);
-      continue;
-    }
-    if (counter.weeks) {
-      counter.weeks--;
-      counter.days += Math.max(0, 7 - freeDays);
-      continue;
-    }
-    break;
-  }
-  return counter;
-}
-
-function range(start: number, end: number) {
+export function range(start: number, end: number) {
   return Array.from({ length: end - start + 1 }, (_, i) => i + start);
 }
 
@@ -574,4 +406,12 @@ function printReceipt(sale: {
   </div>`;
 
   document.body.innerHTML = html;
+}
+function isRateClassChange(counter1: Counter, counter2: Counter) {
+  console.log({ counter1, counter2 });
+  if (!counter1.weeks !== !counter2.weeks) return true;
+  if (!counter1.months !== !counter2.months) return true;
+  if (!counter1.season !== !counter2.season) return true;
+  console.log("no change");
+  return false;
 }
