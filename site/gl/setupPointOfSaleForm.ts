@@ -195,9 +195,7 @@ export async function setupPointOfSaleForm() {
 
     const rates = { dailyRate, weeklyRate, monthlyRate, seasonalRate };
 
-    minimizeRate(counter, rates, actualDays);
-
-    let basePrice = computePrice(counter, rates);
+    let basePrice = minimizeRate(counter, rates, actualDays);
 
     if (!state.counter || totalDays(counter) !== totalDays(state.counter)) {
       const rates = [] as string[];
@@ -420,8 +418,18 @@ export async function setupPointOfSaleForm() {
     });
 
     const batchId = await db.createBatch();
+
+    printReceipt({
+      nameOfParty,
+      dates,
+      expenses,
+      totalNet,
+      totalTax,
+      totalCash,
+    });
+
     inputs.quickReservationForm.reset();
-    window.location.href = `./general-ledger.html?batch=${batchId}`;
+    // window.location.href = `./general-ledger.html?batch=${batchId}`;
   });
 
   inputs.partyName.focus();
@@ -517,4 +525,53 @@ function convertToMonth(counter: Counter, actualDays: number) {
 
 function range(start: number, end: number) {
   return Array.from({ length: end - start + 1 }, (_, i) => i + start);
+}
+
+function printReceipt(sale: {
+  nameOfParty: string;
+  dates: string;
+  expenses: {
+    basePrice: number;
+    adults: number;
+    children: number;
+    visitors: number;
+    woodBundles: number;
+  };
+  totalNet: number;
+  totalTax: number;
+  totalCash: number;
+}) {
+  const html = `
+  <div class="receipt grid grid-2">
+    <h1 class="span-all center">Millbrook Campground Receipt</h1>
+    <div>Party</div><div class="align-right">${sale.nameOfParty}</div>
+    <div>Dates</div><div class="align-right">${sale.dates}</div>
+    <div>Base Price</div><div class="align-right">${asCurrency(
+      sale.expenses.basePrice
+    )}</div>
+    <div>Adults</div><div class="align-right">${asCurrency(
+      sale.expenses.adults
+    )}</div>
+    <div>Children</div><div class="align-right">${asCurrency(
+      sale.expenses.children
+    )}</div>
+    <div>Visitors</div><div class="align-right">${asCurrency(
+      sale.expenses.visitors
+    )}</div>
+    <div>Wood Bundles</div><div class="align-right">${asCurrency(
+      sale.expenses.woodBundles
+    )}</div>
+    <div class="span-all"><hr/></div>
+    <div>Total Net</div><div class="align-right">${asCurrency(
+      sale.totalNet
+    )}</div>
+    <div>Total Tax</div><div class="align-right">${asCurrency(
+      sale.totalTax
+    )}</div>
+    <div>Total Cash</div><div class="align-right bolder bigger">${asCurrency(
+      sale.totalCash
+    )}</div>
+  </div>`;
+
+  document.body.innerHTML = html;
 }

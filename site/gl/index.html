@@ -12,6 +12,7 @@
     .toolbar {
       display: flex;
       flex-direction: row;
+      flex-wrap: wrap;
 
       a {
         border: 1px solid var(--white);
@@ -22,9 +23,14 @@
         color: var(--white);
         text-decoration: none;
         aspect-ratio: 1/1;
-        width: 8em;
+        width: 20vmin;
+        min-width: 3em;
         height: auto;
         text-align: center;
+        white-space: inherit;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
     }
   </style>

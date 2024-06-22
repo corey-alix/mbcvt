@@ -138,6 +138,10 @@
     justify-content: center;
   }
 
+  .span-2 {
+    grid-column: span 2;
+  }
+
   .span-3 {
     grid-column: span 3;
   }
