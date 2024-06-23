@@ -259,11 +259,9 @@ export async function setupGeneralLedgerForm() {
     ux.amountCredit.value = "";
 
     if (balance < 0) {
-      console.log("debit required");
       ux.amountDebit.value = (-balance).toFixed(2);
     }
     if (balance > 0) {
-      console.log("credit required");
       ux.amountCredit.value = balance.toFixed(2);
     }
   }

@@ -76,7 +76,6 @@ export async function setupPointOfSaleForm() {
     const newDate = new Date(date.getTime() + days * oneDay)
       .toISOString()
       .split("T")[0];
-    console.log({ newDate, value, days });
     return newDate;
   }
 
@@ -173,7 +172,6 @@ export async function setupPointOfSaleForm() {
   }
 
   await db.init();
-  console.log("Setting up point of sale form");
   const inputs = {
     quickReservationForm: null as any as HTMLFormElement,
     partyName: null as any as HTMLInputElement,
@@ -408,10 +406,8 @@ function printReceipt(sale: {
   document.body.innerHTML = html;
 }
 function isRateClassChange(counter1: Counter, counter2: Counter) {
-  console.log({ counter1, counter2 });
   if (!counter1.weeks !== !counter2.weeks) return true;
   if (!counter1.months !== !counter2.months) return true;
   if (!counter1.season !== !counter2.season) return true;
-  console.log("no change");
   return false;
 }

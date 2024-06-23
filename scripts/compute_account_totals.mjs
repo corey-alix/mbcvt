@@ -20,8 +20,6 @@ mb2024.accounts.forEach((account) => {
   }
 });
 
-console.log(totals);
-
 // save mb2024 to a file
 import { writeFileSync } from "fs";
 writeFileSync(fileName, JSON.stringify(mb2024));

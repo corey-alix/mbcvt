@@ -22,8 +22,6 @@ function computePrice(counter: Counter, prices: Rates) {
       seasonalRate,
   ];
 
-  console.log("computePrice", { counter, prices, rates });
-
   return Math.min(...rates);
 }
 
@@ -107,14 +105,14 @@ export function renderPriceChart(target: HTMLElement) {
     .map(
       (day, i) =>
         `<tr>
-          <td class="align-right">${day}</td>
+          <td class="align-left">${day}</td>
           <td class="align-right">${asCurrency(tentPrices[i].total)}</td>
           <td class="align-right">${asCurrency(rvPrices[i].total)}</td>
         </tr>`
     )
     .join("");
   const thead = `<thead><tr>
-    <th class="align-right underline bold">Days</th>
+    <th class="align-left underline bold">Days</th>
     <th class="align-right underline bold">Tent</th>
     <th class="align-right underline bold">RV</th>
     </tr></thead>`;

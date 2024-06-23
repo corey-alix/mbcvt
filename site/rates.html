@@ -10,6 +10,17 @@
             padding: 1vmin;
         }
 
+        .flex {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        table {
+            width: fit-content;
+        }
+
         @media print {
             body {
                 font-size: 12pt;
@@ -48,15 +59,15 @@
     </style>
 </head>
 
-<body>
+<body class="flex">
     <hr />
-    <h1 class="center">2025 RATES</h1>
-    <h2 class="center">Rates are based on 2 People</h2>
-    <h2 class="center">All prices include tax</h2>
+    <h1 class="center uppercase">Millbrook Campground 2025 Rates</h1>
+    <h2 class="center uppercase">Rates are based on 2 People</h2>
+    <h3 class="center uppercase">All prices include tax</h3>
     <hr />
-    <div id="priceChart"></div>
+    <div id="priceChart" class="flex"></div>
     <script type="module">
-        import { renderPriceChart } from "./index.js";
+        import { renderPriceChart } from "./gl/index.js";
         renderPriceChart(document.getElementById("priceChart"));
     </script>
 </body>

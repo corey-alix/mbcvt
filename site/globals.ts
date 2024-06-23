@@ -17,12 +17,6 @@ const triggerDays = {
 const WEEKLY_DISCOUNT = 6 / 7;
 const MONTHLY_DISCOUNT = 750 / (triggerDays.monthly * rvRate); // 0.811
 const SEASONAL_DISCOUNT = 1950 / (triggerDays.totalDaysOfOperation * rvRate); // 0.309
-console.log({ WEEKLY_DISCOUNT, MONTHLY_DISCOUNT, SEASONAL_DISCOUNT });
-// {
-//   "WEEKLY_DISCOUNT": 0.8571428571428571,
-//   "MONTHLY_DISCOUNT": 0.5952380952380952,
-//   "SEASONAL_DISCOUNT": 0.28888888888888886
-// }
 
 const weeklyRate = (r: number) => Math.ceil(r * WEEKLY_DISCOUNT);
 const monthlyRate = (r: number) => Math.ceil(r * MONTHLY_DISCOUNT);
@@ -58,5 +52,3 @@ export const magic = Object.freeze({
   taxAccount: 3001,
   taxRate: globals.TAX_RATE,
 });
-
-console.log({ magic });

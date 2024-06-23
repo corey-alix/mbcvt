@@ -237,5 +237,3 @@ export const siteMap = [{
 function range(size: number) {
     return [...Array(size).keys()];
 }
-
-console.log(siteMap);
