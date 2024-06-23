@@ -137,12 +137,6 @@
 
 <body>
     <h1>Point of Sale</h1>
-    <details open>
-        <summary>Price Chart</summary>
-        <h2>2024 Rates</h2>
-        <h3>Rates are based on 2 People</h3>
-        <div id="priceChart"></div>
-    </details>
     <details id="reservation" open>
         <summary>Quick Reservation Entry</summary>
         <form id="quickReservationForm">
@@ -202,9 +196,8 @@
     <div id="toaster"></div>
 </body>
 <script type="module">
-    import { setupPointOfSaleForm, renderPriceChart } from "./index.js";
+    import { setupPointOfSaleForm } from "./index.js";
     setupPointOfSaleForm();
-    renderPriceChart(document.getElementById("priceChart"));
 </script>
 
 </html>

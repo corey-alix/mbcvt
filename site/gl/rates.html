@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Millbrook Campground Rates</title>
+    <style>
+        body {
+            font-size: 3vmin;
+            margin: 1vmin;
+            padding: 1vmin;
+        }
+
+        @media print {
+            body {
+                font-size: 12pt;
+            }
+        }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .align-right {
+            text-align: right;
+        }
+
+        .align-left {
+            text-align: left;
+        }
+
+        th,
+        td {
+            padding: 0.25em;
+            width: 20vw;
+        }
+
+        .underline {
+            text-decoration: underline;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <hr />
+    <h1 class="center">2025 RATES</h1>
+    <h2 class="center">Rates are based on 2 People</h2>
+    <h2 class="center">All prices include tax</h2>
+    <hr />
+    <div id="priceChart"></div>
+    <script type="module">
+        import { renderPriceChart } from "./index.js";
+        renderPriceChart(document.getElementById("priceChart"));
+    </script>
+</body>
+
+</html>

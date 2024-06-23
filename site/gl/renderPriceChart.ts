@@ -103,36 +103,20 @@ export function renderPriceChart(target: HTMLElement) {
   const tentPrices = priceChart(days, true);
   const rvPrices = priceChart(days, false);
 
-  target.insertAdjacentHTML(
-    "beforeend",
-    `<div>Nights</div><div class="align-right">Tent</div><div class="align-right">RV</div>`
-  );
-
-  days.forEach((days, i) => {
-    const rv = rvPrices[i];
-    const tent = tentPrices[i];
-    target.insertAdjacentHTML(
-      "beforeend",
-      `<div>${days}</div><div class="align-right">${asCurrency(
-        tent.total
-      )}</div><div class="align-right">${asCurrency(rv.total)}</div>`
-    );
-  });
-
   const rows = days
     .map(
       (day, i) =>
         `<tr>
-          <td class="align-left">${day}</td>
+          <td class="align-right">${day}</td>
           <td class="align-right">${asCurrency(tentPrices[i].total)}</td>
           <td class="align-right">${asCurrency(rvPrices[i].total)}</td>
         </tr>`
     )
     .join("");
   const thead = `<thead><tr>
-    <th class="align-left">Days</th>
-    <th class="align-right">Tent</th>
-    <th class="align-right">RV</th>
+    <th class="align-right underline bold">Days</th>
+    <th class="align-right underline bold">Tent</th>
+    <th class="align-right underline bold">RV</th>
     </tr></thead>`;
   const table = `<table>${thead}<tbody>${rows}</tbody></table>`;
   target.insertAdjacentHTML("beforeend", table);
