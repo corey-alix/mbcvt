@@ -14,12 +14,17 @@ function computePrice(counter: Counter, prices: Rates) {
 
   const { dailyRate, weeklyRate, monthlyRate, seasonalRate } = prices;
 
-  return (
-    counter.days * dailyRate +
-    counter.weeks * weeklyRate +
-    counter.months * monthlyRate +
-    counter.season * seasonalRate
-  );
+  const rates = [
+    counter.actualDays * dailyRate,
+    Math.max(counter.actualDays, magic.triggerDays.weekly) * weeklyRate,
+    Math.max(counter.actualDays, magic.triggerDays.monthly) * monthlyRate,
+    Math.max(counter.actualDays, magic.triggerDays.totalDaysOfOperation) *
+      seasonalRate,
+  ];
+
+  console.log("computePrice", { counter, prices, rates });
+
+  return Math.min(...rates);
 }
 
 function convertToSeasonal(counter: Counter) {
@@ -61,28 +66,7 @@ function convertToMonth(counter: Counter) {
 }
 
 export function minimizeRate(counter: Counter, rates: Rates) {
-  while (true) {
-    let basePrice = computePrice(counter, rates);
-    const weekly = convertToWeek({ ...counter });
-
-    if (computePrice(weekly, rates) < basePrice) {
-      convertToWeek(counter);
-      continue;
-    }
-
-    const monthly = convertToMonth({ ...counter });
-    if (computePrice(monthly, rates) < basePrice) {
-      convertToMonth(counter);
-      continue;
-    }
-
-    const seasonal = convertToSeasonal({ ...counter });
-    if (computePrice(seasonal, rates) < basePrice) {
-      convertToSeasonal(counter);
-      continue;
-    }
-    return basePrice;
-  }
+  return computePrice(counter, rates);
 }
 
 function priceChart(days: Array<number>, isTentSite: boolean) {
@@ -104,7 +88,8 @@ function priceChart(days: Array<number>, isTentSite: boolean) {
       months: 0,
       season: 0,
     } satisfies Counter;
-    const price = minimizeRate(counter, rates);
+
+    const price = computePrice(counter, rates);
     const tax = price * taxRate;
     const total = price + tax;
     return { days, price, tax: tax, total };
@@ -114,7 +99,7 @@ function priceChart(days: Array<number>, isTentSite: boolean) {
 }
 
 export function renderPriceChart(target: HTMLElement) {
-  const days = range(1, 14);
+  const days = [...range(1, 14), 30, 60, 90, 120, 150];
   const tentPrices = priceChart(days, true);
   const rvPrices = priceChart(days, false);
 
@@ -134,17 +119,21 @@ export function renderPriceChart(target: HTMLElement) {
     );
   });
 
-  const rows = [...rvPrices, ...tentPrices]
+  const rows = days
     .map(
-      (rv, i) =>
-        `<tr><td>${rv.days}</td><td>${asCurrency(
-          rv.price
-        )}</td><td>${asCurrency(rv.tax)}</td><td>${asCurrency(
-          rv.total
-        )}</td></tr>`
+      (day, i) =>
+        `<tr>
+          <td class="align-left">${day}</td>
+          <td class="align-right">${asCurrency(tentPrices[i].total)}</td>
+          <td class="align-right">${asCurrency(rvPrices[i].total)}</td>
+        </tr>`
     )
     .join("");
-  const thead = `<thead><tr><th>Days</th><th>Rate</th><th>Tax</th><th>Total</th></tr></thead>`;
+  const thead = `<thead><tr>
+    <th class="align-left">Days</th>
+    <th class="align-right">Tent</th>
+    <th class="align-right">RV</th>
+    </tr></thead>`;
   const table = `<table>${thead}<tbody>${rows}</tbody></table>`;
   target.insertAdjacentHTML("beforeend", table);
 }
