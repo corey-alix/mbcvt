@@ -29,7 +29,7 @@ export type DatabaseSchema = {
   transactions: TransactionModel[];
 };
 
-export class Database {
+class Database {
   rawSave(data: DatabaseSchema) {
     const backupKey = `${DATABASE_NAME}-backup-${Date.now()}`;
     localStorage.setItem(backupKey, JSON.stringify(this.#data));
@@ -89,9 +89,11 @@ export class Database {
     if (data) {
       this.#data = JSON.parse(data);
     }
-    await this.#load().catch((error) => {
+    try {
+      await this.#load();
+    } catch (error) {
       console.error(`Failed to load data: ${error}`);
-    });
+    }
   }
 
   async addAccount(account: AccountModel) {
@@ -151,3 +153,5 @@ export class Database {
     return this.#data;
   }
 }
+
+export const database = new Database();

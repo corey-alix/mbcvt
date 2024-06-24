@@ -1,10 +1,14 @@
 @media screen {
   :root {
     --primary: hsl(120, 60%, 30%);
+    --primary-text-color: hsl(120, 80%, 80%);
+
+    --secondary: hsl(90, 60%, 90%);
+    --secondary-text-color: hsl(90, 60%, 20%);
+
     --primary-hover: hsl(120, 60%, 40%);
     --selected: hsl(210, 60%, 30%);
     --hover: hsl(210, 60%, 40%);
-    --secondary: hsl(90, 60%, 90%);
     --accent: hsl(45, 80%, 50%);
     --gray: hsl(120, 10%, 25%);
     --white: hsl(90, 0%, 80%);
@@ -23,7 +27,7 @@
 
   a:hover {
     color: var(--white);
-    border-bottom-color: var(--primary-hover);
+    border-bottom-color: var(--accent);
   }
 }
 

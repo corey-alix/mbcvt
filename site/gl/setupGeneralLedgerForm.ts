@@ -1,11 +1,10 @@
-import { Database, TransactionModel } from "../db/index.js";
+import { database as db, TransactionModel } from "../db/index.js";
 import { asLinkToAccountHistory } from "../fun/index.js";
 import { readQueryString, safeHtml, asCurrency } from "../fun/index.js";
 import { toast } from "./toast.js";
 import { asShortDate, trigger, navigateTo, on } from "./gl.js";
 
 export async function setupGeneralLedgerForm() {
-  const db = new Database();
   await db.init();
 
   function renderTransaction(
@@ -58,30 +57,22 @@ export async function setupGeneralLedgerForm() {
   }
 
   const ux = {
-    form: document.getElementById("general-ledger-form") as HTMLFormElement,
-    totalDebit: document.getElementById("total-debit") as HTMLElement,
-    totalCredit: document.getElementById("total-credit") as HTMLElement,
-    amountDebit: document.getElementById("amount-debit") as HTMLInputElement,
-    amountCredit: document.getElementById("amount-credit") as HTMLInputElement,
-    date: document.getElementById("date") as HTMLInputElement,
-    description: document.getElementById("description") as HTMLInputElement,
-    accountDescription: document.getElementById(
-      "account-description"
-    ) as HTMLElement,
-    accountNumber: document.getElementById(
-      "account-number"
-    ) as HTMLInputElement,
-    saveButton: document.getElementById("save-button") as HTMLButtonElement,
-    addAccountButton: document.getElementById(
-      "add-account"
-    ) as HTMLButtonElement,
-    addEntryButton: document.getElementById("add-entry") as HTMLButtonElement,
-    priorBatchButton: document.getElementById(
-      "batch-prev"
-    ) as HTMLButtonElement,
-    nextBatchButton: document.getElementById("batch-next") as HTMLButtonElement,
-    batchDate: document.getElementById("batch-date") as HTMLElement,
-    batchCurrent: null as any as HTMLButtonElement
+    generalLedgerForm: null as any as HTMLFormElement,
+    totalDebit: null as any as HTMLElement,
+    totalCredit: null as any as HTMLElement,
+    amountDebit: null as any as HTMLInputElement,
+    amountCredit: null as any as HTMLInputElement,
+    date: null as any as HTMLInputElement,
+    description: null as any as HTMLInputElement,
+    accountDescription: null as any  as HTMLElement,
+    accountNumber: null as any  as HTMLInputElement,
+    saveButton: null as any as HTMLButtonElement,
+    addAccountButton: null as any as HTMLButtonElement,
+    addEntryButton: null as any as HTMLButtonElement,
+    priorBatchButton: null as any as HTMLButtonElement,
+    nextBatchButton: null as any as HTMLButtonElement,
+    batchDate: null as any as HTMLElement,
+    batchCurrentButton: null as any as HTMLButtonElement
   };
 
   Object.keys(ux).forEach(key => {
@@ -125,7 +116,7 @@ export async function setupGeneralLedgerForm() {
     const account = glAccounts.find(
       (a) => a.id === parseInt(ux.accountNumber.value)
     );
-    ux.addAccountButton.disabled = !!account;
+
     if (!account) {
       ux.accountNumber.setCustomValidity("Invalid account number");
       ux.accountDescription.textContent = "";
@@ -134,11 +125,11 @@ export async function setupGeneralLedgerForm() {
       ux.accountDescription.textContent = account.name;
     }
     // validate the form
-    ux.form.reportValidity();
+    ux.generalLedgerForm.reportValidity();
   });
 
   // intercept form submission
-  ux.form.addEventListener("submit", (event) => {
+  ux.generalLedgerForm.addEventListener("submit", (event) => {
     event.preventDefault();
   });
 
@@ -152,7 +143,6 @@ export async function setupGeneralLedgerForm() {
       state.batchId = maxBatchId;
       render();
     }
-    toast(`Batch ${state.batchId}`);
   });
 
   ux.nextBatchButton.addEventListener("click", async () => {
@@ -165,11 +155,15 @@ export async function setupGeneralLedgerForm() {
       state.batchId = 0;
       render();
     }
-    toast(`Batch ${state.batchId}`);
+  });
+
+  ux.batchCurrentButton.addEventListener("click", async () => {
+    state.batchId = 0;
+    render();
   });
 
   ux.addEntryButton.addEventListener("click", async (event) => {
-    if (!ux.form.checkValidity()) {
+    if (!ux.generalLedgerForm.checkValidity()) {
       return;
     }
 
@@ -248,7 +242,7 @@ export async function setupGeneralLedgerForm() {
     amount.step = "0.01";
 
     amount.addEventListener("input", () => {
-      ux.form.reportValidity();
+      ux.generalLedgerForm.reportValidity();
     });
     return amount;
   }

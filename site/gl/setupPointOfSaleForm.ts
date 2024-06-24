@@ -1,4 +1,4 @@
-import { Database } from "../db/index.js";
+import { database as db } from "../db/index.js";
 import { asCurrency } from "../fun/index.js";
 import { globals, magic } from "../globals.js";
 import { minimizeRate } from "./renderPriceChart.js";
@@ -20,8 +20,6 @@ export type Rates = {
 };
 
 export async function setupPointOfSaleForm() {
-  const db = new Database();
-
   const state = {
     counter: null as Counter | null,
   };

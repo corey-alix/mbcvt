@@ -1,9 +1,8 @@
-import { Database, TransactionModel } from "../db/index.js";
+import { database as db, TransactionModel } from "../db/index.js";
 import { asBatchLink, asCurrency } from "../fun/index.js";
 import { globals } from "../globals.js";
 
 export async function runSalesReport() {
-  const db = new Database();
   await db.init();
 
   const ux = {

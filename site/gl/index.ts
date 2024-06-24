@@ -1,4 +1,4 @@
-import { Database } from "../db/index.js";
+import { database as db } from "../db/index.js";
 import { toast } from "./toast.js";
 
 export { setupChartOfAccountsForm } from "./setupChartOfAccountsForm.js";
@@ -20,7 +20,6 @@ export async function setupGeneralLedgerRawEditor() {
     if (!element) throw `Element not found: ${key}`;
   });
 
-  const db = new Database();
   await db.init();
 
   ux.editor.value = JSON.stringify(db.data, null, 2);

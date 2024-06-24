@@ -1,7 +1,5 @@
-import { Database, type AccountModel } from "../db/index.js";
+import { database as db, type AccountModel } from "../db/index.js";
 import { asCurrency, asLinkToAccountHistory } from "../fun/index.js";
-
-const db = new Database();
 
 // list all accounts with descriptions
 export class ChartOfAccounts {
@@ -36,7 +34,7 @@ export class ChartOfAccounts {
           .map(
             (account) => `
           <tr>
-            <td>${asLinkToAccountHistory(account.id, account.id+"")}</td>
+            <td>${asLinkToAccountHistory(account.id, account.id + "")}</td>
             <td><input data-account-id="${account.id}" value="${
               account.name
             }"/></td>
@@ -53,7 +51,8 @@ export class ChartOfAccounts {
     inputs.forEach((input) => {
       input.addEventListener("change", async (event) => {
         const target = event.target as HTMLInputElement;
-        this.#state.focusedAccountId = target.getAttribute("data-account-id") || "";
+        this.#state.focusedAccountId =
+          target.getAttribute("data-account-id") || "";
         if (!this.#state.focusedAccountId) throw "Account ID not found";
         const accountId = parseInt(this.#state.focusedAccountId, 10);
 

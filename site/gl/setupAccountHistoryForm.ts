@@ -1,10 +1,9 @@
-import { Database, TransactionModel } from "../db/index.js";
+import { database as db, TransactionModel } from "../db/index.js";
 import { asBatchLink } from "../fun/index.js";
 import { asCurrency } from "../fun/index.js";
 
 export async function setupAccountHistoryForm() {
   const target = document.querySelector("#general-ledger") || document.body;
-  const db = new Database();
   await db.init();
 
   // read account number from query string
@@ -41,8 +40,8 @@ export async function setupAccountHistoryForm() {
   table.innerHTML = `
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Description</th>
+                <th class="align-left">Date</th>
+                <th class="align-left">Description</th>
                 <th class="align-right">Amount</th>
                 <th class="align-right">Balance</th>
             </tr>
@@ -52,11 +51,11 @@ export async function setupAccountHistoryForm() {
               .map(
                 (transaction) => `
                 <tr>
-                    <td>${asBatchLink(
+                    <td class="align-left">${asBatchLink(
                       transaction.batchId,
                       transaction.date
                     )}</td>
-                    <td>${transaction.description}</td>
+                    <td class="align-left">${transaction.description}</td>
                     <td class="align-right">${asCurrency(transaction.amt)}</td>
                     <td class="align-right">${asCurrency(
                       (balance += transaction.amt)

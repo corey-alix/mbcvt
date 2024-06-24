@@ -13,13 +13,32 @@
       font-size: 3vmin;
     }
 
+
     input,
     button {
       font-size: inherit;
     }
 
-    #general-ledger-form {
+    button:hover {
+      border-color: var(--primary-hover);
+    }
+
+    button.primary {
+      background-color: var(--primary);
+      color: var(--primary-text-color);
+      border-color: var(--primary-text-color);
+    }
+
+    #generalLedgerForm {
       margin: 0.5rem;
+    }
+
+    .col-first {
+      grid-column: 1;
+    }
+
+    .col-last {
+      grid-column: -2;
     }
 
     .w-4 {
@@ -72,6 +91,12 @@
       display: none;
     }
 
+    button.secondary {
+      background-color: var(--secondary);
+      color: var(--secondary-text-color);
+      border-color: var(--secondary-text-color);
+    }
+
     .gl-header-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -84,6 +109,7 @@
         input {
           margin: 0;
         }
+
       }
 
       fieldset.align-left {
@@ -96,12 +122,36 @@
 
     }
 
+    .toolbar {
+      display: flex;
+      flex-direction: row;
+      justify-content: start;
+      align-items: first baseline;
+      margin: 0.25em;
+      padding: 0.25em;
+      flex-grow: 0.5em;
+      width: 75cqw;
+
+      button {
+        min-width: 13vw;
+        height: 4em;
+        white-space: nowrap;
+      }
+    }
+
     .span-2 {
-      column-span: 2;
+      grid-column: span 2;
     }
 
     .span-3 {
-      column-span: 3;
+      grid-column: span 3;
+    }
+
+    .header {
+      font-weight: bold;
+      text-transform: uppercase;
+      border-top: 0.1em solid var(--accent);
+      border-bottom: 0.1em solid var(--accent);
     }
   </style>
 </head>
@@ -109,7 +159,7 @@
 <body>
   <title>General Ledger</title>
   <h1>General Ledger</h1>
-  <h2 id="batch-date">Batch Date</h2>
+  <h2 id="batchDate">Batch Date</h2>
   <section>
     <div id="general-ledger" class="gl-grid"></div>
     <div class="spacer"></div>
@@ -121,14 +171,14 @@
       <div>Total</div>
       <div></div>
       <div></div>
-      <div id="total-debit" class="align-right">$0.00</div>
-      <div id="total-credit" class="align-right">$0.00</div>
+      <div id="totalDebit" class="align-right">$0.00</div>
+      <div id="totalCredit" class="align-right">$0.00</div>
     </div>
     <div class="spacer"></div>
   </section>
 
   <section class="no-batch">
-    <form id="general-ledger-form">
+    <form id="generalLedgerForm">
       <div class="gl-header-grid">
         <fieldset class="span-2">
           <label for="date">Date</label>
@@ -139,21 +189,24 @@
           <input type="text" name="description" id="description" placeholder="Purpose of this transaction" value=""
             required />
         </fieldset>
-        <fieldset class="align-left">
-          <label class="no-wrap" for="account-number">Account Number</label>
-          <input type="number" id="account-number" data-action="select-on-focus" class="w-4" value="" required />
+
+        <fieldset class="align-left col-first">
+          <label class="no-wrap" for="accountNumber">Account Number</label>
+          <input type="number" id="accountNumber" data-action="select-on-focus" class="w-4" value="" required />
         </fieldset>
         <fieldset class="span-2">
-          <p id="account-description"></p>
-          <button id="add-account" disabled>Add Account</button>
+          <p id="accountDescription"></p>
         </fieldset>
         <fieldset class="align-right">
-          <label class="" for="amount-debit">Debit</label>
-          <input type="number" id="amount-debit" data-action="select-on-focus" class="w-usd " value="" />
+          <label class="" for="amountDebit">Debit</label>
+          <input type="number" id="amountDebit" data-action="select-on-focus" class="w-usd " value="" />
         </fieldset>
         <fieldset class="align-right">
-          <label class="" for="amount-credit">Credit</label>
-          <input type="number" id="amount-credit" data-action="select-on-focus" class="w-usd " />
+          <label for="amountCredit">Credit</label>
+          <input type="number" id="amountCredit" data-action="select-on-focus" class="w-usd " />
+        </fieldset>
+        <fieldset class="col-last">
+          <button id="addEntryButton" class="no-batch secondary">Add Entry</button>
         </fieldset>
       </div>
     </form>
@@ -162,11 +215,11 @@
   <div class="spacer"></div>
 
   <section class="toolbar">
-    <button id="add-entry" class="no-batch">Add Entry</button>
-    <button id="batch-prev">← Prior Batch</button>
-    <button class="yes-batch" id="batch-current">Current Batch</button>
-    <button class="yes-batch" id="batch-next">Next Batch →</button>
-    <button class="no-batch" id="save-button">Apply</button>
+    <button id="addAccountButton">Add Account</button>
+    <button id="priorBatchButton">← Prior</button>
+    <button class="yes-batch" id="batchCurrentButton">Current Batch</button>
+    <button class="yes-batch" id="nextBatchButton">Next →</button>
+    <button class="no-batch primary" id="saveButton">Save Batch</button>
   </section>
 
   <span class="hidden" id="toaster"></span>
