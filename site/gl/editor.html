@@ -2,12 +2,44 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="../index.css" />
+    <style>
+        body {
+            font-size: 3vmin;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            container-type: inline-size;
+        }
 
+        #editor {
+            width: 75cqw;
+            height: 75cqh;
+            background-color: transparent;
+            color: var(--white);
+            resize: none;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-direction: row;
+            justify-content: start;
+            align-items: first baseline;
+            margin: 0.25em;
+            padding: 0.25em;
+            flex-grow: 0.5em;
+            width: 75cqw;
+        }
+    </style>
 </head>
 
 <body>
     <h1>GL Editor</h1>
     <textarea id="editor" class="json"></textarea>
+    <div class="toolbar">
+        <button id="save">Save</button>
+    </div>
     <script type="module">
         import { setupGeneralLedgerRawEditor } from "./index.js";
         setupGeneralLedgerRawEditor();

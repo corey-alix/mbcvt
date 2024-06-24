@@ -1,11 +1,11 @@
 # mbcvt
 Millbrook Campground in Westfield Vermont
 
-# Summary
+## Summary
 
 This is a reservation system for Millbrook Campground in Westfield Vermont.  It is written in typescript.  The backend runs on Netlify and the database is FaunaDB.
 
-# Requirements
+## Requirements
 
 The user must be able to reserve sites online and the experience must be better then https://www.reserveamerica.com/.
 

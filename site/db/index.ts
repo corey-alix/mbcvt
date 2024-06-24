@@ -30,6 +30,13 @@ export type DatabaseSchema = {
 };
 
 export class Database {
+  rawSave(data: DatabaseSchema) {
+    const backupKey = `${DATABASE_NAME}-backup-${Date.now()}`;
+    localStorage.setItem(backupKey, JSON.stringify(this.#data));
+    this.#data = data;
+    this.#save();
+  }
+
   deleteTransaction(index: number) {
     this.#data.transactions.splice(index, 1);
   }
@@ -138,5 +145,9 @@ export class Database {
     });
     const data = (await response.json()) as DatabaseSchema;
     this.#data = data;
+  }
+
+  public get data() {
+    return this.#data;
   }
 }
