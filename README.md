@@ -56,7 +56,11 @@ To run a cli command on a droplet use the following command:
 ```bash
 doctl compute ssh --ssh-command "ls -al"
 ```
+To set an environment variable using `doctl` use the following command:
 
+```bash
+doctl compute ssh --ssh-command "export FOO=bar"
+```
 
 ## Copy Existing Site
 
