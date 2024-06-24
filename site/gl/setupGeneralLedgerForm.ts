@@ -81,11 +81,38 @@ export async function setupGeneralLedgerForm() {
     ) as HTMLButtonElement,
     nextBatchButton: document.getElementById("batch-next") as HTMLButtonElement,
     batchDate: document.getElementById("batch-date") as HTMLElement,
+    batchCurrent: null as any as HTMLButtonElement
   };
 
+  Object.keys(ux).forEach(key => {
+    const element = document.getElementById(key);
+    if (!element) {
+      throw new Error(`Missing element: ${key}`);
+    }
+    (ux as any)[key] = element;
+  });
+
+  document.querySelectorAll("[data-action]").forEach(actionNode => {
+    const actionNames = actionNode.getAttribute("data-action")?.split(" ");
+    actionNames?.forEach(actionName => {
+      switch (actionName) {
+        case "select-on-focus":
+          actionNode.addEventListener("focus", () => {
+            (actionNode as HTMLInputElement).select();
+          })
+          break;
+      }
+    })
+  })
+
   ux.date.value = new Date().toISOString().substring(0, 10);
+  ux.description.focus();
+
   asAmount(ux.amountCredit);
   asAmount(ux.amountDebit);
+
+  ux.amountCredit.addEventListener("input", () => ux.amountDebit.value = "");
+  ux.amountDebit.addEventListener("input", () => ux.amountCredit.value = "");
 
   const glAccounts = db.getAccounts();
 
@@ -254,7 +281,6 @@ export async function setupGeneralLedgerForm() {
 
     const balance = totalCredit + totalDebit;
 
-    ux.accountNumber.value = "";
     ux.amountDebit.value = "";
     ux.amountCredit.value = "";
 
@@ -275,7 +301,10 @@ export async function setupGeneralLedgerForm() {
       throw new Error("Debits and credits must balance");
     }
 
-    await db.createBatch();
+    const batchId = await db.createBatch();
+    // set the batchId query string and reload this page
+    const url = new URL(window.location.href);
+    url.searchParams.set("batch", batchId.toString());
     window.location.reload();
   });
 

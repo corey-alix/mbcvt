@@ -13,8 +13,26 @@
       font-size: 3vmin;
     }
 
+    input,
+    button {
+      font-size: inherit;
+    }
+
     #general-ledger-form {
       margin: 0.5rem;
+    }
+
+    .w-4 {
+      width: 4em;
+    }
+
+    .w-usd {
+      width: clamp(4em, 100%, 8em);
+    }
+
+
+    .no-wrap {
+      white-space: nowrap;
     }
 
     .spacer {
@@ -50,14 +68,40 @@
       border-top-left-radius: 1rem;
     }
 
-    .dock-bottom {
-      position: fixed;
-      top: 90vh;
-      left: 0;
-    }
-
     .hidden {
       display: none;
+    }
+
+    .gl-header-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--spacer);
+
+      fieldset {
+        display: flex;
+        flex-direction: column;
+
+        input {
+          margin: 0;
+        }
+      }
+
+      fieldset.align-left {
+        align-items: start;
+      }
+
+      fieldset.align-right {
+        align-items: end;
+      }
+
+    }
+
+    .span-2 {
+      column-span: 2;
+    }
+
+    .span-3 {
+      column-span: 3;
     }
   </style>
 </head>
@@ -85,44 +129,44 @@
 
   <section class="no-batch">
     <form id="general-ledger-form">
-      <div class="gl-header">
-        <fieldset>
+      <div class="gl-header-grid">
+        <fieldset class="span-2">
           <label for="date">Date</label>
           <input type="date" name="date" id="date" required />
         </fieldset>
-        <fieldset>
+        <fieldset class="span-3">
           <label for="description">Description</label>
           <input type="text" name="description" id="description" placeholder="Purpose of this transaction" value=""
             required />
         </fieldset>
-      </div>
-      <div class="spacer"></div>
-      <div class="gl-header-grid">
-        <label class="align-left">Account Number</label>
-        <label class="align-right">Debit</label>
-        <label class="align-right">Credit</label>
-        <fieldset>
-          <input type="number" id="account-number" class="align-left w-4" value="" required />
+        <fieldset class="align-left">
+          <label class="no-wrap" for="account-number">Account Number</label>
+          <input type="number" id="account-number" data-action="select-on-focus" class="w-4" value="" required />
+        </fieldset>
+        <fieldset class="span-2">
           <p id="account-description"></p>
           <button id="add-account" disabled>Add Account</button>
         </fieldset>
-        <fieldset>
-          <input type="number" id="amount-debit" class="w-usd align-right" value="" />
+        <fieldset class="align-right">
+          <label class="" for="amount-debit">Debit</label>
+          <input type="number" id="amount-debit" data-action="select-on-focus" class="w-usd " value="" />
         </fieldset>
-        <fieldset>
-          <input type="number" id="amount-credit" class="w-usd align-right" />
+        <fieldset class="align-right">
+          <label class="" for="amount-credit">Credit</label>
+          <input type="number" id="amount-credit" data-action="select-on-focus" class="w-usd " />
         </fieldset>
       </div>
-      <button id="add-entry">Add Entry</button>
     </form>
   </section>
 
   <div class="spacer"></div>
 
-  <section class="dock-bottom">
+  <section class="toolbar">
+    <button id="add-entry" class="no-batch">Add Entry</button>
+    <button id="batch-prev">← Prior Batch</button>
+    <button class="yes-batch" id="batch-current">Current Batch</button>
+    <button class="yes-batch" id="batch-next">Next Batch →</button>
     <button class="no-batch" id="save-button">Apply</button>
-    <button id="batch-prev">Prior</button>
-    <button class="yes-batch" id="batch-next">Next</button>
   </section>
 
   <span class="hidden" id="toaster"></span>

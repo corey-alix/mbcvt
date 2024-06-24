@@ -489,32 +489,6 @@
     }
   }
 
-  .gl-header-grid {
-    display: grid;
-    grid-template-columns: auto 5rem 5rem;
-    gap: var(--spacer);
-
-    fieldset {
-      display: flex;
-
-      .align-left {
-        /* not sure */
-      }
-
-      .align-right {
-        /* not sure */
-      }
-    }
-  }
-
-  .w-4 {
-    width: 4rem;
-  }
-
-  .w-usd {
-    width: clamp(4rem, 100%, 8rem);
-  }
-
   fieldset {
     padding: 0;
     border: none;
