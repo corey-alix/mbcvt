@@ -1,6 +1,6 @@
 import { getStickyValue, readQueryString } from "../fun/index.js";
 
-export const PUBLIC_KEY = "123";
+export const PUBLIC_KEY = getStickyValue("public-key", "123");
 export const DATABASE_NAME = getStickyValue("database-name", "test");
 export const API_URL = "/api";
 

@@ -62,6 +62,12 @@ To set an environment variable using `doctl` use the following command:
 doctl compute ssh --ssh-command "export FOO=bar"
 ```
 
+To list environment variables use the following command:
+
+```bash
+doctl compute ssh --ssh-command "env"
+```
+
 ## Copy Existing Site
 
 To download all the files from http://www.millbrookcampground.com/ I will do the following:
