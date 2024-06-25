@@ -127,7 +127,7 @@
       display: flex;
       flex-direction: row;
       justify-content: start;
-      align-items: first baseline;
+      align-items: center;
       margin: 0.25em;
       padding: 0.25em;
       flex-grow: 0.5em;
@@ -169,6 +169,13 @@
   <h1>General Ledger</h1>
   <h2 id="batchDate">Batch Date</h2>
 
+  <section class="toolbar">
+    <button id="priorBatchButton">←</button>
+    <button id="batchCurrentButton">New</button>
+    <button id="nextBatchButton">→</button>
+    <button id="addAccountButton">View Accounts</button>
+  </section>
+
   <section class="no-batch">
     <form id="generalLedgerForm">
       <div class="gl-header-grid">
@@ -183,11 +190,12 @@
         </fieldset>
 
         <fieldset class="align-left col-first">
-          <label class="no-wrap" for="accountNumber">Account Number</label>
+          <label for="accountNumber">Account</label>
           <input type="number" id="accountNumber" data-action="select-on-focus" class="w-4" value="" required />
         </fieldset>
         <fieldset class="span-2">
-          <p id="accountDescription"></p>
+          <label for="accountDescription">Account Description</label>
+          <input id="accountDescription" placeholder="Describe this account" required />
         </fieldset>
         <fieldset class="align-right">
           <label class="" for="amountDebit">Debit</label>
@@ -222,11 +230,7 @@
   </div>
 
   <section class="toolbar">
-    <button id="addAccountButton" class="no-batch">Add Account</button>
-    <button id="priorBatchButton">←</button>
-    <button class="yes-batch" id="batchCurrentButton">New</button>
-    <button class="yes-batch" id="nextBatchButton">→</button>
-    <button class="no-batch primary" id="saveButton">Save</button>
+    <button id="saveButton" class="no-batch primary">Save</button>
   </section>
 
   <span class="hidden" id="toaster"></span>

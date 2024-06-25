@@ -100,6 +100,8 @@ class Database {
     if (!this.#data.accounts) {
       this.#data.accounts = [];
     }
+    if (this.#data.accounts.find((a) => a.id === account.id))
+      throw `Account already exists`;
     this.#data.accounts.push(account);
     await this.#save();
   }

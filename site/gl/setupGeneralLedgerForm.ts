@@ -66,7 +66,7 @@ export async function setupGeneralLedgerForm() {
     amountCredit: null as any as HTMLInputElement,
     date: null as any as HTMLInputElement,
     description: null as any as HTMLInputElement,
-    accountDescription: null as any as HTMLElement,
+    accountDescription: null as any as HTMLInputElement,
     accountNumber: null as any as HTMLInputElement,
     saveButton: null as any as HTMLButtonElement,
     addAccountButton: null as any as HTMLButtonElement,
@@ -120,14 +120,12 @@ export async function setupGeneralLedgerForm() {
     );
 
     if (!account) {
-      ux.accountNumber.setCustomValidity("Invalid account number");
-      ux.accountDescription.textContent = "";
+      ux.accountDescription.value = "";
+      ux.accountDescription.disabled = false;
     } else {
-      ux.accountNumber.setCustomValidity("");
-      ux.accountDescription.textContent = account.name;
+      ux.accountDescription.value = account.name;
+      ux.accountDescription.disabled = true;
     }
-    // validate the form
-    ux.generalLedgerForm.reportValidity();
   });
 
   // intercept form submission
@@ -169,11 +167,20 @@ export async function setupGeneralLedgerForm() {
       return;
     }
 
-    const account = glAccounts.find(
+    let account = glAccounts.find(
       (a) => a.id === parseInt(ux.accountNumber.value)
     );
     if (!account) {
-      throw new Error("Invalid account number");
+      const accountDescription = ux.accountDescription.value;
+      if (!accountDescription) {
+        throw new Error("Account description is required");
+      }
+      account = {
+        id: parseInt(ux.accountNumber.value),
+        name: accountDescription,
+        balance: 0,
+      };
+      await db.addAccount(account);
     }
 
     const debit = parseFloat(ux.amountDebit.value || "0");
@@ -225,7 +232,7 @@ export async function setupGeneralLedgerForm() {
       url.searchParams.set("batch", state.batchId.toString());
       window.history.replaceState({}, "", url.toString());
     } else {
-      ux.batchDate.textContent = "";
+      ux.batchDate.textContent = "Today";
       const transactions = db.getCurrentTransactions();
       transactions.forEach((transactionInfo, index) => {
         renderTransaction(transactionInfo, index);
