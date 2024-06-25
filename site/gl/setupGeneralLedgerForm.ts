@@ -35,7 +35,7 @@ export async function setupGeneralLedgerForm() {
         : "<div></div>"
     }
     `;
-    const target = document.getElementById("general-ledger") as HTMLDivElement;
+    const target = ux.generalLedger;
     target.insertAdjacentHTML("beforeend", template);
 
     const actions = target.querySelectorAll("[data-action]");
@@ -58,24 +58,26 @@ export async function setupGeneralLedgerForm() {
 
   const ux = {
     generalLedgerForm: null as any as HTMLFormElement,
+    generalLedger: null as any as HTMLElement,
+    generalLedgerTotal: null as any as HTMLElement,
     totalDebit: null as any as HTMLElement,
     totalCredit: null as any as HTMLElement,
     amountDebit: null as any as HTMLInputElement,
     amountCredit: null as any as HTMLInputElement,
     date: null as any as HTMLInputElement,
     description: null as any as HTMLInputElement,
-    accountDescription: null as any  as HTMLElement,
-    accountNumber: null as any  as HTMLInputElement,
+    accountDescription: null as any as HTMLElement,
+    accountNumber: null as any as HTMLInputElement,
     saveButton: null as any as HTMLButtonElement,
     addAccountButton: null as any as HTMLButtonElement,
     addEntryButton: null as any as HTMLButtonElement,
     priorBatchButton: null as any as HTMLButtonElement,
     nextBatchButton: null as any as HTMLButtonElement,
     batchDate: null as any as HTMLElement,
-    batchCurrentButton: null as any as HTMLButtonElement
+    batchCurrentButton: null as any as HTMLButtonElement,
   };
 
-  Object.keys(ux).forEach(key => {
+  Object.keys(ux).forEach((key) => {
     const element = document.getElementById(key);
     if (!element) {
       throw new Error(`Missing element: ${key}`);
@@ -83,18 +85,18 @@ export async function setupGeneralLedgerForm() {
     (ux as any)[key] = element;
   });
 
-  document.querySelectorAll("[data-action]").forEach(actionNode => {
+  document.querySelectorAll("[data-action]").forEach((actionNode) => {
     const actionNames = actionNode.getAttribute("data-action")?.split(" ");
-    actionNames?.forEach(actionName => {
+    actionNames?.forEach((actionName) => {
       switch (actionName) {
         case "select-on-focus":
           actionNode.addEventListener("focus", () => {
             (actionNode as HTMLInputElement).select();
-          })
+          });
           break;
       }
-    })
-  })
+    });
+  });
 
   ux.date.value = new Date().toISOString().substring(0, 10);
   ux.description.focus();
@@ -102,8 +104,8 @@ export async function setupGeneralLedgerForm() {
   asAmount(ux.amountCredit);
   asAmount(ux.amountDebit);
 
-  ux.amountCredit.addEventListener("input", () => ux.amountDebit.value = "");
-  ux.amountDebit.addEventListener("input", () => ux.amountCredit.value = "");
+  ux.amountCredit.addEventListener("input", () => (ux.amountDebit.value = ""));
+  ux.amountDebit.addEventListener("input", () => (ux.amountCredit.value = ""));
 
   const glAccounts = db.getAccounts();
 
@@ -194,7 +196,7 @@ export async function setupGeneralLedgerForm() {
   });
 
   function render() {
-    const target = document.getElementById("general-ledger") as HTMLDivElement;
+    const target = ux.generalLedger;
     target.innerHTML = `
     <div class="header">Date</div>
     <div class="header align-left">Account Number</div>
@@ -211,7 +213,9 @@ export async function setupGeneralLedgerForm() {
       ux.batchDate.textContent = batch.date.toString();
 
       const transactions = db.getTransactions(state.batchId);
-      transactions.sort((a, b) => a.date.localeCompare(b.date) || (a.account - b.account));
+      transactions.sort(
+        (a, b) => a.date.localeCompare(b.date) || a.account - b.account
+      );
       transactions.forEach((transactionInfo) => {
         renderTransaction(transactionInfo);
       });
@@ -260,6 +264,10 @@ export async function setupGeneralLedgerForm() {
 
     ux.totalDebit.textContent = asCurrency(totalDebit);
     ux.totalCredit.textContent = asCurrency(-totalCredit);
+
+    const clone = ux.generalLedgerTotal.cloneNode(true) as HTMLElement;
+    // copy all the children into ux.generalLedger
+    ux.generalLedger.append(...clone.childNodes);
   }
 
   function updateBalance() {

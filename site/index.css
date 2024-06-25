@@ -464,7 +464,7 @@
 
   .gl-grid {
     display: grid;
-    grid-template-columns: 4em auto 8em 5em 5em 2em;
+    grid-template-columns: 3fr 4fr auto 4fr 4fr 2fr;
     gap: 0.25em;
     .header {
       font-weight: bold;

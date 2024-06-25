@@ -37,8 +37,9 @@
       grid-column: 1;
     }
 
-    .col-last {
-      grid-column: -2;
+    .col-last-2 {
+      grid-column-start: -3;
+      grid-column-end: all;
     }
 
     .w-4 {
@@ -135,8 +136,11 @@
       button {
         min-width: 13vw;
         height: 4em;
-        white-space: nowrap;
       }
+    }
+
+    .width-100 {
+      width: 100%;
     }
 
     .span-2 {
@@ -145,6 +149,10 @@
 
     .span-3 {
       grid-column: span 3;
+    }
+
+    .span-5 {
+      grid-column: span 5;
     }
 
     .header {
@@ -160,22 +168,6 @@
   <title>General Ledger</title>
   <h1>General Ledger</h1>
   <h2 id="batchDate">Batch Date</h2>
-  <section>
-    <div id="general-ledger" class="gl-grid"></div>
-    <div class="spacer"></div>
-  </section>
-
-  <section>
-    <hr />
-    <div id="general-ledger-total" class="gl-grid">
-      <div>Total</div>
-      <div></div>
-      <div></div>
-      <div id="totalDebit" class="align-right">$0.00</div>
-      <div id="totalCredit" class="align-right">$0.00</div>
-    </div>
-    <div class="spacer"></div>
-  </section>
 
   <section class="no-batch">
     <form id="generalLedgerForm">
@@ -205,21 +197,36 @@
           <label for="amountCredit">Credit</label>
           <input type="number" id="amountCredit" data-action="select-on-focus" class="w-usd " />
         </fieldset>
-        <fieldset class="col-last">
+        <fieldset class="col-last-2">
           <button id="addEntryButton" class="no-batch secondary">Add Entry</button>
         </fieldset>
       </div>
     </form>
+    <div class="spacer no-batch"></div>
   </section>
 
-  <div class="spacer"></div>
+  <section>
+    <div id="generalLedger" class="gl-grid"></div>
+    <div class="spacer"></div>
+  </section>
+
+  <div id="generalLedgerTotal" class="gl-grid hidden">
+    <hr class="span-5 width-100" />
+    <div></div>
+    <div>Total</div>
+    <div></div>
+    <div></div>
+    <div id="totalDebit" class="align-right">$0.00</div>
+    <div id="totalCredit" class="align-right">$0.00</div>
+    <div></div>
+  </div>
 
   <section class="toolbar">
-    <button id="addAccountButton">Add Account</button>
-    <button id="priorBatchButton">← Prior</button>
-    <button class="yes-batch" id="batchCurrentButton">Current Batch</button>
-    <button class="yes-batch" id="nextBatchButton">Next →</button>
-    <button class="no-batch primary" id="saveButton">Save Batch</button>
+    <button id="addAccountButton" class="no-batch">Add Account</button>
+    <button id="priorBatchButton">←</button>
+    <button class="yes-batch" id="batchCurrentButton">New</button>
+    <button class="yes-batch" id="nextBatchButton">→</button>
+    <button class="no-batch primary" id="saveButton">Save</button>
   </section>
 
   <span class="hidden" id="toaster"></span>
