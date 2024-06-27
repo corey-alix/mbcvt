@@ -1,5 +1,6 @@
 import { officeInfo, siteMap } from "./db.js";
 import "./components/index.js";
+import { range } from "./fun/index.js";
 
 const MIN_RESERVATION_DAYS = 2;
 const MAX_RESERVATION_DAYS = 28;
@@ -448,14 +449,10 @@ function log(message: string) {
   console.log(message);
 }
 
-function range(size: number) {
-  return [...Array(size).keys()];
-}
-
 function interpolateDates(start: string, end: string) {
   const startDate = new Date(start);
   const days = calculateDays(start, end);
-  return range(days).map((_, i) => {
+  return range(0, days - 1).map((_, i) => {
     const date = new Date(startDate);
     date.setDate(date.getDate() + i);
     // yyyy-mm-dd format

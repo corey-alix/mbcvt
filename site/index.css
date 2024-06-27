@@ -438,6 +438,7 @@
     width: 15rem;
   }
 
+  select,
   input,
   button {
     margin: var(--spacer);
@@ -497,6 +498,8 @@
     padding: 0;
     border: none;
   }
+
+  select,
   input {
     border: 0.5px solid;
     padding: var(--padding-slim);

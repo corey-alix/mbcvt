@@ -4,6 +4,27 @@ export const PUBLIC_KEY = getStickyValue("public-key", "123");
 export const DATABASE_NAME = getStickyValue("database-name", "test");
 export const API_URL = "/api";
 
+const sampleFormData = {
+  partyName: "test",
+  siteNumber: "1001",
+  siteName: "cash",
+  checkIn: "2024-06-27",
+  checkOut: "2024-06-28",
+  adults: "1",
+  children: "0",
+  visitors: "0",
+  woodBundles: "0",
+  baseDue: "41.28",
+  totalTax: "3.72",
+  totalDue: "45.00",
+  paymentDate: ["2024-06-27", "2024-06-27"],
+  paymentType: ["cash", "check"],
+  paymentAmount: ["45.00", "20.00"],
+  balanceDue: "-20.00",
+};
+
+export type PointOfSaleFormData = typeof sampleFormData;
+
 export type TransactionModel = {
   date: string;
   description: string;
@@ -27,14 +48,27 @@ export type DatabaseSchema = {
   batches: BatchModel[];
   accounts: AccountModel[];
   transactions: TransactionModel[];
+  pos: PointOfSaleFormData[];
 };
 
 class Database {
+  getPointOfSale(id: number) {
+    this.#data.pos = this.#data.pos || [];
+    if (id < 0 || id >= this.#data.pos.length) throw new Error("Invalid ID");
+    return this.#data.pos[id];
+  }
+
+  upsertPointOfSale(pos: PointOfSaleFormData) {
+    this.#data.pos = this.#data.pos || [];
+    this.#data.pos.push(pos);
+    return this.#save();
+  }
+
   rawSave(data: DatabaseSchema) {
     const backupKey = `${DATABASE_NAME}-backup-${Date.now()}`;
     localStorage.setItem(backupKey, JSON.stringify(this.#data));
     this.#data = data;
-    this.#save();
+    return this.#save();
   }
 
   deleteTransaction(index: number) {
@@ -64,8 +98,19 @@ class Database {
 
   getAccount(accountId: number) {
     const result = this.#data.accounts.find((a) => a.id === accountId);
-    if (!result) throw `Account not found`;
+    if (!result) throw `Account not found: ${accountId}`;
     return result;
+  }
+
+  forceAccount(accountId: number, name: string) {
+    let account = this.#data.accounts.find((a) => a.id === accountId);
+    if (!account) {
+      account = { id: accountId, name, balance: 0 };
+      this.#data.accounts.push(account);
+    } else {
+      account.name = name;
+    }
+    return account;
   }
 
   getAccounts() {
@@ -80,6 +125,7 @@ class Database {
     accounts: [] as AccountModel[],
     batches: [] as BatchModel[],
     transactions: [] as TransactionModel[],
+    pos: [] as PointOfSaleFormData[],
   } satisfies DatabaseSchema;
 
   constructor() {}
@@ -108,7 +154,7 @@ class Database {
 
   async updateAccount(account: AccountModel) {
     const targetAccount = this.#data.accounts.find((a) => a.id === account.id);
-    if (!targetAccount) throw `Account not found`;
+    if (!targetAccount) throw `Account not found: ${account.id}`;
     targetAccount.name = account.name;
     await this.#save();
   }

@@ -8,6 +8,51 @@
     <title>General Ledger</title>
     <link rel="stylesheet" href="../index.css" />
     <style>
+        button:hover {
+            border-color: var(--primary-hover);
+        }
+
+        button.primary {
+            background-color: var(--primary);
+            color: var(--primary-text-color);
+            border-color: var(--primary-text-color);
+        }
+
+        .toolbar {
+            display: flex;
+            flex-direction: row;
+            justify-content: start;
+            align-items: center;
+            margin: 0.25em;
+            padding: 0.25em;
+            flex-grow: 0.5em;
+            width: 75cqw;
+
+            button {
+                min-width: 13vw;
+                height: 4em;
+            }
+        }
+
+        .template {
+            display: none !important;
+        }
+
+        .payments.grid {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        .method-of-payment.grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .method-of-payment>fieldset {
+            display: flex;
+            flex-direction: column;
+        }
+
         .bolder {
             font-weight: bolder;
         }
@@ -16,16 +61,17 @@
             font-size: 1.5em;
         }
 
-        #priceChart {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-        }
-
         fieldset {
             padding: 0;
             border: none;
         }
 
+        fieldset>select {
+            height: 100%;
+        }
+
+        button,
+        select,
         input {
             border-radius: var(--border-radius);
             padding: var(--spacer);
@@ -66,6 +112,7 @@
             gap: 0.5em;
         }
 
+        select,
         button,
         input {
             font-size: inherit;
@@ -96,8 +143,6 @@
 
         input[type="date"] {
             text-align: right;
-            width: 12em;
-            /* align to right edge of grid column */
             justify-self: end;
         }
 
@@ -188,8 +233,36 @@
                 <label>Total Due</label>
                 <input type="number" id="totalDue" step="0.01" readonly min="0" tabindex="-1" />
             </fieldset>
+            <template id="method-of-payment">
+                <div class="method-of-payment grid template">
+                    <fieldset>
+                        <label>Payment Date</label>
+                        <input type="date" id="paymentDate" required />
+                    </fieldset>
+                    <fieldset>
+                        <label>Payment Type</label>
+                        <select id="paymentType">
+                            <option value="cash">Cash</option>
+                            <option value="check">Check</option>
+                            <option value="paypal">Paypal</option>
+                        </select>
+                    </fieldset>
+                    <fieldset>
+                        <label for="paymentAmount">Amount</label>
+                        <input type="number" id="paymentAmount" step="0.01" min="0" />
+                    </fieldset>
+                </div>
+            </template>
             <fieldset>
-                <button type="submit">Submit</button>
+                <label for="addPaymentMethod">Payments</label>
+                <button type="button" id="addPaymentMethod">Add Payment</button>
+            </fieldset>
+            <fieldset>
+                <label>Remaining Balance</label>
+                <input type="number" id="balanceDue" step="0.01" readonly min="0" tabindex="-1" />
+            </fieldset>
+            <fieldset class="toolbar">
+                <button type="submit" class="primary">Submit</button>
             </fieldset>
         </form>
     </details>

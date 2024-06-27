@@ -1,6 +1,6 @@
-import { asCurrency } from "../fun/index.js";
+import { asCurrency, range } from "../fun/index.js";
 import { globals, magic } from "../globals.js";
-import { Counter, Rates, range } from "./setupPointOfSaleForm.js";
+import { Counter, Rates } from "./setupPointOfSaleForm.js";
 
 function totalDays(counter: Counter) {
   return counter.days + counter.weeks * 7 + counter.months * 28;

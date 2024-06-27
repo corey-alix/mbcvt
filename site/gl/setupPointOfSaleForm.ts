@@ -1,5 +1,6 @@
-import { database as db } from "../db/index.js";
-import { asCurrency } from "../fun/index.js";
+import { PointOfSaleFormData, database as db } from "../db/index.js";
+import { getElements } from "../fun/index.js";
+import { asCurrency, round } from "../fun/index.js";
 import { globals, magic } from "../globals.js";
 import { minimizeRate } from "./renderPriceChart.js";
 import { toast } from "./toast.js";
@@ -164,9 +165,57 @@ export async function setupPointOfSaleForm() {
   function updateTotals() {
     const expenses = getExpenses();
     const basePrice = Object.values(expenses).reduce((a, b) => a + b, 0);
+    const totalDue = (1 + magic.taxRate) * basePrice;
     inputs.baseDue.value = basePrice.toFixed(2);
     inputs.totalTax.value = (magic.taxRate * basePrice).toFixed(2);
-    inputs.totalDue.value = ((1 + magic.taxRate) * basePrice).toFixed(2);
+    inputs.totalDue.value = totalDue.toFixed(2);
+
+    const payments = Array.from(
+      document.querySelectorAll<HTMLDivElement>(".method-of-payment")
+    ).map((div) => {
+      const paymentAmount =
+        div.querySelector<HTMLInputElement>("#paymentAmount")!;
+      if (!paymentAmount) throw new Error("Payment amount not found");
+      return {
+        amount: paymentAmount.valueAsNumber,
+      };
+    });
+
+    const totalPaid = payments.reduce((a, b) => a + b.amount, 0);
+    inputs.balanceDue.value = (totalDue - totalPaid).toFixed(2);
+  }
+
+  function addPaymentInputs(options?: {
+    paymentType: string;
+    paymentDate: string;
+    paymentAmount: number;
+  }) {
+    const template = document.querySelector<HTMLTemplateElement>(
+      "template#method-of-payment"
+    );
+    if (!template) throw new Error("Template not found");
+    const clone = template.content.firstElementChild!.cloneNode(
+      true
+    ) as HTMLElement;
+    clone.classList.remove("template");
+
+    const ux = {
+      paymentDate: null as any as HTMLInputElement,
+      paymentType: null as any as HTMLSelectElement,
+      paymentAmount: null as any as HTMLInputElement,
+    };
+    getElements(ux, clone);
+
+    ux.paymentType.value = options?.paymentType || "cash";
+    ux.paymentAmount.value =
+      options?.paymentAmount.toFixed(2) || inputs.balanceDue.value;
+    ux.paymentDate.value =
+      options?.paymentDate || new Date().toISOString().split("T")[0];
+
+    ux.paymentAmount.addEventListener("input", () => updateTotals());
+
+    template.parentElement?.insertBefore(clone, template);
+    updateTotals();
   }
 
   await db.init();
@@ -184,13 +233,11 @@ export async function setupPointOfSaleForm() {
     baseDue: null as any as HTMLInputElement,
     totalTax: null as any as HTMLInputElement,
     totalDue: null as any as HTMLInputElement,
+    balanceDue: null as any as HTMLInputElement,
+    addPaymentMethod: null as any as HTMLButtonElement,
   };
 
-  Object.keys(inputs).forEach((key) => {
-    const input = document.querySelector<HTMLElement>(`#${key}`)!;
-    if (!input) throw new Error(`Input not found: ${key}`);
-    (inputs as any)[key] = input;
-  });
+  getElements(inputs, document.body);
 
   injectIncrementorButtons(inputs.visitors);
   injectIncrementorButtons(inputs.adults);
@@ -202,6 +249,8 @@ export async function setupPointOfSaleForm() {
   selectAllOnFocus(inputs.adults);
   selectAllOnFocus(inputs.children);
   selectAllOnFocus(inputs.woodBundles);
+
+  inputs.addPaymentMethod.addEventListener("click", () => addPaymentInputs());
 
   inputs.siteNumber.addEventListener("input", () => {
     const siteNumber = inputs.siteNumber.value.toUpperCase();
@@ -271,10 +320,26 @@ export async function setupPointOfSaleForm() {
     event.preventDefault();
     inputs.quickReservationForm.reportValidity();
 
-    const cashAccount = db.getAccount(magic.cashAccount);
-    const taxAccount = db.getAccount(magic.taxAccount);
-    const firewoodAccount = db.getAccount(magic.firewoodAccount);
-    const peopleAccount = db.getAccount(magic.peopleAccount);
+    // form inputs as json
+    const formData = new FormData(inputs.quickReservationForm);
+    const json = {} as Record<string, any>;
+
+    // convert entries to an array
+    Array.from(formData.entries()).forEach((entry) => {
+      const [key, value] = entry;
+      if (typeof json[key] === "undefined") json[key] = value;
+      else if (Array.isArray(json[key])) json[key].push(value);
+      else json[key] = [json[key], value];
+    });
+
+    console.log(JSON.stringify(json, null, 2));
+
+    db.upsertPointOfSale(json as PointOfSaleFormData);
+
+    const cashAccount = db.forceAccount(magic.cashAccount, "cash");
+    const taxAccount = db.forceAccount(magic.taxAccount, "tax");
+    const firewoodAccount = db.forceAccount(magic.firewoodAccount, "firewood");
+    const peopleAccount = db.forceAccount(magic.peopleAccount, "guests");
 
     const siteNumber = inputs.siteNumber.value;
     const siteAccount = db.getAccount(parseInt(siteNumber));
@@ -344,15 +409,26 @@ export async function setupPointOfSaleForm() {
   });
 
   inputs.partyName.focus();
-}
 
-function round(value: number, places: number) {
-  const multiplier = Math.pow(10, places);
-  return Math.round(value * multiplier) / multiplier;
-}
+  // if there is an invoice number in the query string, populate the form
+  const invoice = new URLSearchParams(window.location.search).get("invoice");
+  if (invoice) {
+    const pos = db.getPointOfSale(parseInt(invoice));
+    if (!pos) throw new Error("Invalid invoice number");
+    inputs.partyName.value = pos.partyName;
+    inputs.siteNumber.value = pos.siteNumber;
+    inputs.checkIn.value = pos.checkIn;
+    inputs.checkOut.value = pos.checkOut;
+    inputs.adults.value = pos.adults;
+    inputs.children.value = pos.children;
+    inputs.visitors.value = pos.visitors;
+    inputs.woodBundles.value = pos.woodBundles;
 
-export function range(start: number, end: number) {
-  return Array.from({ length: end - start + 1 }, (_, i) => i + start);
+    const paymentInfo = extractPaymentInfo(pos);
+    paymentInfo.forEach((payment) => {
+      addPaymentInputs(payment);
+    });
+  }
 }
 
 function printReceipt(sale: {
@@ -403,9 +479,29 @@ function printReceipt(sale: {
 
   document.body.innerHTML = html;
 }
+
 function isRateClassChange(counter1: Counter, counter2: Counter) {
   if (!counter1.weeks !== !counter2.weeks) return true;
   if (!counter1.months !== !counter2.months) return true;
   if (!counter1.season !== !counter2.season) return true;
   return false;
+}
+function extractPaymentInfo(pos: PointOfSaleFormData) {
+  const payments = {
+    paymentType: pos.paymentType,
+    paymentDate: pos.paymentDate,
+    paymentAmount: pos.paymentAmount,
+  };
+
+  if (!Array.isArray(pos.paymentType)) {
+    payments.paymentType = [pos.paymentType];
+    payments.paymentDate = <any>[pos.paymentDate];
+    payments.paymentAmount = <any>[pos.paymentAmount];
+  }
+
+  return payments.paymentType.map((_, i) => ({
+    paymentType: payments.paymentType[i],
+    paymentDate: payments.paymentDate[i],
+    paymentAmount: parseFloat(payments.paymentAmount[i]),
+  }));
 }

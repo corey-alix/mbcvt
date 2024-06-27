@@ -40,3 +40,23 @@ export function asBatchLink(batchId: number, label: string) {
   });
   return `<a href=./general-ledger.html?${queryString.toString()}>${label}</a>`;
 }
+
+export function round(value: number, places: number) {
+  const multiplier = Math.pow(10, places);
+  return Math.round(value * multiplier) / multiplier;
+}
+
+export function range(start: number, end: number) {
+  return Array.from({ length: end - start + 1 }, (_, i) => i + start);
+}
+export function getElements(
+  inputs: Record<string, HTMLElement>,
+  root: HTMLElement
+) {
+  Object.keys(inputs).forEach((key) => {
+    const input = root.querySelector(`#${key}`)!;
+    if (!input) throw new Error(`Input not found: ${key}`);
+    (inputs as any)[key] = input;
+    (input as any).name = input.id;
+  });
+}
