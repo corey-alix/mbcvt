@@ -1,5 +1,5 @@
 import { PointOfSaleFormData, database as db } from "../db/index.js";
-import { getElements } from "../fun/index.js";
+import { getElements, injectActions } from "../fun/index.js";
 import { asCurrency, round } from "../fun/index.js";
 import { globals, magic } from "../globals.js";
 import { minimizeRate } from "./renderPriceChart.js";
@@ -165,9 +165,15 @@ export async function setupPointOfSaleForm() {
   function updateTotals() {
     const expenses = getExpenses();
     const basePrice = Object.values(expenses).reduce((a, b) => a + b, 0);
-    const totalDue = (1 + magic.taxRate) * basePrice;
+    const totalDiscount = inputs.totalDiscount.valueAsNumber;
+    // discount * (1 + taxRate) = totalTaxDiscount
+    // discount = totalTaxDiscount / (1 + taxRate)
+    const effectiveDiscount = totalDiscount / (1 + magic.taxRate);
+    const taxable = basePrice - effectiveDiscount;
+    const taxDue = magic.taxRate * taxable;
+    const totalDue = taxable + taxDue;
     inputs.baseDue.value = basePrice.toFixed(2);
-    inputs.totalTax.value = (magic.taxRate * basePrice).toFixed(2);
+    inputs.totalTax.value = taxDue.toFixed(2);
     inputs.totalDue.value = totalDue.toFixed(2);
 
     const payments = Array.from(
@@ -234,10 +240,12 @@ export async function setupPointOfSaleForm() {
     totalTax: null as any as HTMLInputElement,
     totalDue: null as any as HTMLInputElement,
     balanceDue: null as any as HTMLInputElement,
+    totalDiscount: null as any as HTMLInputElement,
     addPaymentMethod: null as any as HTMLButtonElement,
   };
 
   getElements(inputs, document.body);
+  injectActions();
 
   injectIncrementorButtons(inputs.visitors);
   injectIncrementorButtons(inputs.adults);
@@ -310,6 +318,10 @@ export async function setupPointOfSaleForm() {
   });
 
   inputs.woodBundles.addEventListener("change", () => {
+    updateTotals();
+  });
+
+  inputs.totalDiscount.addEventListener("input", () => {
     updateTotals();
   });
 

@@ -60,3 +60,18 @@ export function getElements(
     (input as any).name = input.id;
   });
 }
+
+export function injectActions() {
+  document.querySelectorAll("[data-action]").forEach((actionNode) => {
+    const actionNames = actionNode.getAttribute("data-action")?.split(" ");
+    actionNames?.forEach((actionName) => {
+      switch (actionName) {
+        case "select-on-focus":
+          actionNode.addEventListener("focus", () => {
+            (actionNode as HTMLInputElement).select();
+          });
+          break;
+      }
+    });
+  });
+}

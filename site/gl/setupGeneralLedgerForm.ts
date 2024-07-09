@@ -1,5 +1,5 @@
 import { database as db, TransactionModel } from "../db/index.js";
-import { asLinkToAccountHistory } from "../fun/index.js";
+import { asLinkToAccountHistory, injectActions } from "../fun/index.js";
 import { readQueryString, safeHtml, asCurrency } from "../fun/index.js";
 import { toast } from "./toast.js";
 import { asShortDate, trigger, navigateTo, on } from "./gl.js";
@@ -85,18 +85,7 @@ export async function setupGeneralLedgerForm() {
     (ux as any)[key] = element;
   });
 
-  document.querySelectorAll("[data-action]").forEach((actionNode) => {
-    const actionNames = actionNode.getAttribute("data-action")?.split(" ");
-    actionNames?.forEach((actionName) => {
-      switch (actionName) {
-        case "select-on-focus":
-          actionNode.addEventListener("focus", () => {
-            (actionNode as HTMLInputElement).select();
-          });
-          break;
-      }
-    });
-  });
+  injectActions();
 
   ux.date.value = new Date().toISOString().substring(0, 10);
   ux.description.focus();
