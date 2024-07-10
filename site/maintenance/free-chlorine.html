@@ -13,13 +13,14 @@
             padding: 1vmin;
         }
 
+        textarea,
         select,
         button,
         input {
             font-size: inherit;
         }
 
-        #free-chlorine-form>fieldset {
+        fieldset {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 0.5em;
@@ -42,32 +43,35 @@
         }
 
         .ul {
-            border-bottom: 0.1em solid green    ;
+            border-bottom: 0.1em solid green;
+        }
+
+        .span-2 {
+            grid-column: span 2;
         }
     </style>
 </head>
 
 <body>
     <h1>Free Chlorine</h1>
-    <form id="free-chlorine-form">
+    <form id="freeChlorineForm">
         <fieldset>
             <label for="date">Date</label>
             <input type="date" id="date" required />
         </fieldset>
         <fieldset>
             <label for="location">Location</label>
-            <input type="text" id="location" required />
+            <input type="text" id="location" required placeholder="Location" />
         </fieldset>
         <fieldset>
             <label for="freeChlorine">Free Chlorine</label>
-            <input type="number" id="freeChlorine" required />
+            <input type="number" id="freeChlorine" required placeholder="mg/L" />
         </fieldset>
         <fieldset>
-            <label for="comment">Comments</label>
-            <textarea id="comment"></textarea>
+            <textarea class="span-2" id="comment" placeholder="Comments"></textarea>
         </fieldset>
         <fieldset>
-            <button type="button" id="submit">Submit</button>
+            <button class="span-2" type="button" id="submit">Submit</button>
         </fieldset>
     </form>
     <section>
