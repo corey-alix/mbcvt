@@ -36,6 +36,14 @@
         fieldset>input {
             border-style: solid;
         }
+
+        tr>td {
+            text-align: left;
+        }
+
+        .ul {
+            border-bottom: 0.1em solid green    ;
+        }
     </style>
 </head>
 
@@ -55,6 +63,10 @@
             <input type="number" id="freeChlorine" required />
         </fieldset>
         <fieldset>
+            <label for="comment">Comments</label>
+            <textarea id="comment"></textarea>
+        </fieldset>
+        <fieldset>
             <button type="button" id="submit">Submit</button>
         </fieldset>
     </form>
@@ -63,9 +75,10 @@
         <table id="freeChlorineReadings">
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Free Chlorine</th>
-                    <th>Location</th>
+                    <th class="ul">Date</th>
+                    <th class="ul">Free Chlorine</th>
+                    <th class="ul">Location</th>
+                    <th class="ul">Comment</th>
                 </tr>
             </thead>
             <tbody>

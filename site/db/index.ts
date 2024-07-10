@@ -48,6 +48,7 @@ export type FreeChlorineData = {
   freeChlorine: number;
   date: string;
   location: string;
+  comment: string;
 };
 
 export type DatabaseSchema = {

@@ -8,6 +8,7 @@ export async function setupFreeChlorineForm() {
     freeChlorine: null as any as HTMLInputElement,
     date: null as any as HTMLInputElement,
     location: null as any as HTMLInputElement,
+    comment: null as any as HTMLTextAreaElement,
     submit: null as any as HTMLButtonElement,
     freeChlorineReadings: null as any as HTMLTableElement,
   };
@@ -20,7 +21,8 @@ export async function setupFreeChlorineForm() {
     const freeChlorine = ux.freeChlorine.valueAsNumber;
     const date = ux.date.valueAsDate!.toISOString().split("T")[0];
     const location = ux.location.value;
-    database.addFreeChlorine({ freeChlorine, date, location });
+    const comment = ux.comment.value;
+    database.addFreeChlorine({ freeChlorine, date, location, comment});
   });
 
   const readings = database.getFreeChlorine();
@@ -29,5 +31,6 @@ export async function setupFreeChlorineForm() {
     row.insertCell().textContent = reading.date;
     row.insertCell().textContent = reading.freeChlorine.toString();
     row.insertCell().textContent = reading.location;
+    row.insertCell().textContent = reading.comment;
   });
 }
