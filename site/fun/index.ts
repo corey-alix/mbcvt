@@ -59,6 +59,8 @@ export function getElements(
     (inputs as any)[key] = input;
     (input as any).name = input.id;
   });
+
+  return inputs;
 }
 
 export function injectActions() {

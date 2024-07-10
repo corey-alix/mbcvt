@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Free Chlorine</title>
+    <link rel="stylesheet" href="../index.css" />
+
+    <style>
+        #free-chlorine-form>fieldset {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5em;
+            width: 75cqw;
+            margin: 0.25em;
+            padding: 0.25em;
+            justify-content: space-between;
+        }
+
+        fieldset>label {
+            text-align: left;
+        }
+
+        fieldset>input {
+            border-style: solid;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Free Chlorine</h1>
+    <form id="free-chlorine-form">
+        <fieldset>
+            <label for="date">Date</label>
+            <input type="date" id="date" required />
+        </fieldset>
+        <fieldset>
+            <label for="location">Location</label>
+            <input type="text" id="location" required />
+        </fieldset>
+        <fieldset>
+            <label for="freeChlorine">Free Chlorine</label>
+            <input type="number" id="freeChlorine" required />
+        </fieldset>
+        <fieldset>
+            <button type="button" id="submit">Submit</button>
+        </fieldset>
+    </form>
+    <section>
+        <h2>Free Chlorine Readings</h2>
+        <table id="freeChlorineReadings">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Free Chlorine</th>
+                    <th>Location</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </section>
+    <script type="module">
+        import { setupFreeChlorineForm } from "./index.js";
+        setupFreeChlorineForm();
+    </script>
+</body>
+
+</html>

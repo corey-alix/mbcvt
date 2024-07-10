@@ -1,5 +1,5 @@
 import { database as db, TransactionModel } from "../db/index.js";
-import { asBatchLink, asCurrency } from "../fun/index.js";
+import { asBatchLink, asCurrency, getElements } from "../fun/index.js";
 import { globals } from "../globals.js";
 
 export async function runSalesReport() {
@@ -40,11 +40,7 @@ export async function runSalesReport() {
     );
   }
 
-  Object.keys(ux).forEach((key) => {
-    const input = document.querySelector<HTMLElement>(`#${key}`)!;
-    if (!input) throw new Error(`Input not found: ${key}`);
-    (ux as any)[key] = input;
-  });
+  getElements(ux, document.body);
 
   ux.nextMonthButton.addEventListener("click", () => {
     let startDate = new Date(ux.startDate.value);

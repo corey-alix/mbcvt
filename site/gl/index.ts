@@ -1,4 +1,5 @@
 import { database as db } from "../db/index.js";
+import { getElements } from "../fun/index.js";
 import { toast } from "./toast.js";
 
 export { setupChartOfAccountsForm } from "./setupChartOfAccountsForm.js";
@@ -14,11 +15,8 @@ export async function setupGeneralLedgerRawEditor() {
     editor: null as any as HTMLTextAreaElement,
     save: null as any as HTMLButtonElement,
   };
-
-  Object.keys(ux).forEach((key) => {
-    const element = ((ux as any)[key] = document.getElementById(key));
-    if (!element) throw `Element not found: ${key}`;
-  });
+  
+  getElements(ux, document.body);
 
   await db.init();
 

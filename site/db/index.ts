@@ -44,14 +44,31 @@ export type BatchModel = {
   transactions: TransactionModel[];
 };
 
+export type FreeChlorineData = {
+  freeChlorine: number;
+  date: string;
+  location: string;
+};
+
 export type DatabaseSchema = {
   batches: BatchModel[];
   accounts: AccountModel[];
   transactions: TransactionModel[];
   pos: PointOfSaleFormData[];
+  freeChlorine: FreeChlorineData[];
 };
 
 class Database {
+  addFreeChlorine(data: FreeChlorineData) {
+    this.#data.freeChlorine = this.#data.freeChlorine || [];
+    this.#data.freeChlorine.push(data);
+    return this.#save();
+  }
+
+  getFreeChlorine() {
+    return this.#data.freeChlorine || [];
+  }
+
   getPointOfSale(id: number) {
     this.#data.pos = this.#data.pos || [];
     if (id < 0 || id >= this.#data.pos.length) throw new Error("Invalid ID");
@@ -126,6 +143,7 @@ class Database {
     batches: [] as BatchModel[],
     transactions: [] as TransactionModel[],
     pos: [] as PointOfSaleFormData[],
+    freeChlorine: [] as FreeChlorineData[],
   } satisfies DatabaseSchema;
 
   constructor() {}

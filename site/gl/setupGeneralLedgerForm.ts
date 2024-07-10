@@ -1,5 +1,5 @@
 import { database as db, TransactionModel } from "../db/index.js";
-import { asLinkToAccountHistory, injectActions } from "../fun/index.js";
+import { asLinkToAccountHistory, getElements, injectActions } from "../fun/index.js";
 import { readQueryString, safeHtml, asCurrency } from "../fun/index.js";
 import { toast } from "./toast.js";
 import { asShortDate, trigger, navigateTo, on } from "./gl.js";
@@ -77,13 +77,8 @@ export async function setupGeneralLedgerForm() {
     batchCurrentButton: null as any as HTMLButtonElement,
   };
 
-  Object.keys(ux).forEach((key) => {
-    const element = document.getElementById(key);
-    if (!element) {
-      throw new Error(`Missing element: ${key}`);
-    }
-    (ux as any)[key] = element;
-  });
+  getElements(ux, document.body);
+
 
   injectActions();
 
