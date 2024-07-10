@@ -1,4 +1,4 @@
-import { range } from "./fun/index";
+import { range } from "./fun/index.js";
 
 const baseRate = 14;
 const sewerRate = 10;
