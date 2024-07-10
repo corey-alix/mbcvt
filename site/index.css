@@ -45,8 +45,20 @@
 
 @media screen {
   body {
+    font-size: 3em;
     background-color: var(--gray);
     color: var(--secondary);
+    padding: 0.5em;
+    display: flex;
+    flex-direction: column;
+    align-content: space-around;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    font-size: inherit;
   }
 }
 

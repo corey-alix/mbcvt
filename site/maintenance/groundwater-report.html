@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Groundwater Systems Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../index.css" />
+    <style>
+        body {
+            font-size: 1em;
+        }
+
+        fieldset {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5em;
+            width: 75cqw;
+            margin: 0.25em;
+            padding: 0.25em;
+            justify-content: space-between;
+        }
+
+        fieldset>label {
+            text-align: left;
+        }
+
+        fieldset>input {
+            border-style: solid;
+        }
+
+        tr>td {
+            text-align: left;
+        }
+
+        .ul {
+            border-bottom: 0.1em solid green;
+            padding-left: 0.1em;
+            padding-right: 0.1em;
+        }
+
+        .span-2 {
+            /* span two td elements */
+            grid-column: span 2;
+        }
+
+        .w1 {
+            width: 1em;
+            display: inline-block;
+        }
+
+        .w2 {
+            width: 2em;
+            display: inline-block;
+        }
+
+        .w5 {
+            width: 5em;
+            display: inline-block;
+        }
+
+        .w10 {
+            width: 10em;
+            display: inline-block;
+        }
+
+        .w15 {
+            width: 15em;
+            display: inline-block;
+        }
+
+        .pad {
+            margin-left: 0.1em;
+            margin-right: 0.1em;
+        }
+
+        center {
+            text-align: center;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Groundwater Systems and Systems Purchasing Groundwater</h1>
+    <p>
+        <span>For the Month of</span>
+        <span id="month" class="ul w2 pad"></span>
+        <span>20</span><span id="year" class="ul w1 pad"></span>
+        <span>WSID#</span>
+        <span id="wsid" class="ul w2 pad">8114</span>
+        <span>Name of Water System</span>
+        <span id="name" class="ul w10 pad">Millbrook Campground</span>
+    </p>
+
+    <p>Minium free chlorine residual required for 4 Log viral inactivation (mg/l):</p>
+
+    <table li>
+        <thead>
+            <tr>
+                <td class="center">Day of Month</td>
+                <td class="center">Water Production</td>
+                <td class="center" colspan="2">Disinfection/Chlorination<br />(Free Cl, in mg/l)</td>
+                <td class="center">Floride<br />(mg/l)</td>
+                <td class="center">pH<br />(Only if providing corrosion control)</td>
+            </tr>
+            <tr>
+                <td class="center"></td>
+                <td class="center">Metered Values<br />(Gallons/Day)</td>
+                <td class="center">Entry Point<br />Daily Low</td>
+                <td class="center">Distribution System<br />(when taking coliform sample)</td>
+                <td class="center">Entry Point</td>
+                <td class="center">Finished<br />avg. daily</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="center">1</td>
+                <td></td>
+                <td class="center">0.5</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <script>
+        const date = new Date();
+        const month = date.getMonth();
+        const year = date.getFullYear();
+        const nameOfMonth = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date);
+        document.getElementById('month').textContent = nameOfMonth;
+        document.getElementById('year').textContent = (year % 100).toString().padStart(2, '0');
+
+        // inject 30 more rows
+        const tbody = document.querySelector('tbody');
+        for (let i = 2; i <= 31; i++) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="center">${i}</td>
+                <td></td>
+                <td class="center">0.5</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            `;
+            tbody.appendChild(tr);
+        }
+    </script>
+</body>
+
+</html>
