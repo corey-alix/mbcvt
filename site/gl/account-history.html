@@ -9,6 +9,12 @@
   <link rel="stylesheet" href="../index.css" />
   <link rel="author" href="mailto:coreyalix@gmail.com" />
   <style>
+    @media print {
+      body {
+        font-size: 0.9em;
+      }
+    }
+
     body {
       font-size: 3vmin;
     }
@@ -23,7 +29,9 @@
       border-top: 0.1em solid var(--accent);
       border-bottom: 0.1em solid var(--accent);
     }
-    td,th {
+
+    td,
+    th {
       margin: 0.25em;
       padding: 0.25em;
     }

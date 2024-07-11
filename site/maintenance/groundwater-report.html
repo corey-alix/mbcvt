@@ -83,6 +83,12 @@
             border: 1px solid black;
             border-collapse: collapse;
         }
+
+        @media print {
+            body {
+                font-size: 0.8em;
+            }
+        }
     </style>
 </head>
 
@@ -91,7 +97,7 @@
     <p>
         <span>For the Month of</span>
         <span id="month" class="ul w2 pad"></span>
-        <span>20</span><span id="year" class="ul w1 pad"></span>
+        <span id="decade">20</span><span id="year" class="ul w1 pad"></span>
         <span>WSID#</span>
         <span id="wsid" class="ul w2 pad">8114</span>
         <span>Name of Water System</span>
@@ -119,38 +125,33 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td class="center">1</td>
-                <td></td>
-                <td class="center">0.5</td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
         </tbody>
     </table>
-    <script>
+    <script type="module">
+        import { setupGroundWaterReport } from "./index.js";
         const date = new Date();
         const month = date.getMonth();
         const year = date.getFullYear();
         const nameOfMonth = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date);
         document.getElementById('month').textContent = nameOfMonth;
+        document.getElementById('decade').textContent = Math.floor(year / 100).toString().padStart(2, '0');
         document.getElementById('year').textContent = (year % 100).toString().padStart(2, '0');
 
         // inject 30 more rows
         const tbody = document.querySelector('tbody');
-        for (let i = 2; i <= 31; i++) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td class="center">${i}</td>
-                <td></td>
-                <td class="center">0.5</td>
-                <td></td>
-                <td></td>
-                <td></td>
-            `;
-            tbody.appendChild(tr);
+        for (let i = 1; i <= 31; i++) {
+            tbody.insertAdjacentHTML('beforeEnd', `
+<tr class="day">
+    <td class="center">${i}</td>
+    <td></td>
+    <td class="center entry day_${i}"></td>
+    <td></td>
+    <td></td>
+    <td></td>
+</tr>`)
         }
+
+        await setupGroundWaterReport();
     </script>
 </body>
 

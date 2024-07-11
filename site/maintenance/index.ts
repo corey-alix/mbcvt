@@ -1,5 +1,5 @@
 import { getElements } from "../fun/index.js";
-import { database } from "../db/index.js";
+import { database, FreeChlorineData } from "../db/index.js";
 
 export async function setupFreeChlorineForm() {
   function reset() {
@@ -52,4 +52,27 @@ export async function setupFreeChlorineForm() {
   });
 
   updateReadings();
+}
+
+export async function setupGroundWaterReport() {
+  await database.init();
+  const readings = database.getFreeChlorine();
+  const tbody = document.querySelector("table>tbody")!;
+  const dailyReadings = {} as Record<number, FreeChlorineData>;
+  readings.forEach((reading) => {
+    const day = new Date(reading.date).getDate();
+    dailyReadings[day] = reading;
+  });
+  tbody.querySelectorAll("tr.day").forEach((entryRow, day) => {
+    const reading = dailyReadings[day];
+    if (!reading) return;
+    const entry = entryRow.querySelector("td.entry")!;
+    entry.textContent = reading?.freeChlorine.toString();
+    const comment = reading?.comment;
+    if (comment) {
+      const nextCell = entry.nextElementSibling! as HTMLTableCellElement;
+      nextCell.textContent = comment;
+      nextCell.classList.add("comment");
+    }
+  });
 }
