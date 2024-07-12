@@ -63,11 +63,18 @@ export function getElements(
   return inputs;
 }
 
-export function injectActions() {
+export function injectActions(handlers: Record<string, Function> = {}) {
   document.querySelectorAll("[data-action]").forEach((actionNode) => {
     const actionNames = actionNode.getAttribute("data-action")?.split(" ");
     actionNames?.forEach((actionName) => {
+      if (handlers && handlers[actionName]) {
+        handlers[actionName](actionNode);
+        return;
+      }
       switch (actionName) {
+        case "date-today":
+          (actionNode as HTMLInputElement).valueAsDate = new Date();
+          break;
         case "select-on-focus":
           actionNode.addEventListener("focus", () => {
             (actionNode as HTMLInputElement).select();

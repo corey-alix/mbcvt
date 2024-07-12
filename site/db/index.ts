@@ -57,9 +57,34 @@ export type DatabaseSchema = {
   transactions: TransactionModel[];
   pos: PointOfSaleFormData[];
   freeChlorine: FreeChlorineData[];
+  contacts: Contact[];
+};
+
+export type Contact = {
+  name: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
 };
 
 class Database {
+  addContact(contact: Partial<Contact>) {
+    this.#data.contacts = this.#data.contacts || [];
+    this.#data.contacts.push(contact as Contact);
+    this.#save();
+  }
+
+  getContacts() {
+    return this.#data.contacts || [];
+  }
+
+  getContact(id: number): Contact {
+    this.#data.contacts = this.#data.contacts || [];
+    if (!this.#data.contacts[id]) throw new Error("Invalid ID");
+    return this.#data.contacts[id];
+  }
+
   addFreeChlorine(data: FreeChlorineData) {
     this.#data.freeChlorine = this.#data.freeChlorine || [];
     this.#data.freeChlorine.push(data);
@@ -145,6 +170,7 @@ class Database {
     transactions: [] as TransactionModel[],
     pos: [] as PointOfSaleFormData[],
     freeChlorine: [] as FreeChlorineData[],
+    contacts: [] as Contact[],
   } satisfies DatabaseSchema;
 
   constructor() {}

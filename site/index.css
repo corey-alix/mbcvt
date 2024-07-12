@@ -45,7 +45,7 @@
 
 @media screen {
   body {
-    font-size: 3em;
+    font-size: 3vmin;
     background-color: var(--gray);
     color: var(--secondary);
     padding: 0.5em;
