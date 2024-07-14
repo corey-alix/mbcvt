@@ -118,7 +118,8 @@ export async function setupAccountsPayableForm() {
           datalist.appendChild(option);
         });
       });
-
+    },
+    "vendor-validator": (input: HTMLInputElement) => {
       input.addEventListener("change", () => {
         const vendorName = input.value;
         const vendor = database
