@@ -9,6 +9,7 @@ export async function setupAccountsPayableForm() {
     postToAccountVendorName: null as any as HTMLInputElement,
     postToAccountAmount: null as any as HTMLInputElement,
     postToAccountDate: null as any as HTMLInputElement,
+    postToAccountDescription: null as any as HTMLInputElement,
     postToAccountSubmitButton: null as any as HTMLButtonElement,
 
     vendorEditorForm: null as any as HTMLFormElement,
@@ -205,12 +206,16 @@ export async function setupAccountsPayableForm() {
       "Accounts Payable"
     );
 
+    const description =
+      ux.postToAccountDescription.value ||
+      `Payment to ${postToAccountVendorName}`;
+
     await database.addTransactionPair({
       debitAccount: defaultAccountId,
       creditAccount: accountsPayableAccount.id,
       amt: postToAccountAmount,
       date: asYearMonthDay(postToAccountDate),
-      description: `Payment to ${postToAccountVendorName}`,
+      description,
     });
     await database.createBatch();
 
