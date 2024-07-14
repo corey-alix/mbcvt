@@ -23,9 +23,9 @@ export class ChartOfAccounts {
     table.innerHTML = `
       <thead>
         <tr>
-          <th>Account</th>
-          <th>Description</th>
-          <th>Balance</th>
+          <th class="left">Account</th>
+          <th class="left">Description</th>
+          <th class="right">Balance</th>
         </tr>
       </thead>
       <tbody>
@@ -34,8 +34,8 @@ export class ChartOfAccounts {
           .map(
             (account) => `
           <tr>
-            <td>${asLinkToAccountHistory(account.id, account.id + "")}</td>
-            <td><input data-account-id="${account.id}" value="${
+            <td class="align-left">${asLinkToAccountHistory(account.id, account.id + "")}</td>
+            <td class="align-left"><input data-account-id="${account.id}" value="${
               account.name
             }"/></td>
             <td class="align-right">${asCurrency(account.balance)}</td>

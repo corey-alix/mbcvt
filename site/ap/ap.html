@@ -5,28 +5,153 @@
     <title>AP</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../index.css" />
     <style>
+        @media screen {
+            body {
+                font-size: clamp(9pt, 2vw, 16pt);
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            }
+
+            input,
+            button,
+            select {
+                font-size: inherit;
+            }
+        }
+
+        /* dark mode */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #345;
+                color: #cde;
+            }
+
+            .bg-lite {
+                background-color: #456;
+            }
+        }
+
+        /* light mode */
+        @media (prefers-color-scheme: light) {
+            body {
+                background-color: #f0f0f0;
+                color: #333;
+            }
+
+            .bg-lite {
+                background-color: #f0f0f0;
+            }
+        }
+
+        /* small width */
+        @media (max-width: 480px) {
+            .grid-2 {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+
+        .capitalize {
+            text-transform: capitalize;
+        }
+
+        .heading {
+            margin: 0.25em 0 0.75em 0;
+        }
+
+        h1.heading {
+            margin: 0.5em 0 1em 0;
+        }
+
         .grid-2 {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 3fr;
             gap: 1em;
+            align-items: stretch;
+        }
+
+        .span-2 {
+            grid-column: span 2;
+        }
+
+        .round {
+            border-radius: 0.5em;
+        }
+
+        .pad {
+            padding: 1em;
+        }
+
+        section {
+            margin: 1em;
+        }
+
+        .toolbar {
+            button,
+            input[type="button"] {
+                padding: 0.5em;
+                margin: 0.5em;
+                border: 0.1em solid;
+            }
+
+
+            .center {
+                text-align: center;
+            }
         }
     </style>
 </head>
 
-<body>
-    <h1>Accounts Payable</h1>
+<body data-action="auto-shortcut">
+    <h1 class="heading center capitalize">Accounts Payable</h1>
+    <section class="template round bg-lite pad">
+        <h2 class="heading center capitalize">List of Vendors</h2>
+        <div class="grid-2">
+            <label for="vendorList">Select a Vendor</label>
+            <select id="vendorList" required data-action="auto-populate-vendor-list">
+                <option value="">Select a Vendor</option>
+            </select>
+            <div class="toolbar span-2">
+                <button class="round" type="button" id="vendorEditorButton">Edit Vendor</button>
+                <button class="round" type="button" id="vendorPayButton">Pay Vendor</button>
+            </div>
+        </div>
+    </section>
     <!-- fill out a form to pay a vendor -->
-    <form class="grid-2">
-        <label for="vendor">Vendor:</label>
-        <input type="text" id="vendor" name="vendor" required data-action="auto-complete-vendor">
-        <label for="amount">Amount:</label>
-        <input type="number" id="amount" name="amount" required>
-        <label for="date">Date:</label>
-        <input type="date" id="date" name="date" required data-action="date-today">
-        <input type="button" id="submit" value="Submit">
-    </form>
+    <section class="round bg-lite pad">
+        <h2 class="heading center capitalize">Post to Accounts Payable</h2>
+        <form id="postToAccountForm" class="grid-2" data-action="label-as-placeholder">
+            <label for="vendor">Vendor Name</label>
+            <input type="text" id="vendor" required data-action="auto-complete-vendor">
+            <label for="amount">Amount Due</label>
+            <input type="number" id="amount" required>
+            <label for="date">Date Due</label>
+            <input type="date" id="date" required data-action="date-today">
+            <div class="toolbar span-2">
+                <button class="round" type="button" id="submit">Post to Ledger</button>
+            </div>
+        </form>
+    </section>
+    <section class="template round bg-lite pad">
+        <h2 class="heading center capitalize">Vendor Account Setup</h2>
+        <form id="upsertToVendorForm" class="grid-2" data-action="label-as-placeholder">
+            <label for="vendorEditorVendorName">Vendor Name</label>
+            <input type="text" id="vendorEditorVendorName" required data-action="auto-complete-vendor" />
+            <label for="vendorEditorLedgerAccount">Default Account</label>
+            <input type="text" id="vendorEditorLedgerAccount" required data-action="auto-complete-gl-account" />
+            <label for="vendorEditorAddress">Address</label>
+            <input type="text" id="vendorEditorAddress" required />
+            <label for="vendorEditorPhone">Phone Number</label>
+            <input type="tel" id="vendorEditorPhone" required data-action="input-telephone" />
+            <label for="vendorEditorEmail">Email</label>
+            <input type="email" id="vendorEditorEmail" required data-action="input-email" />
+            <label for="vendorEditorContact">Contact Person</label>
+            <input type="text" id="vendorEditorContact" required />
+            <div class="toolbar span-2">
+                <button class="round" type="button" id="vendorEditorSubmit">Save Changes</button>
+            </div>
+        </form>
+    </section>
 
     <script type="module">
         import { setupAccountsPayableForm } from "./index.js";

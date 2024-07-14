@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" class="gl">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8" />
   <!-- mobile friendly -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>General Ledger</title>
+  <title>Chart of Accounts</title>
   <link rel="stylesheet" href="../index.css" />
   <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
     a {
       color: inherit;
       margin: 0.5rem;
@@ -16,10 +21,16 @@
     a:hover {
       color: white;
     }
+
+    td > input {
+      margin: 0;
+      padding: 0.5em;
+    }
   </style>
 </head>
 
 <body>
+  <h1>Chart of Accounts</h1>
   <script type="module">
     import { setupChartOfAccountsForm } from "./index.js";
     setupChartOfAccountsForm();

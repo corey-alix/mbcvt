@@ -32,14 +32,17 @@ export type TransactionModel = {
   amt: number;
 };
 
+type AccountId = number;
+type BatchId = number;
+
 export type AccountModel = {
-  id: number;
+  id: AccountId;
   name: string;
   balance: number;
 };
 
 export type BatchModel = {
-  id: number;
+  id: BatchId;
   date: string;
   transactions: TransactionModel[];
 };
@@ -62,19 +65,19 @@ export type DatabaseSchema = {
 
 export type Contact = {
   name: string;
-  street: string;
-  city: string;
-  state: string;
-  zip: string;
+  phone: string;
+  email: string;
+  contact: string;
+  defaultAccountId: AccountId;
+  notes?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  street?: string;
 };
 
 class Database {
-  addContact(contact: Partial<Contact>) {
-    this.#data.contacts = this.#data.contacts || [];
-    this.#data.contacts.push(contact as Contact);
-    this.#save();
-  }
-
   getContacts() {
     return this.#data.contacts || [];
   }
@@ -83,6 +86,17 @@ class Database {
     this.#data.contacts = this.#data.contacts || [];
     if (!this.#data.contacts[id]) throw new Error("Invalid ID");
     return this.#data.contacts[id];
+  }
+
+  upsertContact(contact: Contact) {
+    this.#data.contacts = this.#data.contacts || [];
+    const index = this.#data.contacts.findIndex((c) => c.name === contact.name);
+    if (index === -1) {
+      this.#data.contacts.push(contact);
+    } else {
+      this.#data.contacts[index] = contact;
+    }
+    this.#save();
   }
 
   addFreeChlorine(data: FreeChlorineData) {
