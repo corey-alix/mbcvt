@@ -53,7 +53,30 @@
 <body>
   <h1 id="title">Account History</h1>
   <section>
-    <div id="general-ledger"></div>
+    <div id="general-ledger">
+      <table>
+        <thead>
+          <tr>
+            <th class="align-left">Date</th>
+            <th class="align-left">Description</th>
+            <th class="align-right">Debit</th>
+            <th class="align-right">Credit</th>
+            <th class="align-right">Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template id="row-template">
+            <tr>
+              <td id="batchLink" class="align-left"></td>
+              <td id="transactionDescription" class="align-left"></td>
+              <td id="transactionDebit" class="align-right"></td>
+              <td id="transactionCredit" class="align-right"></td>
+              <td id="transactionBalance" class="align-right"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
   </section>
   <span id="toaster"></span>
 

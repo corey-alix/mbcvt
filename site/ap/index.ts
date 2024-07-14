@@ -7,6 +7,7 @@ export async function setupAccountsPayableForm() {
   const ux = {
     postToAccountForm: null as any as HTMLFormElement,
     postToAccountVendorName: null as any as HTMLInputElement,
+    postToAccountLedgerAccount: null as any as HTMLInputElement,
     postToAccountAmount: null as any as HTMLInputElement,
     postToAccountDate: null as any as HTMLInputElement,
     postToAccountDescription: null as any as HTMLInputElement,
@@ -23,6 +24,7 @@ export async function setupAccountsPayableForm() {
 
     vendorPickerList: null as any as HTMLSelectElement,
     vendorPickerEditButton: null as any as HTMLButtonElement,
+    vendorPickerCreateButton: null as any as HTMLButtonElement,
     vendorPickerPayButton: null as any as HTMLButtonElement,
   };
 
@@ -89,14 +91,18 @@ export async function setupAccountsPayableForm() {
       });
     },
     "auto-populate-vendor-list": (input: HTMLSelectElement) => {
-      const contacts = database.getContacts();
-
-      contacts.forEach((vendor) => {
-        const option = document.createElement("option");
-        option.value = vendor.name;
-        option.textContent = vendor.name;
-        input.appendChild(option);
-      });
+      const doit = () => {
+        const contacts = database.getContacts();
+        input.innerHTML = "";
+        contacts.forEach((vendor) => {
+          const option = document.createElement("option");
+          option.value = vendor.name;
+          option.textContent = vendor.name;
+          input.appendChild(option);
+        });
+      };
+      doit();
+      database.addEventListener("save", doit);
     },
     "auto-complete-vendor": (input: HTMLInputElement) => {
       const datalist = document.createElement("datalist");
@@ -220,6 +226,13 @@ export async function setupAccountsPayableForm() {
     ux.vendorEditorForm.reset();
   });
 
+  ux.vendorPickerCreateButton.addEventListener("click", () => {
+    ux.vendorEditorVendorName.value = "";
+    ux.vendorEditorVendorName.dispatchEvent(new Event("input"));
+    ux.vendorEditorVendorName.dispatchEvent(new Event("change"));
+    ux.vendorEditorVendorName.focus();
+  });
+
   ux.vendorPickerEditButton.addEventListener("click", () => {
     ux.vendorEditorVendorName.value = ux.vendorPickerList.value;
     ux.vendorEditorVendorName.dispatchEvent(new Event("input"));
@@ -232,6 +245,24 @@ export async function setupAccountsPayableForm() {
     ux.postToAccountVendorName.dispatchEvent(new Event("input"));
     ux.postToAccountVendorName.dispatchEvent(new Event("change"));
     ux.postToAccountVendorName.focus();
+  });
+
+  ux.postToAccountVendorName.addEventListener("change", () => {
+    const postToAccountVendorName = ux.postToAccountVendorName.value;
+    const vendor = database
+      .getContacts()
+      .find((d) => d.name === postToAccountVendorName);
+    if (!vendor) {
+      throw new Error(`Vendor not found: ${postToAccountVendorName}`);
+    }
+
+    const defaultAccountId = vendor.defaultAccountId;
+    if (!defaultAccountId) throw new Error("Vendor has no default account");
+
+    const defaultAccount = database.getAccount(defaultAccountId);
+    if (!defaultAccount) throw `Account not found: ${defaultAccountId}`;
+
+    ux.postToAccountLedgerAccount.value = defaultAccountId + "";
   });
 }
 

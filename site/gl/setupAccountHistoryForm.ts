@@ -35,36 +35,35 @@ export async function setupAccountHistoryForm() {
   // sort by date
   transactions.sort((a, b) => a.date.localeCompare(b.date));
 
-  const table = document.createElement("table");
+  const rowTemplate = document.getElementById(
+    "row-template"
+  ) as HTMLTemplateElement;
+  if (!rowTemplate) throw "row-template not found";
+
+  const table = document
+    .getElementById("general-ledger")
+    ?.querySelector("table");
+  if (!table) throw "table not found";
+
   let balance = 0;
-  table.innerHTML = `
-        <thead>
-            <tr>
-                <th class="align-left">Date</th>
-                <th class="align-left">Description</th>
-                <th class="align-right">Amount</th>
-                <th class="align-right">Balance</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${transactions
-              .map(
-                (transaction) => `
-                <tr>
-                    <td class="align-left">${asBatchLink(
-                      transaction.batchId,
-                      transaction.date
-                    )}</td>
-                    <td class="align-left">${transaction.description}</td>
-                    <td class="align-right">${asCurrency(transaction.amt)}</td>
-                    <td class="align-right">${asCurrency(
-                      (balance += transaction.amt)
-                    )}</td>
-                </tr>
-            `
-              )
-              .join("")}
-        </tbody>
-    `;
-  target.appendChild(table);
+
+  transactions.map((transaction) => {
+    const row = (
+      rowTemplate.content.cloneNode(true) as HTMLElement
+    ).querySelector("tr")!;
+    const link = asBatchLink(transaction.batchId, transaction.date);
+    const description = transaction.description;
+    const amt = asCurrency(transaction.amt);
+    balance += transaction.amt;
+    row.querySelector("#batchLink")!.innerHTML = link;
+    row.querySelector("#transactionDescription")!.innerHTML = description;
+    if (transaction.amt > 0) {
+      row.querySelector("#transactionDebit")!.innerHTML = amt;
+    } else if (transaction.amt < 0) {
+      row.querySelector("#transactionCredit")!.innerHTML = amt;
+    }
+    row.querySelector("#transactionBalance")!.innerHTML = asCurrency(balance);
+    row.querySelector("#batchLink")!.innerHTML = link;
+    rowTemplate.parentElement?.appendChild(row);
+  });
 }

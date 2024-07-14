@@ -5,7 +5,7 @@ import { range } from "./fun/index.js";
 const MIN_RESERVATION_DAYS = 2;
 const MAX_RESERVATION_DAYS = 28;
 
-class EventManager {
+export class EventManager {
   #queue: Record<string, Array<(e?: Event) => void>> = {};
   on(topic: string, callback: (e?: Event) => void) {
     if (!this.#queue[topic]) this.#queue[topic] = [];

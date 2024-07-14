@@ -1,4 +1,5 @@
 import { getStickyValue, readQueryString } from "../fun/index.js";
+import { EventManager } from "../index.js";
 
 export const PUBLIC_KEY = getStickyValue("public-key", "123");
 export const DATABASE_NAME = getStickyValue("database-name", "test");
@@ -78,6 +79,12 @@ export type Contact = {
 };
 
 class Database {
+  private events = new EventManager();
+
+  addEventListener(event: string, doit: () => void) {
+    this.events.on(event, doit);
+  }
+
   getContacts() {
     return this.#data.contacts || [];
   }
@@ -280,6 +287,8 @@ class Database {
         "Content-Type": "application/json",
       },
     });
+
+    this.events.trigger("save", new Event("save"));
   }
 
   async #load() {
