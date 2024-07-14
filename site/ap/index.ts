@@ -81,65 +81,22 @@ export async function setupAccountsPayableForm() {
 
       buttons.forEach((button) => {
         if (button.disabled) return;
-        const text = button.innerText;
-        let newText = text;
-
-        if (
-          text
-            .toLocaleLowerCase()
-            .split("")
-            .filter((v) => !blacklist.includes(v))
-            .some((shortcut) => {
-              if (shortcuts.has(shortcut)) return false;
-              const isUpperCaseMatch = text.includes(shortcut);
-              const isLowerCaseMatch =
-                !isUpperCaseMatch &&
-                text.toLocaleLowerCase().includes(shortcut);
-              shortcuts.set(shortcut, button);
-
-              if (isLowerCaseMatch) shortcut = shortcut.toUpperCase();
-              if (!isLowerCaseMatch && !isUpperCaseMatch) {
-                newText = `${text} [${shortcut}]`;
-              } else {
-                newText = text.replace(shortcut, `<u>${shortcut}</u>`);
-              }
-              return true;
-            })
-        ) {
-          button.innerHTML = newText;
+        const shortcut = findShortcut(button.innerText, blacklist, shortcuts);
+        if (shortcut) {
+          button.innerHTML = shortcut.text;
+          shortcuts.set(shortcut.shortcut, button);
         }
       });
 
       inputs.forEach((input) => {
         if (input.disabled || input.readOnly || input.tabIndex < 0) return;
         const label = labels.find((l) => l.htmlFor === input.id);
-        const text = label ? label.innerText : input.value;
-        let newText = text;
-
-        text
-          .toLocaleLowerCase()
-          .split("")
-          .filter((v) => !blacklist.includes(v))
-          .some((shortcut) => {
-            if (shortcuts.has(shortcut)) return false;
-            const isUpperCaseMatch = text.includes(shortcut.toUpperCase());
-            const isLowerCaseMatch =
-              !isUpperCaseMatch && text.toLocaleLowerCase().includes(shortcut);
-            shortcuts.set(shortcut, input);
-
-            if (isLowerCaseMatch) shortcut = shortcut.toUpperCase();
-            if (!isLowerCaseMatch && !isUpperCaseMatch) {
-              newText = `${text} [${shortcut}]`;
-            } else {
-              newText = text.replace(shortcut, `<u>${shortcut}</u>`);
-            }
-            if (label) {
-              label.innerHTML = newText;
-            } else {
-              input.innerHTML = newText;
-            }
-            return true;
-          });
+        if (!label) return;
+        const shortcut = findShortcut(label.innerText, blacklist, shortcuts);
+        if (shortcut) {
+          label.innerHTML = shortcut.text;
+          shortcuts.set(shortcut.shortcut, input);
+        }
       });
 
       root.addEventListener("keydown", (e) => {
@@ -299,4 +256,30 @@ export async function setupAccountsPayableForm() {
     ux.vendor.dispatchEvent(new Event("change"));
     ux.vendor.focus();
   });
+}
+function findShortcut(
+  text: string,
+  blacklist: string[],
+  shortcuts: Map<string, HTMLInputElement | HTMLButtonElement | null>
+) {
+  const candidates = text
+    .toLocaleLowerCase()
+    .split("")
+    .filter((v) => !blacklist.includes(v) && !shortcuts.has(v));
+
+  for (let shortcut of candidates) {
+    const indexOf = text
+      .toLocaleLowerCase()
+      .indexOf(shortcut.toLocaleLowerCase());
+    if (indexOf < 0) {
+      text = `${text} [${shortcut}]`;
+    } else {
+      const leftOf = text.slice(0, indexOf);
+      const rightOf = text.slice(indexOf + 1);
+      const ch = text.charAt(indexOf);
+      text = `${leftOf}<u>${ch}</u>${rightOf}`;
+    }
+    return { text, shortcut };
+  }
+  return null;
 }
