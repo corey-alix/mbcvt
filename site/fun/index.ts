@@ -84,3 +84,90 @@ export function injectActions(handlers: Record<string, Function> = {}) {
     });
   });
 }
+
+export function autoShortcut(root = document.body) {
+  function findShortcut(
+    text: string,
+    blacklist: string[],
+    shortcuts: Map<string, HTMLElement | null>
+  ) {
+    const candidates = text
+      .toLocaleLowerCase()
+      .split("")
+      .filter((v) => !blacklist.includes(v) && !shortcuts.has(v));
+
+    if (!candidates.length) return null;
+
+    for (let shortcut of candidates) {
+      const indexOf = text
+        .toLocaleUpperCase()
+        .indexOf(shortcut.toLocaleUpperCase());
+      if (indexOf < 0) throw new Error("Shortcut not found");
+      const leftOf = text.slice(0, indexOf);
+      const rightOf = text.slice(indexOf + 1);
+      const ch = text.charAt(indexOf);
+      text = `${leftOf}<u>${ch}</u>${rightOf}`;
+      return { text, shortcut };
+    }
+    return null;
+  }
+
+  const labels = Array.from(
+    root.querySelectorAll<HTMLLabelElement>("label[for]")
+  );
+
+  const shortcuts = new Map<
+    string,
+    HTMLInputElement | HTMLButtonElement | HTMLAnchorElement | null
+  >();
+  const blacklist = "d ".split("");
+
+  const buttons = Array.from(
+    root.querySelectorAll<HTMLButtonElement>("button")
+  );
+
+  buttons.forEach((button) => {
+    if (button.disabled) return;
+    const shortcut = findShortcut(button.innerText, blacklist, shortcuts);
+    if (shortcut) {
+      button.innerHTML = shortcut.text;
+      shortcuts.set(shortcut.shortcut, button);
+    }
+  });
+
+  const inputs = labels
+    .map((l) => root.querySelector<HTMLInputElement>(`#${l.htmlFor}`)!)
+    .filter((v) => !!v);
+
+  inputs.forEach((input) => {
+    if (input.disabled || input.readOnly || input.tabIndex < 0) return;
+    const label = labels.find((l) => l.htmlFor === input.id);
+    if (!label) return;
+    const shortcut = findShortcut(label.innerText, blacklist, shortcuts);
+    if (shortcut) {
+      label.innerHTML = shortcut.text;
+      shortcuts.set(shortcut.shortcut, input);
+    }
+  });
+
+  const anchors = Array.from(root.querySelectorAll<HTMLAnchorElement>("a"));
+  anchors.forEach((anchor) => {
+    if (anchor.tabIndex < 0) return;
+    const shortcut = findShortcut(anchor.innerText, blacklist, shortcuts);
+    if (shortcut) {
+      anchor.innerHTML = shortcut.text;
+      shortcuts.set(shortcut.shortcut, anchor);
+    }
+  });
+
+  root.addEventListener("keydown", (e) => {
+    if (!e.altKey) return;
+    if (e.ctrlKey || e.shiftKey || e.metaKey) return;
+    const key = e.key.toLowerCase();
+    if (!shortcuts.has(key)) return;
+    const input = shortcuts.get(key);
+    if (!input) return;
+    input.focus();
+    e.preventDefault();
+  });
+}

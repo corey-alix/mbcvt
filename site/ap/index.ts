@@ -1,5 +1,5 @@
 import { database } from "../db/index.js";
-import { getElements, injectActions } from "../fun/index.js";
+import { autoShortcut, getElements, injectActions } from "../fun/index.js";
 
 export async function setupAccountsPayableForm() {
   await database.init();
@@ -64,54 +64,8 @@ export async function setupAccountsPayableForm() {
       // to indicate the shortcut.  Prefer the first letter of the label text, but if that
       // is already used, use another letter.
       // If no letter is available, do not set a shortcut.
-      const labels = Array.from(
-        root.querySelectorAll<HTMLLabelElement>("label[for]")
-      );
 
-      const shortcuts = new Map<
-        string,
-        HTMLInputElement | HTMLButtonElement | null
-      >();
-      const blacklist = "d".split("");
-
-      const inputs = labels
-        .map((l) => root.querySelector<HTMLInputElement>(`#${l.htmlFor}`))
-        .filter((v) => !!v) as HTMLInputElement[];
-
-      const buttons = Array.from(
-        root.querySelectorAll<HTMLButtonElement>("button")
-      );
-
-      buttons.forEach((button) => {
-        if (button.disabled) return;
-        const shortcut = findShortcut(button.innerText, blacklist, shortcuts);
-        if (shortcut) {
-          button.innerHTML = shortcut.text;
-          shortcuts.set(shortcut.shortcut, button);
-        }
-      });
-
-      inputs.forEach((input) => {
-        if (input.disabled || input.readOnly || input.tabIndex < 0) return;
-        const label = labels.find((l) => l.htmlFor === input.id);
-        if (!label) return;
-        const shortcut = findShortcut(label.innerText, blacklist, shortcuts);
-        if (shortcut) {
-          label.innerHTML = shortcut.text;
-          shortcuts.set(shortcut.shortcut, input);
-        }
-      });
-
-      root.addEventListener("keydown", (e) => {
-        if (!e.altKey) return;
-        if (e.ctrlKey || e.shiftKey || e.metaKey) return;
-        const key = e.key.toLowerCase();
-        if (!shortcuts.has(key)) return;
-        const input = shortcuts.get(key);
-        if (!input) return;
-        input.focus();
-        e.preventDefault();
-      });
+      autoShortcut(root);
     },
     "auto-complete-gl-account": (input: HTMLInputElement) => {
       const datalist = document.createElement("datalist");
@@ -276,33 +230,6 @@ export async function setupAccountsPayableForm() {
     ux.postToAccountVendorName.dispatchEvent(new Event("change"));
     ux.postToAccountVendorName.focus();
   });
-}
-
-function findShortcut(
-  text: string,
-  blacklist: string[],
-  shortcuts: Map<string, HTMLInputElement | HTMLButtonElement | null>
-) {
-  const candidates = text
-    .toLocaleLowerCase()
-    .split("")
-    .filter((v) => !blacklist.includes(v) && !shortcuts.has(v));
-
-  for (let shortcut of candidates) {
-    const indexOf = text
-      .toLocaleLowerCase()
-      .indexOf(shortcut.toLocaleLowerCase());
-    if (indexOf < 0) {
-      text = `${text} [${shortcut}]`;
-    } else {
-      const leftOf = text.slice(0, indexOf);
-      const rightOf = text.slice(indexOf + 1);
-      const ch = text.charAt(indexOf);
-      text = `${leftOf}<u>${ch}</u>${rightOf}`;
-    }
-    return { text, shortcut };
-  }
-  return null;
 }
 
 function asYearMonthDay(postToAccountDate: Date | null): string {
