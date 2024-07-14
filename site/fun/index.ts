@@ -85,42 +85,45 @@ export function injectActions(handlers: Record<string, Function> = {}) {
   });
 }
 
+const shortcuts = new Map<
+  string,
+  HTMLInputElement | HTMLButtonElement | HTMLAnchorElement | null
+>();
+
+const whitelist = "abcefghijklmnopqrstuvwxyz0123456789<>".split("");
+
+function findShortcut(text: string) {
+  const candidates = text
+    .toLocaleLowerCase()
+    .split("")
+    .filter((v) => whitelist.includes(v) && !shortcuts.has(v));
+
+  if (!candidates.length) return null;
+
+  for (let shortcut of candidates) {
+    const indexOf = text
+      .toLocaleUpperCase()
+      .indexOf(shortcut.toLocaleUpperCase());
+    if (indexOf < 0) throw new Error("Shortcut not found");
+    const leftOf = text.slice(0, indexOf);
+    const rightOf = text.slice(indexOf + 1);
+    const ch = text.charAt(indexOf);
+    text = `${leftOf}<u>${ch}</u>${rightOf}`;
+    return { text, shortcut };
+  }
+  return null;
+}
+
 export function autoShortcut(root = document.body) {
-  function findShortcut(
-    text: string,
-    blacklist: string[],
-    shortcuts: Map<string, HTMLElement | null>
-  ) {
-    const candidates = text
-      .toLocaleLowerCase()
-      .split("")
-      .filter((v) => !blacklist.includes(v) && !shortcuts.has(v));
-
-    if (!candidates.length) return null;
-
-    for (let shortcut of candidates) {
-      const indexOf = text
-        .toLocaleUpperCase()
-        .indexOf(shortcut.toLocaleUpperCase());
-      if (indexOf < 0) throw new Error("Shortcut not found");
-      const leftOf = text.slice(0, indexOf);
-      const rightOf = text.slice(indexOf + 1);
-      const ch = text.charAt(indexOf);
-      text = `${leftOf}<u>${ch}</u>${rightOf}`;
-      return { text, shortcut };
-    }
-    return null;
+  // if this is a mobile device, do nothing since there is not a physical keyboard
+  if (!hasPhysicalKeyboard()) {
+    console.log("no physical keyboard detected");
+    return;
   }
 
   const labels = Array.from(
     root.querySelectorAll<HTMLLabelElement>("label[for]")
   );
-
-  const shortcuts = new Map<
-    string,
-    HTMLInputElement | HTMLButtonElement | HTMLAnchorElement | null
-  >();
-  const blacklist = "d ".split("");
 
   const buttons = Array.from(
     root.querySelectorAll<HTMLButtonElement>("button")
@@ -128,7 +131,7 @@ export function autoShortcut(root = document.body) {
 
   buttons.forEach((button) => {
     if (button.disabled) return;
-    const shortcut = findShortcut(button.innerText, blacklist, shortcuts);
+    const shortcut = findShortcut(button.innerText);
     if (shortcut) {
       button.innerHTML = shortcut.text;
       shortcuts.set(shortcut.shortcut, button);
@@ -143,7 +146,7 @@ export function autoShortcut(root = document.body) {
     if (input.disabled || input.readOnly || input.tabIndex < 0) return;
     const label = labels.find((l) => l.htmlFor === input.id);
     if (!label) return;
-    const shortcut = findShortcut(label.innerText, blacklist, shortcuts);
+    const shortcut = findShortcut(label.innerText);
     if (shortcut) {
       label.innerHTML = shortcut.text;
       shortcuts.set(shortcut.shortcut, input);
@@ -153,7 +156,7 @@ export function autoShortcut(root = document.body) {
   const anchors = Array.from(root.querySelectorAll<HTMLAnchorElement>("a"));
   anchors.forEach((anchor) => {
     if (anchor.tabIndex < 0) return;
-    const shortcut = findShortcut(anchor.innerText, blacklist, shortcuts);
+    const shortcut = findShortcut(anchor.innerText);
     if (shortcut) {
       anchor.innerHTML = shortcut.text;
       shortcuts.set(shortcut.shortcut, anchor);
@@ -170,4 +173,7 @@ export function autoShortcut(root = document.body) {
     input.focus();
     e.preventDefault();
   });
+}
+function hasPhysicalKeyboard() {
+  return !window.matchMedia("(pointer: coarse) and (hover: none)").matches;
 }

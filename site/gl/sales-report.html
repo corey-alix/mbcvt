@@ -6,10 +6,6 @@
     <title>Sales Report</title>
     <link rel="stylesheet" href="../index.css">
     <style>
-        body {
-            font-size: 3vmin;
-        }
-
         input,
         button {
             font-size: inherit;
@@ -38,6 +34,8 @@
 
     <script type="module">
         import { runSalesReport } from "./index.js";
+        import {autoShortcut} from "../fun/index.js";
+        autoShortcut();
         runSalesReport();
     </script>
 

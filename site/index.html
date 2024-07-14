@@ -35,6 +35,10 @@
 </head>
 
 <body>
+    <label for="dbName">Database</label>
+    <input id="dbName" type="text" placeholder="Database" data-sticky-key="database-name" />
+    <label for="public-key">Public Key</label>
+    <input id="public-key" type="text" placeholder="Public Key" data-sticky-key="public-key" />
     <div class="toolbar" data-action="auto-shortcut">
         <a href="./ap/index.html">Accounts Payable</a>
         <a href="./gl/index.html">General Ledger</a>
@@ -43,6 +47,10 @@
     <script type="module">
         import { autoShortcut } from "./fun/index.js";
         autoShortcut();
+
+        import { setupGeneralLedgerWelcomeForm } from "./gl/index.js";
+        setupGeneralLedgerWelcomeForm();
+
     </script>
 </body>
 

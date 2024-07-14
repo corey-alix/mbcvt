@@ -186,11 +186,11 @@
         <summary>Quick Reservation Entry</summary>
         <form id="quickReservationForm">
             <fieldset>
-                <label>Name of Party</label>
+                <label for="partyName">Name of Party</label>
                 <input type="text" id="partyName" placeholder="Name of Party" required />
             </fieldset>
             <fieldset>
-                <label>Site Number</label>
+                <label for="siteNumber">Site Number</label>
                 <input type="text" id="siteNumber" placeholder="Site Number" />
             </fieldset>
             <fieldset>
@@ -198,50 +198,49 @@
                 <input type="text" id="siteName" placeholder="Site Description" readonly tabindex="-1" />
             </fieldset>
             <fieldset>
-                <label>Check In</label>
+                <label for="checkIn">Check In</label>
                 <input type="date" id="checkIn" required />
             </fieldset>
             <fieldset>
-                <label>Check Out</label>
+                <label for="checkOut">Check Out</label>
                 <input type="date" id="checkOut" required />
             </fieldset>
             <fieldset>
-                <label>Adults</label>
+                <label for="adults">Adults</label>
                 <input type="number" id="adults" value="1" min="1" />
             </fieldset>
             <fieldset>
-                <label>Children</label>
+                <label for="children">Children</label>
                 <input type="number" id="children" value="0" min="0" />
             </fieldset>
             <fieldset>
-                <label>Visitor Passes</label>
+                <label for="visitors">Visitor Passes</label>
                 <input type="number" id="visitors" value="0" min="0" />
             </fieldset>
             <fieldset>
-                <label>Wood Bundles</label>
+                <label for="woodBundles">Wood Bundles</label>
                 <input type="number" id="woodBundles" value="0" min="0" />
             </fieldset>
             <fieldset>
-                <label>Price</label>
+                <label for="baseDue">Price</label>
                 <input type="number" id="baseDue" step="0.01" readonly min="0" tabindex="-1" />
             </fieldset>
             <fieldset>
-                <label>Tax</label>
+                <label for="totalTax">Tax</label>
                 <input type="number" id="totalTax" step="0.01" readonly min="0" tabindex="-1" />
             </fieldset>
             <fieldset>
-                <label>Total Due</label>
+                <label for="totalDue">Total Due</label>
                 <input type="number" id="totalDue" step="0.01" readonly min="0" tabindex="-1" />
             </fieldset>
             <fieldset>
-                <label>Discount</label>
-                <input data-action="select-on-focus" type="number" id="totalDiscount" step="0.01" min="0" tabindex="-1"
-                    value="0" />
+                <label for="totalDiscount">Discount</label>
+                <input data-action="select-on-focus" type="number" id="totalDiscount" step="0.01" value="0" />
             </fieldset>
             <template id="method-of-payment">
                 <div class="method-of-payment grid template">
                     <fieldset>
-                        <label>Payment Date</label>
+                        <label for="paymentDate">Payment Date</label>
                         <input type="date" id="paymentDate" required />
                     </fieldset>
                     <fieldset>

@@ -1,5 +1,5 @@
 import { PointOfSaleFormData, database as db } from "../db/index.js";
-import { getElements, injectActions } from "../fun/index.js";
+import { autoShortcut, getElements, injectActions } from "../fun/index.js";
 import { asCurrency, round } from "../fun/index.js";
 import { globals, magic } from "../globals.js";
 import { minimizeRate } from "./renderPriceChart.js";
@@ -21,6 +21,7 @@ export type Rates = {
 };
 
 export async function setupPointOfSaleForm() {
+  autoShortcut();
   const state = {
     counter: null as Counter | null,
   };

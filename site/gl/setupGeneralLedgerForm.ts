@@ -1,10 +1,11 @@
 import { database as db, TransactionModel } from "../db/index.js";
-import { asLinkToAccountHistory, getElements, injectActions } from "../fun/index.js";
+import { asLinkToAccountHistory, autoShortcut, getElements, injectActions } from "../fun/index.js";
 import { readQueryString, safeHtml, asCurrency } from "../fun/index.js";
 import { toast } from "./toast.js";
 import { asShortDate, trigger, navigateTo, on } from "./gl.js";
 
 export async function setupGeneralLedgerForm() {
+  autoShortcut();
   await db.init();
 
   function renderTransaction(
