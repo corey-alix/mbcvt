@@ -222,12 +222,14 @@ export async function setupAccountsPayableForm() {
 
   ux.vendorPickerEditButton.addEventListener("click", () => {
     ux.vendorEditorVendorName.value = ux.vendorPickerList.value;
+    ux.vendorEditorVendorName.dispatchEvent(new Event("input"));
     ux.vendorEditorVendorName.dispatchEvent(new Event("change"));
     ux.vendorEditorVendorName.focus();
   });
 
   ux.vendorPickerPayButton.addEventListener("click", () => {
     ux.postToAccountVendorName.value = ux.vendorPickerList.value;
+    ux.postToAccountVendorName.dispatchEvent(new Event("input"));
     ux.postToAccountVendorName.dispatchEvent(new Event("change"));
     ux.postToAccountVendorName.focus();
   });
