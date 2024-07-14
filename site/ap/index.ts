@@ -6,21 +6,23 @@ export async function setupAccountsPayableForm() {
 
   const ux = {
     postToAccountForm: null as any as HTMLFormElement,
-    vendor: null as any as HTMLInputElement,
-    amount: null as any as HTMLInputElement,
-    date: null as any as HTMLInputElement,
-    submit: null as any as HTMLButtonElement,
-    upsertToVendorForm: null as any as HTMLFormElement,
+    postToAccountVendorName: null as any as HTMLInputElement,
+    postToAccountAmount: null as any as HTMLInputElement,
+    postToAccountDate: null as any as HTMLInputElement,
+    postToAccountSubmitButton: null as any as HTMLButtonElement,
+
+    vendorEditorForm: null as any as HTMLFormElement,
     vendorEditorVendorName: null as any as HTMLInputElement,
     vendorEditorLedgerAccount: null as any as HTMLInputElement,
     vendorEditorAddress: null as any as HTMLInputElement,
     vendorEditorPhone: null as any as HTMLInputElement,
     vendorEditorEmail: null as any as HTMLInputElement,
     vendorEditorContact: null as any as HTMLInputElement,
-    vendorEditorSubmit: null as any as HTMLButtonElement,
-    vendorList: null as any as HTMLSelectElement,
-    vendorEditorButton: null as any as HTMLButtonElement,
-    vendorPayButton: null as any as HTMLButtonElement,
+    vendorEditorSubmitButton: null as any as HTMLButtonElement,
+
+    vendorPickerList: null as any as HTMLSelectElement,
+    vendorPickerEditButton: null as any as HTMLButtonElement,
+    vendorPickerPayButton: null as any as HTMLButtonElement,
   };
 
   getElements(ux, document.body);
@@ -176,87 +178,101 @@ export async function setupAccountsPayableForm() {
     },
   });
 
-  ux.submit.addEventListener("click", () => {
+  ux.postToAccountSubmitButton.addEventListener("click", async () => {
     if (!ux.postToAccountForm.reportValidity()) {
       return;
     }
 
-    const vendorName = ux.vendor.value;
+    const postToAccountVendorName = ux.postToAccountVendorName.value;
+    const postToAccountAmount = ux.postToAccountAmount.valueAsNumber;
+    const postToAccountDate = ux.postToAccountDate.valueAsDate;
 
-    const vendor = database.getContacts().find((d) => d.name === vendorName);
+    const vendor = database
+      .getContacts()
+      .find((d) => d.name === postToAccountVendorName);
     if (!vendor) {
-      throw new Error(`Vendor not found: ${vendorName}`);
+      throw new Error(`Vendor not found: ${postToAccountVendorName}`);
     }
 
-    const amount = ux.amount.valueAsNumber;
-    const date = ux.date.valueAsDate;
+    const defaultAccountId = vendor.defaultAccountId;
+    if (!defaultAccountId) throw new Error("Vendor has no default account");
+
+    const defaultAccount = database.getAccount(defaultAccountId);
+    if (!defaultAccount) throw `Account not found: ${defaultAccountId}`;
+
+    const accountsPayableAccount = database.forceAccount(
+      4001,
+      "Accounts Payable"
+    );
+
+    await database.addTransactionPair({
+      debitAccount: defaultAccountId,
+      creditAccount: accountsPayableAccount.id,
+      amt: postToAccountAmount,
+      date: asYearMonthDay(postToAccountDate),
+      description: `Payment to ${postToAccountVendorName}`,
+    });
+    await database.createBatch();
 
     ux.postToAccountForm.reset();
-    ux.date.valueAsDate = new Date();
-    ux.vendor.focus();
+    ux.postToAccountDate.valueAsDate = new Date();
+    ux.postToAccountVendorName.focus();
   });
 
-  ux.vendorEditorVendorName.addEventListener("change", () => {
+  ux.vendorEditorVendorName.addEventListener("input", () => {
     const vendorName = ux.vendorEditorVendorName.value;
     const vendor = database.getContacts().find((d) => d.name === vendorName);
     if (!vendor) {
-      ux.vendorEditorAddress.value = "";
-      ux.vendorEditorPhone.value = "";
-      ux.vendorEditorEmail.value = "";
-      ux.vendorEditorContact.value = "";
+      ux.vendorEditorForm.reset();
+      ux.vendorEditorVendorName.value = vendorName;
     } else {
       ux.vendorEditorAddress.value = vendor.address || "";
       ux.vendorEditorPhone.value = vendor.phone || "";
       ux.vendorEditorEmail.value = vendor.email || "";
       ux.vendorEditorContact.value = vendor.contact || "";
+      ux.vendorEditorLedgerAccount.value = vendor.defaultAccountId + "";
     }
   });
 
-  ux.vendorEditorSubmit.addEventListener("click", () => {
-    if (!ux.upsertToVendorForm.reportValidity()) {
+  ux.vendorEditorSubmitButton.addEventListener("click", async () => {
+    if (!ux.vendorEditorForm.reportValidity()) {
       console.error("Form is not valid");
       return;
     }
 
-    const defaultAccountId = ux.vendorEditorLedgerAccount.valueAsNumber;
+    const defaultAccountId = parseInt(ux.vendorEditorLedgerAccount.value, 10);
     const defaultAccount = database.getAccount(defaultAccountId);
     if (!defaultAccount) {
       throw new Error(`Account not found: ${defaultAccountId}`);
     }
 
     const vendorName = ux.vendorEditorVendorName.value;
-    const vendor = database.getContacts().find((d) => d.name === vendorName);
-    if (!vendor) {
-      database.upsertContact({
-        name: vendorName,
-        address: ux.vendorEditorAddress.value,
-        phone: ux.vendorEditorPhone.value,
-        email: ux.vendorEditorEmail.value,
-        contact: ux.vendorEditorContact.value,
-        defaultAccountId,
-        notes: "",
-      });
-    } else {
-      vendor.address = ux.vendorEditorAddress.value;
-      vendor.phone = ux.vendorEditorPhone.value;
-      vendor.email = ux.vendorEditorEmail.value;
-      vendor.contact = ux.vendorEditorContact.value;
-      database.upsertContact(vendor);
-    }
+    await database.upsertContact({
+      name: vendorName,
+      address: ux.vendorEditorAddress.value,
+      phone: ux.vendorEditorPhone.value,
+      email: ux.vendorEditorEmail.value,
+      contact: ux.vendorEditorContact.value,
+      defaultAccountId,
+      notes: "",
+    });
+    // notify user of success
+    ux.vendorEditorForm.reset();
   });
 
-  ux.vendorEditorButton.addEventListener("click", () => {
-    ux.vendorEditorVendorName.value = ux.vendorList.value;
+  ux.vendorPickerEditButton.addEventListener("click", () => {
+    ux.vendorEditorVendorName.value = ux.vendorPickerList.value;
     ux.vendorEditorVendorName.dispatchEvent(new Event("change"));
     ux.vendorEditorVendorName.focus();
   });
 
-  ux.vendorPayButton.addEventListener("click", () => {
-    ux.vendor.value = ux.vendorList.value;
-    ux.vendor.dispatchEvent(new Event("change"));
-    ux.vendor.focus();
+  ux.vendorPickerPayButton.addEventListener("click", () => {
+    ux.postToAccountVendorName.value = ux.vendorPickerList.value;
+    ux.postToAccountVendorName.dispatchEvent(new Event("change"));
+    ux.postToAccountVendorName.focus();
   });
 }
+
 function findShortcut(
   text: string,
   blacklist: string[],
@@ -282,4 +298,14 @@ function findShortcut(
     return { text, shortcut };
   }
   return null;
+}
+
+function asYearMonthDay(postToAccountDate: Date | null): string {
+  if (!postToAccountDate) {
+    return "";
+  }
+  const year = postToAccountDate.getFullYear() + "";
+  const month = (postToAccountDate.getMonth() + 1 + "").padStart(2, "0");
+  const day = (postToAccountDate.getDate() + "").padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }

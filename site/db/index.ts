@@ -88,7 +88,7 @@ class Database {
     return this.#data.contacts[id];
   }
 
-  upsertContact(contact: Contact) {
+  async upsertContact(contact: Contact) {
     this.#data.contacts = this.#data.contacts || [];
     const index = this.#data.contacts.findIndex((c) => c.name === contact.name);
     if (index === -1) {
@@ -96,13 +96,13 @@ class Database {
     } else {
       this.#data.contacts[index] = contact;
     }
-    this.#save();
+    await this.#save();
   }
 
-  addFreeChlorine(data: FreeChlorineData) {
+  async addFreeChlorine(data: FreeChlorineData) {
     this.#data.freeChlorine = this.#data.freeChlorine || [];
     this.#data.freeChlorine.push(data);
-    return this.#save();
+    return await this.#save();
   }
 
   getFreeChlorine() {
@@ -115,17 +115,17 @@ class Database {
     return this.#data.pos[id];
   }
 
-  upsertPointOfSale(pos: PointOfSaleFormData) {
+  async upsertPointOfSale(pos: PointOfSaleFormData) {
     this.#data.pos = this.#data.pos || [];
     this.#data.pos.push(pos);
-    return this.#save();
+    return await this.#save();
   }
 
-  rawSave(data: DatabaseSchema) {
+  async rawSave(data: DatabaseSchema) {
     const backupKey = `${DATABASE_NAME}-backup-${Date.now()}`;
     localStorage.setItem(backupKey, JSON.stringify(this.#data));
     this.#data = data;
-    return this.#save();
+    return await this.#save();
   }
 
   deleteTransaction(index: number) {
@@ -218,10 +218,49 @@ class Database {
     await this.#save();
   }
 
+  async addTransactionPair(transaction: {
+    debitAccount: number;
+    creditAccount: number;
+    amt: number;
+    date: string;
+    description: string;
+  }) {
+    const { debitAccount, creditAccount, amt, date, description } = transaction;
+    const debit = this.#data.accounts.find((a) => a.id === debitAccount);
+    if (!debit) throw `Debit account not found: ${debitAccount}`;
+    const credit = this.#data.accounts.find((a) => a.id === creditAccount);
+    if (!credit) throw `Credit account not found: ${creditAccount}`;
+
+    debit.balance -= amt;
+    credit.balance += amt;
+
+    this.#data.transactions = this.#data.transactions || [];
+
+    this.#data.transactions.push({
+      account: debitAccount,
+      date,
+      description,
+      amt,
+    });
+
+    this.#data.transactions.push({
+      account: creditAccount,
+      date,
+      description,
+      amt: -amt,
+    });
+
+    await this.#save();
+  }
+
   async addTransaction(transactionInfo: TransactionModel) {
-    if (!this.#data.transactions) {
-      this.#data.transactions = [];
-    }
+    this.#data.transactions = this.#data.transactions || [];
+    const account = this.#data.accounts.find(
+      (a) => a.id === transactionInfo.account
+    );
+    if (!account) throw `Account not found: ${transactionInfo.account}`;
+
+    account.balance += transactionInfo.amt;
     this.#data.transactions.push(transactionInfo);
     await this.#save();
   }
