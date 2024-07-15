@@ -170,7 +170,14 @@ export function autoShortcut(root = document.body) {
     if (!shortcuts.has(key)) return;
     const input = shortcuts.get(key);
     if (!input) return;
-    input.focus();
+    const isButton = input instanceof HTMLButtonElement;
+    const isAnchor = input instanceof HTMLAnchorElement;
+    if (isButton || isAnchor) {
+      input.click();
+      return;
+    } else {
+      input.focus();
+    }
     e.preventDefault();
   });
 }

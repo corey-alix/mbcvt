@@ -1,4 +1,9 @@
-import { PointOfSaleFormData, database as db } from "../db/index.js";
+import {
+  PointOfSaleFormData,
+  PointOfSaleReceiptModel,
+  database,
+  database as db,
+} from "../db/index.js";
 import { autoShortcut, getElements, injectActions } from "../fun/index.js";
 import { asCurrency, round } from "../fun/index.js";
 import { globals, magic } from "../globals.js";
@@ -230,6 +235,7 @@ export async function setupPointOfSaleForm() {
     balanceDue: null as any as HTMLInputElement,
     totalDiscount: null as any as HTMLInputElement,
     addPaymentMethod: null as any as HTMLButtonElement,
+    printReceiptButton: null as any as HTMLButtonElement,
   };
 
   getElements(inputs, document.body);
@@ -245,6 +251,14 @@ export async function setupPointOfSaleForm() {
   selectAllOnFocus(inputs.adults);
   selectAllOnFocus(inputs.children);
   selectAllOnFocus(inputs.woodBundles);
+
+  inputs.printReceiptButton.addEventListener("click", () => {
+    const receiptId = prompt("Enter receipt number");
+    if (!receiptId) return;
+    const receipt = db.getReceipt(parseInt(receiptId));
+    if (!receipt) return;
+    printReceipt(receipt);
+  });
 
   inputs.addPaymentMethod.addEventListener("click", () => addPaymentInputs());
 
@@ -369,7 +383,7 @@ export async function setupPointOfSaleForm() {
         debitAccount: arAccount.id,
         creditAccount: siteAccount.id,
         date: transactionDate,
-        description: `${nameOfParty}, ${dates}`,
+        description: `Balance Due`,
         amt: balanceDue,
       });
     }
@@ -378,37 +392,17 @@ export async function setupPointOfSaleForm() {
       debitAccount: cashAccount.id,
       creditAccount: siteAccount.id,
       date: transactionDate,
-      description: `${nameOfParty}, ${dates}`,
+      description: `Total Paid`,
       amt: totalPaid,
     });
 
-    if (discountNet) {
-      await db.addTransactionPair({
-        debitAccount: cashAccount.id,
-        creditAccount: siteAccount.id,
-        date: transactionDate,
-        description: "Discount",
-        amt: -discountNet,
-      });
-    }
-
     await db.addTransactionPair({
-      debitAccount: taxAccount.id,
-      creditAccount: siteAccount.id,
+      debitAccount: siteAccount.id,
+      creditAccount: taxAccount.id,
       date: transactionDate,
       description: "Tax Collected",
-      amt: totalTax,
+      amt: totalTax - discountTax,
     });
-
-    if (discountTax) {
-      await db.addTransactionPair({
-        debitAccount: taxAccount.id,
-        creditAccount: siteAccount.id,
-        date: transactionDate,
-        description: "Discount",
-        amt: -discountTax,
-      });
-    }
 
     if (expenses.woodBundles) {
       await db.addTransactionPair({
@@ -416,7 +410,7 @@ export async function setupPointOfSaleForm() {
         creditAccount: siteAccount.id,
         date: transactionDate,
         description: "Firewood",
-        amt: expenses.woodBundles,
+        amt: -expenses.woodBundles,
       });
     }
 
@@ -426,13 +420,14 @@ export async function setupPointOfSaleForm() {
         creditAccount: siteAccount.id,
         date: transactionDate,
         description: "Guests",
-        amt: expenses.children + expenses.adults + expenses.visitors,
+        amt: -(expenses.children + expenses.adults + expenses.visitors),
       });
     }
 
-    await db.createBatch();
+    const batchId = await db.createBatch();
 
-    printReceipt({
+    const receipt = {
+      batchId,
       nameOfParty,
       dates,
       expenses,
@@ -442,7 +437,11 @@ export async function setupPointOfSaleForm() {
       discountNet,
       discountTax,
       totalPaid: computeTotalPaid(),
-    });
+    };
+
+    await database.addReceipt(receipt);
+
+    printReceipt(receipt);
 
     inputs.quickReservationForm.reset();
     // window.location.href = `./general-ledger.html?batch=${batchId}`;
@@ -487,29 +486,17 @@ function computeTotalPaid() {
   return totalPaid;
 }
 
-function printReceipt(sale: {
-  nameOfParty: string;
-  dates: string;
-  expenses: {
-    basePrice: number;
-    adults: number;
-    children: number;
-    visitors: number;
-    woodBundles: number;
-  };
-  totalNet: number;
-  totalTax: number;
-  totalCash: number;
-  discountNet: number;
-  discountTax: number;
-  totalPaid: number;
-}) {
+function printReceipt(sale: PointOfSaleReceiptModel) {
   console.log(sale);
   const html = `
   <div class="receipt grid grid-2">
     <h1 class="span-all center">Millbrook Campground Receipt</h1>
-    <div>Party</div><div class="align-right">${sale.nameOfParty}</div>
+    <h2 class="span-all center">#${(sale.batchId + "").padStart(5)}</h2>
+    <div>Party</div><div class="bolder uppercase align-right">${
+      sale.nameOfParty
+    }</div>
     <div>Dates</div><div class="align-right">${sale.dates}</div>
+    <div class="span-all"><hr/></div>
     <div>Base Price</div><div class="align-right">${asCurrency(
       sale.expenses.basePrice
     )}</div>
@@ -525,7 +512,7 @@ function printReceipt(sale: {
     <div>Wood Bundles</div><div class="align-right">${asCurrency(
       sale.expenses.woodBundles
     )}</div>
-    <div class="span-all"><hr/></div>
+    <div class="span-all"><br/></div>
 
     <div>Price</div>
     <div class="align-right">${asCurrency(sale.totalNet)}</div>
@@ -536,7 +523,7 @@ function printReceipt(sale: {
       sale.totalNet + sale.totalTax
     )}</div>
 
-    <div class="if-discount span-all"><hr/></div>
+    <div class="if-discount span-all"><br/></div>
     <div class="if-discount">Discount Net</div>
     <div class="if-discount align-right">${asCurrency(sale.discountNet)}</div>
     <div class="if-discount">Discount Tax</div>

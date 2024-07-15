@@ -26,6 +26,25 @@ const sampleFormData = {
 
 export type PointOfSaleFormData = typeof sampleFormData;
 
+export type PointOfSaleReceiptModel = {
+  batchId: number;
+  nameOfParty: string;
+  dates: string;
+  expenses: {
+    basePrice: number;
+    adults: number;
+    children: number;
+    visitors: number;
+    woodBundles: number;
+  };
+  totalNet: number;
+  totalTax: number;
+  totalCash: number;
+  discountNet: number;
+  discountTax: number;
+  totalPaid: number;
+};
+
 export type TransactionModel = {
   date: string;
   description: string;
@@ -60,6 +79,7 @@ export type DatabaseSchema = {
   accounts: AccountModel[];
   transactions: TransactionModel[];
   pos: PointOfSaleFormData[];
+  posReceipts: PointOfSaleReceiptModel[];
   freeChlorine: FreeChlorineData[];
   contacts: Contact[];
 };
@@ -106,10 +126,20 @@ class Database {
     await this.#save();
   }
 
+  async addReceipt(receipt: Partial<PointOfSaleReceiptModel>) {
+    this.#data.posReceipts = this.#data.posReceipts || [];
+    this.#data.posReceipts.push(receipt as PointOfSaleReceiptModel);
+    await this.#save();
+  }
+
+  getReceipt(batchId: number) {
+    return this.#data.posReceipts.find((r) => r.batchId === batchId);
+  }
+
   async addFreeChlorine(data: FreeChlorineData) {
     this.#data.freeChlorine = this.#data.freeChlorine || [];
     this.#data.freeChlorine.push(data);
-    return await this.#save();
+    await this.#save();
   }
 
   getFreeChlorine() {
@@ -192,6 +222,7 @@ class Database {
     pos: [] as PointOfSaleFormData[],
     freeChlorine: [] as FreeChlorineData[],
     contacts: [] as Contact[],
+    posReceipts: [] as PointOfSaleReceiptModel[],
   } satisfies DatabaseSchema;
 
   constructor() {}
