@@ -166,30 +166,17 @@ export async function setupPointOfSaleForm() {
   function updateTotals() {
     const expenses = getExpenses();
     const basePrice = Object.values(expenses).reduce((a, b) => a + b, 0);
-    const totalDiscount = inputs.totalDiscount.valueAsNumber;
-    // discount * (1 + taxRate) = totalTaxDiscount
-    // discount = totalTaxDiscount / (1 + taxRate)
-    const effectiveDiscount = totalDiscount / (1 + magic.taxRate);
-    const taxable = basePrice - effectiveDiscount;
-    const taxDue = magic.taxRate * taxable;
+    const taxable = basePrice;
+    const taxDue = magic.taxRate * basePrice;
     const totalDue = taxable + taxDue;
     inputs.baseDue.value = basePrice.toFixed(2);
     inputs.totalTax.value = taxDue.toFixed(2);
     inputs.totalDue.value = totalDue.toFixed(2);
 
-    const payments = Array.from(
-      document.querySelectorAll<HTMLDivElement>(".method-of-payment")
-    ).map((div) => {
-      const paymentAmount =
-        div.querySelector<HTMLInputElement>("#paymentAmount")!;
-      if (!paymentAmount) throw new Error("Payment amount not found");
-      return {
-        amount: paymentAmount.valueAsNumber,
-      };
-    });
+    const totalDiscount = inputs.totalDiscount.valueAsNumber;
 
-    const totalPaid = payments.reduce((a, b) => a + b.amount, 0);
-    inputs.balanceDue.value = (totalDue - totalPaid).toFixed(2);
+    const totalPaid = computeTotalPaid();
+    inputs.balanceDue.value = (totalDue - totalPaid - totalDiscount).toFixed(2);
   }
 
   function addPaymentInputs(options?: {
@@ -345,10 +332,9 @@ export async function setupPointOfSaleForm() {
       else json[key] = [json[key], value];
     });
 
-    console.log(JSON.stringify(json, null, 2));
-
     db.upsertPointOfSale(json as PointOfSaleFormData);
 
+    const arAccount = db.forceAccount(magic.saleAccount, "AR");
     const cashAccount = db.forceAccount(magic.cashAccount, "cash");
     const taxAccount = db.forceAccount(magic.taxAccount, "tax");
     const firewoodAccount = db.forceAccount(magic.firewoodAccount, "firewood");
@@ -359,54 +345,92 @@ export async function setupPointOfSaleForm() {
 
     const transactionDate = new Date().toISOString().split("T")[0];
 
-    const expenses = getExpenses();
-    const totalNet = Object.values(expenses).reduce((a, b) => a + b, 0);
-    const totalTax = round(totalNet * magic.taxRate, 2);
-    const totalCash = totalNet + totalTax;
-
     const nameOfParty = inputs.partyName.value;
     const dates = `${inputs.checkIn.value} to ${inputs.checkOut.value}`;
 
-    await db.addTransaction({
+    const expenses = getExpenses();
+
+    const totalNet = Object.values(expenses).reduce((a, b) => a + b, 0);
+    const totalTax = round(totalNet * magic.taxRate, 2);
+
+    const totalDiscount = inputs.totalDiscount.valueAsNumber;
+    const discountNet = totalDiscount / (1 + magic.taxRate);
+    const discountTax = totalDiscount - discountNet;
+
+    const totalPaid = computeTotalPaid();
+
+    const balanceDue = round(
+      totalNet + totalTax - totalPaid - totalDiscount,
+      2
+    );
+
+    if (balanceDue) {
+      await db.addTransactionPair({
+        debitAccount: arAccount.id,
+        creditAccount: siteAccount.id,
+        date: transactionDate,
+        description: `${nameOfParty}, ${dates}`,
+        amt: balanceDue,
+      });
+    }
+
+    await db.addTransactionPair({
+      debitAccount: cashAccount.id,
+      creditAccount: siteAccount.id,
       date: transactionDate,
       description: `${nameOfParty}, ${dates}`,
-      account: cashAccount.id,
-      amt: totalCash,
+      amt: totalPaid,
     });
 
-    await db.addTransaction({
-      account: taxAccount.id,
+    if (discountNet) {
+      await db.addTransactionPair({
+        debitAccount: cashAccount.id,
+        creditAccount: siteAccount.id,
+        date: transactionDate,
+        description: "Discount",
+        amt: -discountNet,
+      });
+    }
+
+    await db.addTransactionPair({
+      debitAccount: taxAccount.id,
+      creditAccount: siteAccount.id,
       date: transactionDate,
       description: "Tax Collected",
-      amt: -totalTax,
+      amt: totalTax,
     });
 
+    if (discountTax) {
+      await db.addTransactionPair({
+        debitAccount: taxAccount.id,
+        creditAccount: siteAccount.id,
+        date: transactionDate,
+        description: "Discount",
+        amt: -discountTax,
+      });
+    }
+
     if (expenses.woodBundles) {
-      await db.addTransaction({
-        account: firewoodAccount.id,
+      await db.addTransactionPair({
+        debitAccount: firewoodAccount.id,
+        creditAccount: siteAccount.id,
         date: transactionDate,
         description: "Firewood",
-        amt: -expenses.woodBundles,
+        amt: expenses.woodBundles,
       });
     }
 
     if (expenses.children + expenses.adults + expenses.visitors) {
-      await db.addTransaction({
-        account: peopleAccount.id,
+      await db.addTransactionPair({
+        debitAccount: peopleAccount.id,
+        creditAccount: siteAccount.id,
         date: transactionDate,
         description: "Guests",
-        amt: -(expenses.children + expenses.adults + expenses.visitors),
+        amt: expenses.children + expenses.adults + expenses.visitors,
       });
     }
 
-    await db.addTransaction({
-      account: siteAccount.id,
-      date: transactionDate,
-      description: `Site ${siteAccount.name}`,
-      amt: -expenses.basePrice,
-    });
-
-    const batchId = await db.createBatch();
+    await db.createBatch();
 
     printReceipt({
       nameOfParty,
@@ -414,7 +438,10 @@ export async function setupPointOfSaleForm() {
       expenses,
       totalNet,
       totalTax,
-      totalCash,
+      totalCash: totalNet + totalTax,
+      discountNet,
+      discountTax,
+      totalPaid: computeTotalPaid(),
     });
 
     inputs.quickReservationForm.reset();
@@ -444,6 +471,22 @@ export async function setupPointOfSaleForm() {
   }
 }
 
+function computeTotalPaid() {
+  const payments = Array.from(
+    document.querySelectorAll<HTMLDivElement>(".method-of-payment")
+  ).map((div) => {
+    const paymentAmount =
+      div.querySelector<HTMLInputElement>("#paymentAmount")!;
+    if (!paymentAmount) throw new Error("Payment amount not found");
+    return {
+      amount: paymentAmount.valueAsNumber,
+    };
+  });
+
+  const totalPaid = payments.reduce((a, b) => a + b.amount, 0);
+  return totalPaid;
+}
+
 function printReceipt(sale: {
   nameOfParty: string;
   dates: string;
@@ -457,7 +500,11 @@ function printReceipt(sale: {
   totalNet: number;
   totalTax: number;
   totalCash: number;
+  discountNet: number;
+  discountTax: number;
+  totalPaid: number;
 }) {
+  console.log(sale);
   const html = `
   <div class="receipt grid grid-2">
     <h1 class="span-all center">Millbrook Campground Receipt</h1>
@@ -479,16 +526,36 @@ function printReceipt(sale: {
       sale.expenses.woodBundles
     )}</div>
     <div class="span-all"><hr/></div>
-    <div>Total Net</div><div class="align-right">${asCurrency(
-      sale.totalNet
+
+    <div>Price</div>
+    <div class="align-right">${asCurrency(sale.totalNet)}</div>
+    <div>Tax</div>
+    <div class="align-right">${asCurrency(sale.totalTax)}</div>
+    <div>Final Price</div>
+    <div class="align-right bolder">${asCurrency(
+      sale.totalNet + sale.totalTax
     )}</div>
-    <div>Total Tax</div><div class="align-right">${asCurrency(
-      sale.totalTax
+
+    <div class="if-discount span-all"><hr/></div>
+    <div class="if-discount">Discount Net</div>
+    <div class="if-discount align-right">${asCurrency(sale.discountNet)}</div>
+    <div class="if-discount">Discount Tax</div>
+    <div class="if-discount align-right">${asCurrency(sale.discountTax)}</div>
+    <div class="if-discount">Total Discount</div>
+    <div class="if-discount align-right bolder">${asCurrency(
+      sale.discountNet + sale.discountTax
     )}</div>
-    <div>Total Cash</div><div class="align-right bolder bigger">${asCurrency(
-      sale.totalCash
+
+    <div class="span-all"><hr/></div>
+    <div class="">Total Paid</div>
+    <div class="align-right">${asCurrency(sale.totalPaid)}</div>
+    <div>Balance Due</div>
+    <div class="align-right bolder bigger">${asCurrency(
+      sale.totalCash - sale.discountNet - sale.discountTax - sale.totalPaid
     )}</div>
   </div>`;
+
+  document.body.classList.toggle("discount", !!sale.discountNet);
 
   document.body.innerHTML = html;
 }
