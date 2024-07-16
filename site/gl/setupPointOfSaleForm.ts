@@ -371,7 +371,11 @@ export async function setupPointOfSaleForm() {
     );
 
     const discountGross = round(inputs.totalDiscount.valueAsNumber, 2);
-    const discountNet = round(discountGross / (1 + magic.taxRate), 2);
+    const discountTax = round(
+      round(discountGross / (1 + magic.taxRate), 2) * magic.taxRate,
+      2
+    );
+    const discountNet = discountGross - discountTax;
 
     const taxableTotal = round(expensesNet - discountNet, 2);
     const taxTotal = round(taxableTotal * magic.taxRate, 2);
@@ -382,11 +386,10 @@ export async function setupPointOfSaleForm() {
     );
 
     if (balanceDue) {
-      await db.addTransactionPair({
-        debitAccount: arAccount.id,
-        creditAccount: siteAccount.id,
+      await db.addTransaction({
+        account: arAccount.id,
         date: transactionDate,
-        description: `Balance Due`,
+        description: balanceDue > 0 ? "Balance" : "Credit",
         amt: balanceDue,
       });
     }
