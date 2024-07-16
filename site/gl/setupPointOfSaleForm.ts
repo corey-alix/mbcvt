@@ -397,7 +397,7 @@ export async function setupPointOfSaleForm() {
     await db.addTransaction({
       account: cashAccount.id,
       date: transactionDate,
-      description: `Total Paid`,
+      description: `Total Paid: ${nameOfParty}`,
       amt: paidTotal,
     });
 
