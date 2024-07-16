@@ -43,6 +43,7 @@ export type PointOfSaleReceiptModel = {
   discountNet: number;
   discountTax: number;
   totalPaid: number;
+  balanceDue: number;
 };
 
 export type TransactionModel = {

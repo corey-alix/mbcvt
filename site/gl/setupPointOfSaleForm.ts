@@ -362,19 +362,22 @@ export async function setupPointOfSaleForm() {
     const nameOfParty = inputs.partyName.value;
     const dates = `${inputs.checkIn.value} to ${inputs.checkOut.value}`;
 
+    const paidTotal = computeTotalPaid();
     const expenses = getExpenses();
 
-    const totalNet = Object.values(expenses).reduce((a, b) => a + b, 0);
-    const totalTax = round(totalNet * magic.taxRate, 2);
+    const expensesNet = round(
+      Object.values(expenses).reduce((a, b) => a + b, 0),
+      2
+    );
 
-    const totalDiscount = inputs.totalDiscount.valueAsNumber;
-    const discountNet = totalDiscount / (1 + magic.taxRate);
-    const discountTax = totalDiscount - discountNet;
+    const discountGross = round(inputs.totalDiscount.valueAsNumber, 2);
+    const discountNet = round(discountGross / (1 + magic.taxRate), 2);
 
-    const totalPaid = computeTotalPaid();
+    const taxableTotal = round(expensesNet - discountNet, 2);
+    const taxTotal = round(taxableTotal * magic.taxRate, 2);
 
     const balanceDue = round(
-      totalNet + totalTax - totalPaid - totalDiscount,
+      expensesNet + taxTotal - paidTotal - discountNet,
       2
     );
 
@@ -388,39 +391,53 @@ export async function setupPointOfSaleForm() {
       });
     }
 
-    await db.addTransactionPair({
-      debitAccount: cashAccount.id,
-      creditAccount: siteAccount.id,
+    await db.addTransaction({
+      account: cashAccount.id,
       date: transactionDate,
       description: `Total Paid`,
-      amt: totalPaid,
+      amt: paidTotal,
     });
 
-    await db.addTransactionPair({
-      debitAccount: siteAccount.id,
-      creditAccount: taxAccount.id,
+    await db.addTransaction({
+      account: taxAccount.id,
       date: transactionDate,
-      description: "Tax Collected",
-      amt: totalTax - discountTax,
+      description: "Tax Due",
+      amt: -taxTotal,
     });
+
+    await db.addTransaction({
+      account: siteAccount.id,
+      date: transactionDate,
+      description: "Rental",
+      amt: -expenses.basePrice,
+    });
+
+    if (discountGross) {
+      await db.addTransaction({
+        account: siteAccount.id,
+        date: transactionDate,
+        description: "Discount",
+        amt: discountNet,
+      });
+    }
 
     if (expenses.woodBundles) {
-      await db.addTransactionPair({
-        debitAccount: firewoodAccount.id,
-        creditAccount: siteAccount.id,
+      await db.addTransaction({
+        account: firewoodAccount.id,
         date: transactionDate,
         description: "Firewood",
         amt: -expenses.woodBundles,
       });
     }
 
-    if (expenses.children + expenses.adults + expenses.visitors) {
-      await db.addTransactionPair({
-        debitAccount: peopleAccount.id,
-        creditAccount: siteAccount.id,
+    const visitorGross =
+      expenses.children + expenses.adults + expenses.visitors;
+    if (visitorGross) {
+      await db.addTransaction({
+        account: peopleAccount.id,
         date: transactionDate,
         description: "Guests",
-        amt: -(expenses.children + expenses.adults + expenses.visitors),
+        amt: -visitorGross,
       });
     }
 
@@ -431,13 +448,14 @@ export async function setupPointOfSaleForm() {
       nameOfParty,
       dates,
       expenses,
-      totalNet,
-      totalTax,
-      totalCash: totalNet + totalTax,
+      totalNet: expensesNet,
+      totalTax: expensesNet * magic.taxRate,
+      totalCash: expensesNet + taxTotal,
       discountNet,
-      discountTax,
+      discountTax: discountNet * magic.taxRate,
       totalPaid: computeTotalPaid(),
-    };
+      balanceDue,
+    } satisfies PointOfSaleReceiptModel;
 
     await database.addReceipt(receipt);
 
@@ -488,29 +506,33 @@ function computeTotalPaid() {
 
 function printReceipt(sale: PointOfSaleReceiptModel) {
   console.log(sale);
+  const { balanceDue, expenses } = sale;
+
   const html = `
   <div class="receipt grid grid-2">
     <h1 class="span-all center">Millbrook Campground Receipt</h1>
-    <h2 class="span-all center">#${(sale.batchId + "").padStart(5)}</h2>
+    <h2 class="span-all center"><a href="./general-ledger.html?batch=${
+      sale.batchId
+    }" class="no-border">#${(sale.batchId + "").padStart(5)}</a></h2>
     <div>Party</div><div class="bolder uppercase align-right">${
       sale.nameOfParty
     }</div>
     <div>Dates</div><div class="align-right">${sale.dates}</div>
     <div class="span-all"><hr/></div>
     <div>Base Price</div><div class="align-right">${asCurrency(
-      sale.expenses.basePrice
+      expenses.basePrice
     )}</div>
     <div>Adults</div><div class="align-right">${asCurrency(
-      sale.expenses.adults
+      expenses.adults
     )}</div>
     <div>Children</div><div class="align-right">${asCurrency(
-      sale.expenses.children
+      expenses.children
     )}</div>
     <div>Visitors</div><div class="align-right">${asCurrency(
-      sale.expenses.visitors
+      expenses.visitors
     )}</div>
     <div>Wood Bundles</div><div class="align-right">${asCurrency(
-      sale.expenses.woodBundles
+      expenses.woodBundles
     )}</div>
     <div class="span-all"><br/></div>
 
@@ -537,9 +559,7 @@ function printReceipt(sale: PointOfSaleReceiptModel) {
     <div class="">Total Paid</div>
     <div class="align-right">${asCurrency(sale.totalPaid)}</div>
     <div>Balance Due</div>
-    <div class="align-right bolder bigger">${asCurrency(
-      sale.totalCash - sale.discountNet - sale.discountTax - sale.totalPaid
-    )}</div>
+    <div class="align-right bolder bigger">${asCurrency(balanceDue)}</div>
   </div>`;
 
   document.body.classList.toggle("discount", !!sale.discountNet);
