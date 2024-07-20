@@ -6,6 +6,7 @@ export const DATABASE_NAME = getStickyValue("database-name", "test");
 export const API_URL = "/api";
 
 const sampleFormData = {
+  batchId: 1,
   partyName: "test",
   siteNumber: "1001",
   siteName: "cash",
@@ -147,15 +148,21 @@ class Database {
     return this.#data.freeChlorine || [];
   }
 
-  getPointOfSale(id: number) {
+  getPointOfSale(batchId: number) {
     this.#data.pos = this.#data.pos || [];
-    if (id < 0 || id >= this.#data.pos.length) throw new Error("Invalid ID");
+    const id = this.#data.pos.findIndex((p) => p.batchId === batchId);
+    if (id === -1) throw new Error("Invalid batch ID");
     return this.#data.pos[id];
   }
 
   async upsertPointOfSale(pos: PointOfSaleFormData) {
     this.#data.pos = this.#data.pos || [];
-    this.#data.pos.push(pos);
+    const index = this.#data.pos.findIndex((p) => p.batchId === pos.batchId);
+    if (index === -1) {
+      this.#data.pos.push(pos);
+    } else {
+      this.#data.pos[index] = pos;
+    }
     return await this.#save();
   }
 

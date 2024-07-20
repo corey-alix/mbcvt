@@ -334,20 +334,6 @@ export async function setupPointOfSaleForm() {
     event.preventDefault();
     inputs.quickReservationForm.reportValidity();
 
-    // form inputs as json
-    const formData = new FormData(inputs.quickReservationForm);
-    const json = {} as Record<string, any>;
-
-    // convert entries to an array
-    Array.from(formData.entries()).forEach((entry) => {
-      const [key, value] = entry;
-      if (typeof json[key] === "undefined") json[key] = value;
-      else if (Array.isArray(json[key])) json[key].push(value);
-      else json[key] = [json[key], value];
-    });
-
-    db.upsertPointOfSale(json as PointOfSaleFormData);
-
     const arAccount = db.forceAccount(magic.saleAccount, "AR");
     const cashAccount = db.forceAccount(magic.cashAccount, "cash");
     const taxAccount = db.forceAccount(magic.taxAccount, "tax");
@@ -444,7 +430,42 @@ export async function setupPointOfSaleForm() {
       });
     }
 
-    const batchId = await db.createBatch();
+    // if there in an invoice number, insert correcting entries into the existing batc
+    const invoice = getQuery("invoice");
+    let batchId = 0;
+    if (invoice) {
+      batchId = parseInt(invoice);
+      const batch = db.getBatches().find((b) => b.id === batchId);
+      if (!batch) throw new Error("Batch not found");
+      // reverse all past transactions
+      for (const transaction of batch.transactions) {
+        await db.addTransaction({
+          account: transaction.account,
+          date: transaction.date,
+          description: transaction.description,
+          amt: -transaction.amt,
+        });
+      }
+    } else {
+      batchId = await db.createBatch();
+    }
+
+    {
+      // form inputs as json
+      const formData = new FormData(inputs.quickReservationForm);
+      const json = {} as Record<string, any>;
+
+      // convert entries to an array
+      Array.from(formData.entries()).forEach((entry) => {
+        const [key, value] = entry;
+        if (typeof json[key] === "undefined") json[key] = value;
+        else if (Array.isArray(json[key])) json[key].push(value);
+        else json[key] = [json[key], value];
+      });
+      json["batchId"] = batchId;
+
+      db.upsertPointOfSale(json as PointOfSaleFormData);
+    }
 
     const receipt = {
       batchId,
@@ -471,7 +492,7 @@ export async function setupPointOfSaleForm() {
   inputs.partyName.focus();
 
   // if there is an invoice number in the query string, populate the form
-  const invoice = new URLSearchParams(window.location.search).get("invoice");
+  const invoice = getQuery("invoice");
   if (invoice) {
     const pos = db.getPointOfSale(parseInt(invoice));
     if (!pos) throw new Error("Invalid invoice number");
@@ -594,4 +615,9 @@ function extractPaymentInfo(pos: PointOfSaleFormData) {
     paymentDate: payments.paymentDate[i],
     paymentAmount: parseFloat(payments.paymentAmount[i]),
   }));
+}
+
+function getQuery(name: string) {
+  const match = new URLSearchParams(window.location.search).get(name);
+  return match || "";
 }
