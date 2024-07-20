@@ -24,32 +24,6 @@ export async function setupGeneralLedgerForm() {
     const accountInfo = db.getAccounts().find((a) => a.id === account);
     if (!accountInfo) throw new Error(`Account not found: ${account}`);
 
-    const clone = document
-      .querySelector("template[id='transactionTemplate']")!
-      .cloneNode() as HTMLElement;
-
-    const ux = getElements(
-      {
-        date: null as any as HTMLDivElement,
-        accountName: null as any as HTMLElement,
-        description: null as any as HTMLElement,
-        debit: null as any as HTMLElement,
-        credit: null as any as HTMLElement,
-        deleteButton: null as any as HTMLButtonElement,
-      },
-      clone
-    );
-
-    ux.date.innerHTML = safeHtml(asShortDate(date));
-    ux.accountName.innerHTML = asLinkToAccountHistory(
-      account,
-      `${account} (${accountInfo.name})`
-    );
-    ux.description.innerHTML = safeHtml(description);
-
-    if (debit) ux.debit.innerText = asCurrency(debit);
-    if (credit) ux.credit.innerText = asCurrency(credit);
-
     const template = `
     <div>${asShortDate(date)}</div>
     <div title="${

@@ -431,7 +431,7 @@ export async function setupPointOfSaleForm() {
     }
 
     // if there in an invoice number, insert correcting entries into the existing batc
-    const invoice = getQuery("invoice");
+    const invoice = getQuery("batch");
     let batchId = 0;
     if (invoice) {
       batchId = parseInt(invoice);
@@ -492,7 +492,7 @@ export async function setupPointOfSaleForm() {
   inputs.partyName.focus();
 
   // if there is an invoice number in the query string, populate the form
-  const invoice = getQuery("invoice");
+  const invoice = getQuery("batch");
   if (invoice) {
     const pos = db.getPointOfSale(parseInt(invoice));
     if (!pos) throw new Error("Invalid invoice number");
