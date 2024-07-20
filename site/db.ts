@@ -1,4 +1,4 @@
-import { range } from "./fun/index.js";
+import { range, asDateString } from "./fun/index.js";
 
 const baseRate = 14;
 const sewerRate = 10;
@@ -271,7 +271,7 @@ export const siteMap = [
       const openingDate = new Date();
       openingDate.setDate(openingDate.getDate() + i);
       // yyyy-mm-dd format
-      return openingDate.toISOString().split("T")[0];
+      return asDateString(openingDate);
     });
 
     // remove some dates to simulate reservations

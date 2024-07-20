@@ -4,7 +4,12 @@ import {
   database,
   database as db,
 } from "../db/index.js";
-import { autoShortcut, getElements, injectActions } from "../fun/index.js";
+import {
+  asDateString,
+  autoShortcut,
+  getElements,
+  injectActions,
+} from "../fun/index.js";
 import { asCurrency, round } from "../fun/index.js";
 import { globals, magic } from "../globals.js";
 import { minimizeRate } from "./renderPriceChart.js";
@@ -208,8 +213,7 @@ export async function setupPointOfSaleForm() {
     ux.paymentType.value = options?.paymentType || "cash";
     ux.paymentAmount.value =
       options?.paymentAmount.toFixed(2) || inputs.balanceDue.value;
-    ux.paymentDate.value =
-      options?.paymentDate || new Date().toISOString().split("T")[0];
+    ux.paymentDate.value = options?.paymentDate || asDateString(new Date());
 
     ux.paymentAmount.addEventListener("input", () => updateTotals());
 
@@ -327,7 +331,7 @@ export async function setupPointOfSaleForm() {
     updateTotals();
   });
 
-  inputs.checkIn.value = new Date().toISOString().split("T")[0];
+  inputs.checkIn.value = asDateString(new Date());
   inputs.checkIn.dispatchEvent(new Event("change"));
 
   inputs.quickReservationForm.addEventListener("submit", async (event) => {
@@ -343,7 +347,7 @@ export async function setupPointOfSaleForm() {
     const siteNumber = inputs.siteNumber.value;
     const siteAccount = db.getAccount(parseInt(siteNumber));
 
-    const transactionDate = new Date().toISOString().split("T")[0];
+    const transactionDate = asDateString(new Date());
 
     const nameOfParty = inputs.partyName.value;
     const dates = `${inputs.checkIn.value} to ${inputs.checkOut.value}`;
@@ -361,10 +365,10 @@ export async function setupPointOfSaleForm() {
       round(discountGross / (1 + magic.taxRate), 2) * magic.taxRate,
       2
     );
+
     const discountNet = discountGross - discountTax;
 
-    const taxableTotal = round(expensesNet - discountNet, 2);
-    const taxTotal = round(taxableTotal * magic.taxRate, 2);
+    const taxTotal = round(expensesNet * magic.taxRate, 2) - discountTax;
 
     const balanceDue = round(
       expensesNet + taxTotal - paidTotal - discountNet,
@@ -380,12 +384,15 @@ export async function setupPointOfSaleForm() {
       });
     }
 
-    await db.addTransaction({
-      account: cashAccount.id,
-      date: transactionDate,
-      description: `Total Paid: ${nameOfParty}`,
-      amt: paidTotal,
-    });
+    const payments = getPayments();
+    for (const payment of payments) {
+      await db.addTransaction({
+        account: cashAccount.id,
+        date: payment.date || transactionDate,
+        description: payment.mop,
+        amt: payment.amount,
+      });
+    }
 
     await db.addTransaction({
       account: taxAccount.id,
@@ -397,7 +404,7 @@ export async function setupPointOfSaleForm() {
     await db.addTransaction({
       account: siteAccount.id,
       date: transactionDate,
-      description: "Rental",
+      description: `Rental to ${nameOfParty}`,
       amt: -expenses.basePrice,
     });
 
@@ -505,6 +512,7 @@ export async function setupPointOfSaleForm() {
     inputs.children.value = pos.children;
     inputs.visitors.value = pos.visitors;
     inputs.woodBundles.value = pos.woodBundles;
+    inputs.totalDiscount.value = pos.totalDiscount;
 
     const paymentInfo = extractPaymentInfo(pos);
     paymentInfo.forEach((payment) => {
@@ -513,20 +521,30 @@ export async function setupPointOfSaleForm() {
   }
 }
 
-function computeTotalPaid() {
-  const payments = Array.from(
+function getPayments() {
+  return Array.from(
     document.querySelectorAll<HTMLDivElement>(".method-of-payment")
   ).map((div) => {
     const paymentAmount =
       div.querySelector<HTMLInputElement>("#paymentAmount")!;
     if (!paymentAmount) throw new Error("Payment amount not found");
+
+    const paymentType = div.querySelector<HTMLSelectElement>("#paymentType")!;
+    if (!paymentType) throw new Error("Payment type not found");
+
+    const paymentDate = div.querySelector<HTMLInputElement>("#paymentDate")!;
+    if (!paymentDate) throw new Error("Payment date not found");
+
     return {
+      mop: paymentType.value,
       amount: paymentAmount.valueAsNumber,
+      date: asDateString(paymentDate.valueAsDate!),
     };
   });
+}
 
-  const totalPaid = payments.reduce((a, b) => a + b.amount, 0);
-  return totalPaid;
+function computeTotalPaid() {
+  return getPayments().reduce((a, b) => a + b.amount, 0);
 }
 
 function printReceipt(sale: PointOfSaleReceiptModel) {

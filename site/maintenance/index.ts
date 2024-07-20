@@ -1,4 +1,4 @@
-import { getElements } from "../fun/index.js";
+import { asDateString, getElements } from "../fun/index.js";
 import { database, FreeChlorineData } from "../db/index.js";
 
 export async function setupFreeChlorineForm() {
@@ -43,7 +43,7 @@ export async function setupFreeChlorineForm() {
   ux.submit.addEventListener("click", async () => {
     if (!ux.freeChlorineForm.reportValidity()) return;
     const freeChlorine = ux.freeChlorine.valueAsNumber;
-    const date = ux.date.valueAsDate!.toISOString().split("T")[0];
+    const date = asDateString(ux.date.valueAsDate!);
     const location = ux.location.value;
     const comment = ux.comment.value;
     await database.addFreeChlorine({ freeChlorine, date, location, comment });

@@ -1,6 +1,6 @@
 import { officeInfo, siteMap } from "./db.js";
 import "./components/index.js";
-import { range } from "./fun/index.js";
+import { asDateString, range } from "./fun/index.js";
 
 const MIN_RESERVATION_DAYS = 2;
 const MAX_RESERVATION_DAYS = 28;
@@ -456,7 +456,7 @@ function interpolateDates(start: string, end: string) {
     const date = new Date(startDate);
     date.setDate(date.getDate() + i);
     // yyyy-mm-dd format
-    return date.toISOString().split("T")[0];
+    return asDateString(date);
   });
 }
 
@@ -474,7 +474,7 @@ function isAvailable(
 function addDay(arrivalDateValue: string, days = 1) {
   const arrivalDate = new Date(arrivalDateValue);
   arrivalDate.setDate(arrivalDate.getDate() + days);
-  return arrivalDate.toISOString().split("T")[0];
+  return asDateString(arrivalDate);
 }
 
 function asUsd(value: number) {

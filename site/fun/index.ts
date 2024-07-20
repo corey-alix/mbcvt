@@ -184,3 +184,7 @@ export function autoShortcut(root = document.body) {
 function hasPhysicalKeyboard() {
   return !window.matchMedia("(pointer: coarse) and (hover: none)").matches;
 }
+
+export function asDateString(date: Date) {
+  return date.toISOString().split("T")[0];
+}

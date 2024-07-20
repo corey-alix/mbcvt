@@ -18,6 +18,7 @@ const sampleFormData = {
   woodBundles: "0",
   baseDue: "41.28",
   totalTax: "3.72",
+  totalDiscount: "0.00",
   totalDue: "45.00",
   paymentDate: ["2024-06-27", "2024-06-27"],
   paymentType: ["cash", "check"],
@@ -185,8 +186,9 @@ class Database {
     this.#data.batches = this.#data.batches || [];
     const index = this.#data.batches.findIndex((b) => b.id === batchId);
     if (index < 0) throw "Batch not found";
-    this.#data.batches[index].transactions = this.#data.transactions;
+    this.#data.batches[index].transactions.push(...this.#data.transactions);
     this.#data.transactions = [];
+    simplifyTransactions(this.#data.batches[index].transactions);
     await this.#save();
   }
 
@@ -358,3 +360,26 @@ class Database {
 }
 
 export const database = new Database();
+function simplifyTransactions(transactions: TransactionModel[]) {
+  for (let i = 0; i < transactions.length; i++) {
+    const t1 = transactions[i];
+    let j = i + 1;
+    while (j < transactions.length) {
+      const t2 = transactions[j];
+      if (
+        t1.account === t2.account &&
+        t1.date === t2.date &&
+        t1.description === t2.description
+      ) {
+        t1.amt += transactions[j].amt;
+        transactions.splice(j, 1);
+      } else {
+        j++;
+      }
+    }
+  }
+  // remove all 0 transactions
+  for (let i = transactions.length - 1; i >= 0; i--) {
+    if (transactions[i].amt === 0) transactions.splice(i, 1);
+  }
+}
