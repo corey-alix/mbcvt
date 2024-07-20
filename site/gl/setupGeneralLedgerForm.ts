@@ -1,5 +1,10 @@
 import { database as db, TransactionModel } from "../db/index.js";
-import { asLinkToAccountHistory, autoShortcut, getElements, injectActions } from "../fun/index.js";
+import {
+  asLinkToAccountHistory,
+  autoShortcut,
+  getElements,
+  injectActions,
+} from "../fun/index.js";
 import { readQueryString, safeHtml, asCurrency } from "../fun/index.js";
 import { toast } from "./toast.js";
 import { asShortDate, trigger, navigateTo, on } from "./gl.js";
@@ -19,6 +24,32 @@ export async function setupGeneralLedgerForm() {
     const accountInfo = db.getAccounts().find((a) => a.id === account);
     if (!accountInfo) throw new Error(`Account not found: ${account}`);
 
+    const clone = document
+      .querySelector("template[id='transactionTemplate']")!
+      .cloneNode() as HTMLElement;
+
+    const ux = getElements(
+      {
+        date: null as any as HTMLDivElement,
+        accountName: null as any as HTMLElement,
+        description: null as any as HTMLElement,
+        debit: null as any as HTMLElement,
+        credit: null as any as HTMLElement,
+        deleteButton: null as any as HTMLButtonElement,
+      },
+      clone
+    );
+
+    ux.date.innerHTML = safeHtml(asShortDate(date));
+    ux.accountName.innerHTML = asLinkToAccountHistory(
+      account,
+      `${account} (${accountInfo.name})`
+    );
+    ux.description.innerHTML = safeHtml(description);
+
+    if (debit) ux.debit.innerText = asCurrency(debit);
+    if (credit) ux.credit.innerText = asCurrency(credit);
+
     const template = `
     <div>${asShortDate(date)}</div>
     <div title="${
@@ -36,10 +67,10 @@ export async function setupGeneralLedgerForm() {
         : "<div></div>"
     }
     `;
-    const target = ux.generalLedger;
-    target.insertAdjacentHTML("beforeend", template);
 
-    const actions = target.querySelectorAll("[data-action]");
+    ux.generalLedger.insertAdjacentHTML("beforeend", template);
+
+    const actions = ux.generalLedger.querySelectorAll("[data-action]");
     actions.forEach((action) => {
       const command = action.getAttribute("data-action")!;
       action.removeAttribute("data-action");
@@ -79,7 +110,6 @@ export async function setupGeneralLedgerForm() {
   };
 
   getElements(ux, document.body);
-
 
   injectActions();
 
@@ -237,9 +267,6 @@ export async function setupGeneralLedgerForm() {
     amount.min = "0.01";
     amount.step = "0.01";
 
-    amount.addEventListener("input", () => {
-      ux.generalLedgerForm.reportValidity();
-    });
     return amount;
   }
 
@@ -290,6 +317,8 @@ export async function setupGeneralLedgerForm() {
   updateBalance();
 
   ux.saveButton.addEventListener("click", async () => {
+    if (!ux.generalLedgerForm.reportValidity()) return;
+
     // only save if total debit equals total credit
     if (ux.totalDebit.textContent !== ux.totalCredit.textContent) {
       throw new Error("Debits and credits must balance");
