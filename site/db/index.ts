@@ -181,6 +181,15 @@ class Database {
     return this.#data.batches || [];
   }
 
+  async updateBatch(batchId: number) {
+    this.#data.batches = this.#data.batches || [];
+    const index = this.#data.batches.findIndex((b) => b.id === batchId);
+    if (index < 0) throw "Batch not found";
+    this.#data.batches[index].transactions = this.#data.transactions;
+    this.#data.transactions = [];
+    await this.#save();
+  }
+
   async createBatch() {
     this.#data.batches = this.#data.batches || [];
     const id = this.#data.batches.length + 1;

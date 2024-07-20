@@ -446,6 +446,7 @@ export async function setupPointOfSaleForm() {
           amt: -transaction.amt,
         });
       }
+      await db.updateBatch(batchId);
     } else {
       batchId = await db.createBatch();
     }
