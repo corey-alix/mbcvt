@@ -35,12 +35,6 @@ export async function setupPointOfSaleForm() {
     counter: null as Counter | null,
   };
 
-  function selectAllOnFocus(input: HTMLInputElement) {
-    input.addEventListener("focus", () => {
-      input.select();
-    });
-  }
-
   function injectIncrementorButtons(input: HTMLInputElement) {
     // wrap an input in a container element that also contains a + and - button
     if (!input) throw new Error("Input not found");
@@ -67,11 +61,11 @@ export async function setupPointOfSaleForm() {
     container.append(decrementButton, input, incrementButton);
     incrementButton.addEventListener("click", () => {
       input.stepUp();
-      input.dispatchEvent(new Event("change"));
+      input.dispatchEvent(new Event("input"));
     });
     decrementButton.addEventListener("click", () => {
       input.stepDown();
-      input.dispatchEvent(new Event("change"));
+      input.dispatchEvent(new Event("input"));
     });
 
     // place the container back in the DOM
@@ -217,6 +211,8 @@ export async function setupPointOfSaleForm() {
     ux.paymentAmount.addEventListener("input", () => updateTotals());
 
     template.parentElement?.insertBefore(clone, template);
+    injectActions();
+
     updateTotals();
   }
 
@@ -242,18 +238,9 @@ export async function setupPointOfSaleForm() {
   };
 
   getElements(inputs, document.body);
-  injectActions();
-
-  injectIncrementorButtons(inputs.visitors);
-  injectIncrementorButtons(inputs.adults);
-  injectIncrementorButtons(inputs.children);
-  injectIncrementorButtons(inputs.woodBundles);
-
-  selectAllOnFocus(inputs.siteNumber);
-  selectAllOnFocus(inputs.visitors);
-  selectAllOnFocus(inputs.adults);
-  selectAllOnFocus(inputs.children);
-  selectAllOnFocus(inputs.woodBundles);
+  injectActions({
+    "incrementor": injectIncrementorButtons,
+  });
 
   inputs.printReceiptButton.addEventListener("click", () => {
     const receiptId = prompt("Enter receipt number");
@@ -298,31 +285,23 @@ export async function setupPointOfSaleForm() {
     updateTotals();
   });
 
-  inputs.checkOut.addEventListener("change", () => {
+  inputs.checkOut.addEventListener("input", () => {
     updateTotals();
   });
 
-  inputs.children.addEventListener("change", () => {
+  inputs.children.addEventListener("input", () => {
     updateTotals();
   });
 
-  inputs.adults.addEventListener("change", () => {
+  inputs.adults.addEventListener("input", () => {
     updateTotals();
   });
 
-  inputs.visitors.addEventListener("change", () => {
+  inputs.visitors.addEventListener("input", () => {
     updateTotals();
   });
 
-  inputs.visitors.addEventListener("change", () => {
-    updateTotals();
-  });
-
-  inputs.visitors.addEventListener("change", () => {
-    updateTotals();
-  });
-
-  inputs.woodBundles.addEventListener("change", () => {
+  inputs.woodBundles.addEventListener("input", () => {
     updateTotals();
   });
 

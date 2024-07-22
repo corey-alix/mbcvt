@@ -64,7 +64,8 @@ export function getElements(
 }
 
 export function injectActions(handlers: Record<string, Function> = {}) {
-  document.querySelectorAll("[data-action]").forEach((actionNode) => {
+  const nodes = document.querySelectorAll("[data-action]");
+  nodes.forEach((actionNode) => {
     const actionNames = actionNode.getAttribute("data-action")?.split(" ");
     actionNames?.forEach((actionName) => {
       if (handlers && handlers[actionName]) {
@@ -82,6 +83,11 @@ export function injectActions(handlers: Record<string, Function> = {}) {
           break;
       }
     });
+  });
+
+  // remove all data-action attributes
+  nodes.forEach((node) => {
+    node.removeAttribute("data-action");
   });
 }
 
