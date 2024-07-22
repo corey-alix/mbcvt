@@ -10,6 +10,11 @@ import http from "http";
 // read port from argument or use default
 const port = process.argv[2] || 3000;
 
+/**
+ * @type {Record<string, number>} versions
+ */
+const versions = { test: 0 };
+
 class DataServices {
   constructor() {
     // read secret key from environment variable
@@ -48,6 +53,21 @@ class DataServices {
   }
 
   /**
+   * @param {string} topic
+   * @param {{ version: number; }} json
+   */
+  validateVersion(topic, json) {
+    const expectedVersion = versions[topic] || 0;
+    const actualVersion = json.version || 0;
+    if (actualVersion < expectedVersion) {
+      console.error("Invalid version", { expectedVersion, actualVersion });
+      throw new Error("Invalid version");
+    }
+    json.version = versions[topic] = actualVersion + 1;
+    console.log("Version:", json.version);
+  }
+
+  /**
    * @param {string} value
    */
   validateValue(value) {
@@ -57,7 +77,7 @@ class DataServices {
 
     // must be a valid JSON object
     try {
-      JSON.parse(value);
+      return JSON.parse(value);
     } catch (e) {
       throw new Error("Invalid value");
     }
@@ -71,9 +91,11 @@ class DataServices {
   save(key, topic, value) {
     this.validateKey(key);
     this.validateTopic(topic);
-    this.validateValue(value);
+    const json = this.validateValue(value);
+    this.validateVersion(topic, json);
     // write the value to the file system
-    fs.writeFileSync(`./data/${topic}.json`, value);
+    fs.writeFileSync(`./data/${topic}.json`, JSON.stringify(json, null, " "));
+    return json.version;
   }
 
   /**
@@ -128,13 +150,16 @@ app.post("/api", (req, res) => {
   req.on("data", (chunk) => {
     body += chunk.toString();
   });
+
   req.on("end", () => {
     try {
       const request = JSON.parse(body);
-      const response = webServices.writeTopic(request);
-      res.send(response);
+      const version = webServices.writeTopic(request);
+      res.setHeader("Content-Type", "application/json");
+      res.send({ version });
     } catch (e) {
-      res.status(400).send(e);
+      res.setHeader("Content-Type", "application/json");
+      res.status(400).send({ error: e });
     }
   });
 });

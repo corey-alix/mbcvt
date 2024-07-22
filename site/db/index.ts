@@ -5,6 +5,8 @@ export const PUBLIC_KEY = getStickyValue("public-key", "123");
 export const DATABASE_NAME = getStickyValue("database-name", "test");
 export const API_URL = "/api";
 
+let isSaving = false;
+
 const sampleFormData = {
   batchId: 1,
   partyName: "test",
@@ -78,6 +80,7 @@ export type FreeChlorineData = {
 };
 
 export type DatabaseSchema = {
+  version: number;
   batches: BatchModel[];
   accounts: AccountModel[];
   transactions: TransactionModel[];
@@ -235,6 +238,7 @@ class Database {
   }
 
   #data = {
+    version: 0,
     accounts: [] as AccountModel[],
     batches: [] as BatchModel[],
     transactions: [] as TransactionModel[],
@@ -323,22 +327,30 @@ class Database {
   }
 
   async #save() {
-    const data = JSON.stringify(this.#data);
-    localStorage.setItem(DATABASE_NAME, data);
+    if (isSaving) throw new Error("Already saving");
+    isSaving = true;
+    try {
+      const data = JSON.stringify(this.#data);
+      localStorage.setItem(DATABASE_NAME, data);
 
-    await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        key: PUBLIC_KEY,
-        topic: DATABASE_NAME,
-        value: data,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+      const response = await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          key: PUBLIC_KEY,
+          topic: DATABASE_NAME,
+          value: data,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-    this.events.trigger("save", new Event("save"));
+      const json = (await response.json()) as any;
+      this.#data.version = json.version;
+      this.events.trigger("save", new Event("save"));
+    } finally {
+      isSaving = false;
+    }
   }
 
   async #load() {

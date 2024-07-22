@@ -472,7 +472,7 @@ export async function setupPointOfSaleForm() {
       });
       json["batchId"] = batchId;
 
-      db.upsertPointOfSale(json as PointOfSaleFormData);
+      await db.upsertPointOfSale(json as PointOfSaleFormData);
     }
 
     const receipt = {
@@ -518,6 +518,9 @@ export async function setupPointOfSaleForm() {
     paymentInfo.forEach((payment) => {
       addPaymentInputs(payment);
     });
+
+    // setup validations
+    inputs.checkOut.min = addDay(inputs.checkIn.value, 1);
   }
 }
 
