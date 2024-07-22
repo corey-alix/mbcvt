@@ -18,6 +18,8 @@ Similar to a spreadsheet, the user can tab through the columns and rows but must
 
 The data should persist in the cloud, perhaps on the digital ocean server.  The data could be stored in sqlite and I can stand up a light-weight API to serve simple JSON.  The client would only need the secret key to access the service.
 
+TODO: Add transactional support so every change is not immediately saved to the database and a failed save leaves no artifacts.
+
 ## Deploy to Digital Ocean
 
 I will manually deploy the app to Digital Ocean using git and ssh.

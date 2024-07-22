@@ -2,7 +2,6 @@ import {
   PointOfSaleFormData,
   PointOfSaleReceiptModel,
   database,
-  database as db,
 } from "../db/index.js";
 import {
   asDateString,
@@ -221,7 +220,7 @@ export async function setupPointOfSaleForm() {
     updateTotals();
   }
 
-  await db.init();
+  await database.init();
   const inputs = {
     quickReservationForm: null as any as HTMLFormElement,
     partyName: null as any as HTMLInputElement,
@@ -259,7 +258,7 @@ export async function setupPointOfSaleForm() {
   inputs.printReceiptButton.addEventListener("click", () => {
     const receiptId = prompt("Enter receipt number");
     if (!receiptId) return;
-    const receipt = db.getReceipt(parseInt(receiptId));
+    const receipt = database.getReceipt(parseInt(receiptId));
     if (!receipt) return;
     printReceipt(receipt);
   });
@@ -274,7 +273,7 @@ export async function setupPointOfSaleForm() {
     }
 
     // validate that this site number corresponds to a GL entry
-    const accounts = db
+    const accounts = database
       .getAccounts()
       .filter(
         (a) => (a.id + "").startsWith(siteNumber) || a.name.includes(siteNumber)
@@ -338,14 +337,17 @@ export async function setupPointOfSaleForm() {
     event.preventDefault();
     inputs.quickReservationForm.reportValidity();
 
-    const arAccount = db.forceAccount(magic.saleAccount, "AR");
-    const cashAccount = db.forceAccount(magic.cashAccount, "cash");
-    const taxAccount = db.forceAccount(magic.taxAccount, "tax");
-    const firewoodAccount = db.forceAccount(magic.firewoodAccount, "firewood");
-    const peopleAccount = db.forceAccount(magic.peopleAccount, "guests");
+    const arAccount = database.forceAccount(magic.saleAccount, "AR");
+    const cashAccount = database.forceAccount(magic.cashAccount, "cash");
+    const taxAccount = database.forceAccount(magic.taxAccount, "tax");
+    const firewoodAccount = database.forceAccount(
+      magic.firewoodAccount,
+      "firewood"
+    );
+    const peopleAccount = database.forceAccount(magic.peopleAccount, "guests");
 
     const siteNumber = inputs.siteNumber.value;
-    const siteAccount = db.getAccount(parseInt(siteNumber));
+    const siteAccount = database.getAccount(parseInt(siteNumber));
 
     const transactionDate = asDateString(new Date());
 
@@ -376,7 +378,7 @@ export async function setupPointOfSaleForm() {
     );
 
     if (balanceDue) {
-      await db.addTransaction({
+      await database.addTransaction({
         account: arAccount.id,
         date: transactionDate,
         description: balanceDue > 0 ? "Balance" : "Credit",
@@ -386,7 +388,7 @@ export async function setupPointOfSaleForm() {
 
     const payments = getPayments();
     for (const payment of payments) {
-      await db.addTransaction({
+      await database.addTransaction({
         account: cashAccount.id,
         date: payment.date || transactionDate,
         description: payment.mop,
@@ -394,14 +396,14 @@ export async function setupPointOfSaleForm() {
       });
     }
 
-    await db.addTransaction({
+    await database.addTransaction({
       account: taxAccount.id,
       date: transactionDate,
       description: "Tax Due",
       amt: -taxTotal,
     });
 
-    await db.addTransaction({
+    await database.addTransaction({
       account: siteAccount.id,
       date: transactionDate,
       description: `Rental to ${nameOfParty}`,
@@ -409,7 +411,7 @@ export async function setupPointOfSaleForm() {
     });
 
     if (discountGross) {
-      await db.addTransaction({
+      await database.addTransaction({
         account: siteAccount.id,
         date: transactionDate,
         description: "Discount",
@@ -418,7 +420,7 @@ export async function setupPointOfSaleForm() {
     }
 
     if (expenses.woodBundles) {
-      await db.addTransaction({
+      await database.addTransaction({
         account: firewoodAccount.id,
         date: transactionDate,
         description: "Firewood",
@@ -429,7 +431,7 @@ export async function setupPointOfSaleForm() {
     const visitorGross =
       expenses.children + expenses.adults + expenses.visitors;
     if (visitorGross) {
-      await db.addTransaction({
+      await database.addTransaction({
         account: peopleAccount.id,
         date: transactionDate,
         description: "Guests",
@@ -442,20 +444,20 @@ export async function setupPointOfSaleForm() {
     let batchId = 0;
     if (invoice) {
       batchId = parseInt(invoice);
-      const batch = db.getBatches().find((b) => b.id === batchId);
+      const batch = database.getBatches().find((b) => b.id === batchId);
       if (!batch) throw new Error("Batch not found");
       // reverse all past transactions
       for (const transaction of batch.transactions) {
-        await db.addTransaction({
+        await database.addTransaction({
           account: transaction.account,
           date: transaction.date,
           description: transaction.description,
           amt: -transaction.amt,
         });
       }
-      await db.updateBatch(batchId);
+      await database.updateBatch(batchId);
     } else {
-      batchId = await db.createBatch();
+      batchId = await database.createBatch();
     }
 
     {
@@ -472,7 +474,7 @@ export async function setupPointOfSaleForm() {
       });
       json["batchId"] = batchId;
 
-      await db.upsertPointOfSale(json as PointOfSaleFormData);
+      await database.upsertPointOfSale(json as PointOfSaleFormData);
     }
 
     const receipt = {
@@ -502,7 +504,7 @@ export async function setupPointOfSaleForm() {
   // if there is an invoice number in the query string, populate the form
   const invoice = getQuery("batch");
   if (invoice) {
-    const pos = db.getPointOfSale(parseInt(invoice));
+    const pos = database.getPointOfSale(parseInt(invoice));
     if (!pos) throw new Error("Invalid invoice number");
     inputs.partyName.value = pos.partyName;
     inputs.siteNumber.value = pos.siteNumber;
