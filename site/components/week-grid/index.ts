@@ -78,11 +78,18 @@ const template = `
     background-color: var(--color-white);
   }
 
+  .start-date {
+    position: sticky;
+    top: 0;
+    background-color: var(--color-black);
+    height: 1em;
+  }
+
   .header {
     font-weight: bold;
     /* prevent this column from scrolling */
     position: sticky;
-    top: 0;
+    top: 1em;
     background-color: var(--color-black);
     color: var(--color-white);
     padding: 0.5em;
@@ -188,7 +195,7 @@ export class WeekGrid extends HTMLElement {
         !this.showAllSites && !weeklyAvailability.some((value) => value);
 
       const siteElement = document.createElement("div");
-      siteElement.textContent = `${site.site.substring(0, 2)}`;
+      siteElement.textContent = `${site.site.substring(0, 4)}`;
       siteElement.classList.add("site", "data");
       siteElement.classList.toggle("hidden", hidden);
       grid.appendChild(siteElement);

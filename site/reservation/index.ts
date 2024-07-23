@@ -3,10 +3,6 @@ import { WeekGrid } from "../components/week-grid/index.js";
 import { database } from "../db/index.js";
 import { asDateString, getElements } from "../fun/index.js";
 
-const sites =
-  "F1,F2,F3,F4,F5,F6,F7,PULLOUT,BARNYARD,0,1,2,3,4,5,6,7A,7B,8,9,10,12,13,14,15,16,17,18,19,20,21,21B,22".split(
-    ","
-  );
 export async function setupReservationForm() {
   await database.init();
   const grid = document.querySelector<WeekGrid>("week-grid")!;
@@ -49,15 +45,11 @@ export async function setupReservationForm() {
     grid.startDate = currentDate;
   });
 
-  const siteAvailability = database.getSiteAvailability();
-  for (let siteId of sites) {
-    if (!siteAvailability.some((site) => site.site === siteId)) {
-      siteAvailability.push({
-        site: siteId,
-        reserved: [],
-      });
-    }
-  }
+  const siteAvailability = database.getSiteAvailability().sort((a, b) => {
+    const v1 = a.site.padStart(3, "0");
+    const v2 = b.site.padStart(3, "0");
+    return v1.localeCompare(v2);
+  });
 
   grid.availableSites = siteAvailability;
   grid.addEventListener("cell-click", async (event) => {
