@@ -11,11 +11,21 @@ const template = `
     --color-black: #333;
     --color-yellow: #ff0;
   }
+
   .grid {
     display: grid;
     grid-template-columns: 1fr repeat(7, 1fr);
     justify-items: center;
   }
+
+  .grid > .hidden {
+    display: none;
+  } 
+
+  .grid > .not-hidden {
+    display: grid;
+  } 
+
   .row-2 {
     grid-row: span 2;
   }
@@ -116,6 +126,15 @@ export class WeekGrid extends HTMLElement {
     this.shadowRoot!.innerHTML = template;
   }
 
+  set showAllSites(value: boolean) {
+    const sites = this.shadowRoot!.querySelectorAll(
+      ".site.hidden, .siteday.hidden"
+    );
+    sites.forEach((site) => {
+      site.classList.toggle("not-hidden", value);
+    });
+  }
+
   set startDate(value: Date) {
     const daySinceMonday = (value.getDay() + 6) % 7;
     const monday = new Date(value);
@@ -159,17 +178,19 @@ export class WeekGrid extends HTMLElement {
       const weeklyAvailability = daysOfWeek.map((dayOfWeek, index) => {
         const date = new Date(this.#startDate);
         date.setDate(date.getDate() + index);
-        return !isReserved(site, asDateString(date));
+        const note = notes.find(
+          (n) => n.site === site.site && n.date === asDateString(date)
+        );
+        return !!note || !isReserved(site, asDateString(date));
       });
 
-      if (!weeklyAvailability.some((value) => value)) {
-        // no availability for this site this week
-        return;
-      }
+      const hidden =
+        !this.showAllSites && !weeklyAvailability.some((value) => value);
 
       const siteElement = document.createElement("div");
       siteElement.textContent = `${site.site.substring(0, 2)}`;
       siteElement.classList.add("site", "data");
+      siteElement.classList.toggle("hidden", hidden);
       grid.appendChild(siteElement);
 
       days.forEach((day, index) => {
@@ -189,6 +210,7 @@ export class WeekGrid extends HTMLElement {
         dayElement.textContent = site.site.substring(0, 2);
 
         dayElement.classList.add("siteday", "data");
+        dayElement.classList.toggle("hidden", hidden);
         dayElement.classList.add(reserved ? "reserved" : "available");
         grid.appendChild(dayElement);
         dayElement.addEventListener("click", () => {

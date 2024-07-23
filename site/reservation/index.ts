@@ -18,10 +18,17 @@ export async function setupReservationForm() {
     nextWeek: null as any as HTMLButtonElement,
     thisWeek: null as any as HTMLButtonElement,
     addNote: null as any as HTMLInputElement,
+    showAllSites: null as any as HTMLButtonElement,
   };
   getElements(ux, document.body);
 
   let activeNote = false;
+
+  let showAllSites = false;
+  ux.showAllSites.addEventListener("click", () => {
+    showAllSites = !showAllSites;
+    grid.showAllSites = showAllSites;
+  });
 
   ux.addNote.addEventListener("click", async () => {
     activeNote = true;
