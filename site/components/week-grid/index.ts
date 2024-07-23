@@ -12,6 +12,11 @@ const template = `
     --color-yellow: #ff0;
   }
 
+  .tiny {
+    font-size: small;
+    white-space: nowrap;
+  }
+
   .grid {
     display: grid;
     grid-template-columns: 1fr repeat(7, 1fr);
@@ -68,6 +73,10 @@ const template = `
 
   .note {
     border: 0.2em solid var(--color-yellow);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   .siteday.reserved {
@@ -209,16 +218,18 @@ export class WeekGrid extends HTMLElement {
         const siteNote = notes.find(
           (n) => n.site === site.site && n.date === asDateString(date)
         );
-        if (siteNote) {
-          dayElement.title = siteNote.note;
-          dayElement.classList.add("note");
-        }
 
         dayElement.textContent = site.site.substring(0, 2);
 
         dayElement.classList.add("siteday", "data");
         dayElement.classList.toggle("hidden", hidden);
         dayElement.classList.add(reserved ? "reserved" : "available");
+        if (siteNote) {
+          dayElement.title = siteNote.note;
+          dayElement.classList.add("note");
+          dayElement.textContent = "";
+          dayElement.insertAdjacentHTML("beforeend", `<div class="tiny">${siteNote.note.substring(0, 6)}</div>`);
+        }
         grid.appendChild(dayElement);
         dayElement.addEventListener("click", () => {
           this.trigger("cell-click", {
