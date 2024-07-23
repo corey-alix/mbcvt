@@ -45,7 +45,8 @@ const template = `
 
   .title {
     font-weight: bold;
-    margin-bottom: 1rem;
+    font-size: larger;
+    width: 100%;
   }
 
   .site {
@@ -90,28 +91,30 @@ const template = `
   .start-date {
     position: sticky;
     top: 0;
+    height: 2em;
     background-color: var(--color-black);
-    height: 1em;
   }
 
   .header {
     font-weight: bold;
     /* prevent this column from scrolling */
     position: sticky;
-    top: 1em;
+    top: 2rem;
     background-color: var(--color-black);
     color: var(--color-white);
-    padding: 0.5em;
-    margin: 0;
     /* fill */
     width: 100%;
     border-bottom: 1px solid var(--color-white);
   }
 
+  .span-row {
+    grid-column: span 8;
+  }
+
   </style>
-  <div class="start-date center title">Start date</div>
   <div class="grid">
-    <div class="site row-2 center">Site</div>
+  <div class="span-row start-date center title">Start date</div>
+    <div class="header site center">Site</div>
     <div class="header day center">Mon</div>
     <div class="header day center">Tue</div>
     <div class="header day center">Wed</div>
@@ -119,6 +122,7 @@ const template = `
     <div class="header day center">Fri</div>
     <div class="header day center">Sat</div>
     <div class="header day center">Sun</div>
+    <div class="spacer"></div>
     <div class="date center">Mon</div>
     <div class="date center">Tue</div>
     <div class="date center">Wed</div>
