@@ -26,19 +26,36 @@ yellow if reserved but no deposit.
                 background-color: var(--color-black);
                 color: var(--color-white);
             }
+        }
 
-            .center {
-                text-align: center;
-            }
+        .center {
+            text-align: center;
+        }
 
+        .toolbar {
+            display: flex;
+            justify-content: center;
+        }
+
+        .toolbar>button {
+            margin: 1em;
+            border-radius: 1em;
+            padding: 0.5em 1em;
+            background-color: var(--color-white);
+            color: var(--color-black);
+            border: none;
+            min-height: 1em;
         }
     </style>
 </head>
 
 <body>
     <h1 class="center">Reservations</h1>
-    <button id="priorWeek">Prior Week</button>
-    <button id="nextWeek">Next Week</button>
+    <div class="toolbar">
+        <button id="priorWeek">Prior Week</button>
+        <button id="nextWeek">Next Week</button>
+        <button id="thisWeek">This Week</button>
+    </div>
     <!-- 7 x n grid -->
     <week-grid></week-grid>
 

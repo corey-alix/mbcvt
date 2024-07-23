@@ -16,9 +16,15 @@ export async function setupReservationForm() {
   const ux = {
     priorWeek: null as any as HTMLButtonElement,
     nextWeek: null as any as HTMLButtonElement,
+    thisWeek: null as any as HTMLButtonElement,
   };
   getElements(ux, document.body);
 
+  ux.thisWeek.addEventListener("click", () => {
+    currentDate.setDate(new Date().getDate());
+    grid.startDate = currentDate
+  });
+  
   ux.priorWeek.addEventListener("click", () => {
     currentDate.setDate(currentDate.getDate() - 7);
     grid.startDate = currentDate;
