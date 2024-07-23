@@ -8,6 +8,7 @@ const template = `
   :host {
     --color-white: white;
     --color-red: red;
+    --color-black: black;
   }
   .grid {
     display: grid;
@@ -17,15 +18,15 @@ const template = `
   .row-2 {
     grid-row: span 2;
   }
+
   .available {
-    color: green;
+    color: var(--color-black);
   }
-  .reserved {
-    color: red;
-  }
+
   .center {
     text-align: center;
   }
+
   .title {
     font-weight: bold;
     margin-bottom: 1rem;
@@ -33,6 +34,7 @@ const template = `
 
   .site {
     font-weight: bold;
+    font-size: larger;
     text-transform: uppercase;
     display: flex;
     justify-content: start;
@@ -143,7 +145,7 @@ export class WeekGrid extends HTMLElement {
       }
 
       const siteElement = document.createElement("div");
-      siteElement.textContent = `${site.site}`;
+      siteElement.textContent = `${site.site.substring(0, 2)}`;
       siteElement.classList.add("site", "data");
       grid.appendChild(siteElement);
 
@@ -152,7 +154,7 @@ export class WeekGrid extends HTMLElement {
         date.setDate(date.getDate() + index);
         const reserved = isReserved(site, asDateString(date));
         const dayElement = document.createElement("div");
-        dayElement.textContent = reserved ? "X" : "A";
+        dayElement.textContent = site.site.substring(0, 2);
         dayElement.classList.add("siteday", "data");
         dayElement.classList.add(reserved ? "reserved" : "available");
         grid.appendChild(dayElement);
