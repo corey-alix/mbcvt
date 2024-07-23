@@ -19,6 +19,7 @@ export async function setupReservationForm() {
   getElements(ux, document.body);
 
   let activeNote = false;
+  let lastNote = "";
 
   let showAllSites = false;
   ux.showAllSites.addEventListener("click", () => {
@@ -27,7 +28,8 @@ export async function setupReservationForm() {
   });
 
   ux.addNote.addEventListener("click", async () => {
-    activeNote = true;
+    activeNote = !activeNote;
+    document.body.classList.toggle("add-note-tool", activeNote);
   });
 
   ux.thisWeek.addEventListener("click", () => {
@@ -64,17 +66,28 @@ export async function setupReservationForm() {
     if (!siteInfo) throw new Error("Site not found");
 
     if (activeNote) {
-      const note = prompt("Enter a note");
-      if (!note) {
+      const note = database
+        .getSiteNotes()
+        .find((n) => n.site === cellData.site && n.date === cellData.date);
+      lastNote = note ? note.note : lastNote;
+      const promptResult = prompt("Enter a note", lastNote);
+      if (null == promptResult) return;
+      lastNote = promptResult || "";
+      if (!lastNote) {
         activeNote = false;
+        await database.deleteNote({
+          site: cellData.site,
+          date: cellData.date,
+        });
+        grid.refresh();
         return;
       }
+
       await database.upsertNote({
         site: cellData.site,
         date: cellData.date,
-        note,
+        note: lastNote,
       });
-      activeNote = false;
       grid.refresh();
       return;
     }

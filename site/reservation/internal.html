@@ -20,11 +20,20 @@ yellow if reserved but no deposit.
             :root {
                 --color-white: #bbb;
                 --color-black: #333;
+                --color-yellow: #ff0;
             }
 
             body {
                 background-color: var(--color-black);
                 color: var(--color-white);
+            }
+
+            .add-note-tool {
+                cursor: text;
+            }
+
+            .add-note-tool button#addNote {
+                outline: 0.1em solid var(--color-yellow);
             }
         }
 

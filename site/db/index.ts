@@ -123,6 +123,16 @@ export type Contact = {
 };
 
 class Database {
+  deleteNote(siteNote: { site: string; date: string }) {
+    this.#data.siteNotes = this.#data.siteNotes || [];
+    const index = this.#data.siteNotes.findIndex(
+      (s) => s.site === siteNote.site && s.date === siteNote.date
+    );
+    if (index === -1) throw new Error("Note not found");
+    this.#data.siteNotes.splice(index, 1);
+    return this.#save();
+  }
+
   upsertNote(siteNote: { site: string; date: string; note: string }) {
     this.#data.siteNotes = this.#data.siteNotes || [];
     const index = this.#data.siteNotes.findIndex(
