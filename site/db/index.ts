@@ -7,6 +7,12 @@ export const API_URL = "/api";
 
 let isSaving = false;
 
+export type SiteNoteModel = {
+  site: string;
+  date: string;
+  note: string;
+};
+
 export type SiteAvailabilityModel = {
   site: string;
   reserved: {
@@ -16,7 +22,6 @@ export type SiteAvailabilityModel = {
     };
   }[];
 };
-
 
 const sampleFormData = {
   batchId: 1,
@@ -100,6 +105,7 @@ export type DatabaseSchema = {
   freeChlorine: FreeChlorineData[];
   contacts: Contact[];
   siteAvailability: SiteAvailabilityModel[];
+  siteNotes: SiteNoteModel[];
 };
 
 export type Contact = {
@@ -117,6 +123,23 @@ export type Contact = {
 };
 
 class Database {
+  upsertNote(siteNote: { site: string; date: string; note: string }) {
+    this.#data.siteNotes = this.#data.siteNotes || [];
+    const index = this.#data.siteNotes.findIndex(
+      (s) => s.site === siteNote.site && s.date === siteNote.date
+    );
+    if (index === -1) {
+      this.#data.siteNotes.push(siteNote);
+    } else {
+      this.#data.siteNotes[index].note = siteNote.note;
+    }
+    return this.#save();
+  }
+
+  getSiteNotes() {
+    return this.#data.siteNotes || [];
+  }
+
   private events = new EventManager();
 
   addEventListener(event: string, doit: () => void) {
@@ -129,7 +152,9 @@ class Database {
 
   async upsertSiteAvailability(site: SiteAvailabilityModel) {
     this.#data.siteAvailability = this.#data.siteAvailability || [];
-    const index = this.#data.siteAvailability.findIndex((s) => s.site === site.site);
+    const index = this.#data.siteAvailability.findIndex(
+      (s) => s.site === site.site
+    );
     if (index === -1) {
       this.#data.siteAvailability.push(site);
     } else {
@@ -274,6 +299,7 @@ class Database {
     contacts: [] as Contact[],
     posReceipts: [] as PointOfSaleReceiptModel[],
     siteAvailability: [] as SiteAvailabilityModel[],
+    siteNotes: [] as SiteNoteModel[],
   } satisfies DatabaseSchema;
 
   constructor() {}

@@ -17,8 +17,15 @@ export async function setupReservationForm() {
     priorWeek: null as any as HTMLButtonElement,
     nextWeek: null as any as HTMLButtonElement,
     thisWeek: null as any as HTMLButtonElement,
+    addNote: null as any as HTMLInputElement,
   };
   getElements(ux, document.body);
+
+  let activeNote = false;
+
+  ux.addNote.addEventListener("click", async () => {
+    activeNote = true;
+  });
 
   ux.thisWeek.addEventListener("click", () => {
     currentDate.setDate(new Date().getDate());
@@ -56,6 +63,22 @@ export async function setupReservationForm() {
       (site) => site.site === cellData.site
     );
     if (!siteInfo) throw new Error("Site not found");
+
+    if (activeNote) {
+      const note = prompt("Enter a note");
+      if (!note) {
+        activeNote = false;
+        return;
+      }
+      await database.upsertNote({
+        site: cellData.site,
+        date: cellData.date,
+        note,
+      });
+      activeNote = false;
+      grid.refresh();
+      return;
+    }
 
     if (!cellData.reserved) {
       const reservationDate = cellData.date;

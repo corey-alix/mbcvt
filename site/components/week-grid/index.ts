@@ -1,4 +1,4 @@
-import { type SiteAvailabilityModel } from "../../db/index.js";
+import { database, type SiteAvailabilityModel } from "../../db/index.js";
 import { asDateString } from "../../fun/index.js";
 
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -9,6 +9,7 @@ const template = `
     --color-white: #ddd;
     --color-red: red;
     --color-black: #333;
+    --color-yellow: #ff0;
   }
   .grid {
     display: grid;
@@ -53,6 +54,10 @@ const template = `
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .note {
+    border: 0.2em solid var(--color-yellow);
   }
 
   .siteday.reserved {
@@ -124,7 +129,9 @@ export class WeekGrid extends HTMLElement {
     this.refresh();
   }
 
-  refresh() {
+  async refresh() {
+    await database.init();
+
     const grid = this.shadowRoot!.querySelector(".grid")!;
 
     // remove all "data" elements
@@ -146,6 +153,8 @@ export class WeekGrid extends HTMLElement {
     });
 
     const sites = this.#availableSites;
+    const notes = database.getSiteNotes();
+
     sites.forEach((site) => {
       const weeklyAvailability = daysOfWeek.map((dayOfWeek, index) => {
         const date = new Date(this.#startDate);
@@ -168,7 +177,17 @@ export class WeekGrid extends HTMLElement {
         date.setDate(date.getDate() + index);
         const reserved = isReserved(site, asDateString(date));
         const dayElement = document.createElement("div");
+
+        const siteNote = notes.find(
+          (n) => n.site === site.site && n.date === asDateString(date)
+        );
+        if (siteNote) {
+          dayElement.title = siteNote.note;
+          dayElement.classList.add("note");
+        }
+
         dayElement.textContent = site.site.substring(0, 2);
+
         dayElement.classList.add("siteday", "data");
         dayElement.classList.add(reserved ? "reserved" : "available");
         grid.appendChild(dayElement);
