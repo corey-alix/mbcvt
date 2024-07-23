@@ -193,3 +193,13 @@ app.get("/", (req, res) => {
 http.createServer(app).listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+
+// on error, restart the server
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+  // restart app server
+  http.createServer(app).listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+  });
+});

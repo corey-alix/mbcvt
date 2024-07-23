@@ -1,0 +1,48 @@
+<!--
+Day of the week across the top, 
+site down the left side, 
+red if reserved, 
+green if available, 
+yellow if reserved but no deposit.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- mobile friendly -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation</title>
+    <link rel="author" href="mailto:coreyalix@gmail.com">
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-white: #bbb;
+                --color-black: #333;
+            }
+
+            body {
+                background-color: var(--color-black);
+                color: var(--color-white);
+            }
+
+            .center {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1 class="center">Reservations</h1>
+    <!-- 7 x n grid -->
+    <week-grid></week-grid>
+
+    <script type="module">
+        import { setupReservationForm } from './index.js';
+        setupReservationForm();
+    </script>
+</body>
+
+</html>
