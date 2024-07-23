@@ -6,14 +6,14 @@ const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const template = `
   <style>
   :host {
-    --color-white: #ddd;
-    --color-red: red;
+    --color-white: #ccc;
+    --color-red: #a22;
     --color-black: #333;
-    --color-yellow: #ff0;
+    --color-yellow: #dd6;
   }
 
   .tiny {
-    font-size: small;
+    font-size: xx-small;
     white-space: nowrap;
   }
 
@@ -169,6 +169,15 @@ export class WeekGrid extends HTMLElement {
 
     const grid = this.shadowRoot!.querySelector(".grid")!;
 
+    // if the current focus element is a grid child, restore the focus to the child in that same position
+    const focused = this.shadowRoot!.activeElement;
+    let focusIndex = -1;
+    if (focused instanceof HTMLElement) {
+      const gridChildren = Array.from(grid.children);
+      focusIndex = gridChildren.indexOf(focused);
+    }
+    console.log({ focused, focusIndex });
+
     // remove all "data" elements
     const data = this.shadowRoot!.querySelectorAll(".data");
     data.forEach((element) => {
@@ -214,6 +223,7 @@ export class WeekGrid extends HTMLElement {
         date.setDate(date.getDate() + index);
         const reserved = isReserved(site, asDateString(date));
         const dayElement = document.createElement("div");
+        dayElement.tabIndex = 0;
 
         const siteNote = notes.find(
           (n) => n.site === site.site && n.date === asDateString(date)
@@ -228,18 +238,37 @@ export class WeekGrid extends HTMLElement {
           dayElement.title = siteNote.note;
           dayElement.classList.add("note");
           dayElement.textContent = "";
-          dayElement.insertAdjacentHTML("beforeend", `<div class="tiny">${siteNote.note.substring(0, 6)}</div>`);
+          dayElement.insertAdjacentHTML(
+            "beforeend",
+            `<div class="tiny">${siteNote.note.substring(0, 6)}</div>`
+          );
         }
         grid.appendChild(dayElement);
-        dayElement.addEventListener("click", () => {
+
+        const doit = () => {
           this.trigger("cell-click", {
             site: site.site,
             date: asDateString(date),
             reserved,
           });
+        };
+
+        dayElement.addEventListener("keypress", (event) => {
+          if (event.key === "Enter") {
+            doit();
+          }
         });
+        dayElement.addEventListener("click", doit);
       });
     });
+
+    if (focusIndex != -1) {
+      const gridChildren = Array.from(grid.children);
+      const focusElement = gridChildren[focusIndex];
+      if (focusElement instanceof HTMLElement) {
+        focusElement.focus();
+      }
+    }
   }
 
   trigger(topic: string, data: any) {
@@ -253,13 +282,6 @@ function isReserved(site: SiteAvailabilityModel, date: string) {
   return site.reserved.some((reservation) => {
     const result =
       date >= reservation.range.start && date <= reservation.range.end;
-    console.log({
-      site: site.site,
-      date,
-      start: reservation.range.start,
-      end: reservation.range.end,
-      result,
-    });
     return result;
   });
 }
