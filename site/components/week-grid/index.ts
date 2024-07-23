@@ -5,6 +5,10 @@ const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const template = `
   <style>
+  :host {
+    --color-white: white;
+    --color-red: red;
+  }
   .grid {
     display: grid;
     grid-template-columns: 1fr repeat(7, 1fr);
@@ -37,8 +41,8 @@ const template = `
 
   .siteday {
     border-radius: 50%;
-    width: 5vw;
-    height: 5vw;
+    width: clamp(1em, 5vw, 2em);
+    aspect-ratio: 1;
     border: 0.1em solid var(--color-white);
     padding: 0.2em;
     margin: 0.2em;
@@ -47,6 +51,14 @@ const template = `
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .siteday.reserved {
+    background-color: var(--color-red);
+  }
+
+  .siteday.available {
+    background-color: var(--color-white);
   }
 
   </style>
@@ -119,6 +131,17 @@ export class WeekGrid extends HTMLElement {
 
     const sites = this.#availableSites;
     sites.forEach((site) => {
+      const weeklyAvailability = daysOfWeek.map((dayOfWeek, index) => {
+        const date = new Date(this.#startDate);
+        date.setDate(date.getDate() + index);
+        return !isReserved(site, asDateString(date));
+      });
+
+      if (!weeklyAvailability.some((value) => value)) {
+        // no availability for this site this week
+        return;
+      }
+
       const siteElement = document.createElement("div");
       siteElement.textContent = `${site.site}`;
       siteElement.classList.add("site", "data");
