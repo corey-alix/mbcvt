@@ -22,9 +22,9 @@ export async function setupReservationForm() {
 
   ux.thisWeek.addEventListener("click", () => {
     currentDate.setDate(new Date().getDate());
-    grid.startDate = currentDate
+    grid.startDate = currentDate;
   });
-  
+
   ux.priorWeek.addEventListener("click", () => {
     currentDate.setDate(currentDate.getDate() - 7);
     grid.startDate = currentDate;
@@ -85,6 +85,47 @@ export async function setupReservationForm() {
           });
         }
       }
+      await database.upsertSiteAvailability(siteInfo);
+      grid.refresh();
+    } else {
+      const reservation = siteInfo.reserved.find(
+        (reservation) =>
+          reservation.range.start <= cellData.date &&
+          reservation.range.end >= cellData.date
+      );
+      if (!reservation) throw new Error("Reservation not found");
+
+      if (reservation.range.start === cellData.date) {
+        if (reservation.range.end === cellData.date) {
+          siteInfo.reserved = siteInfo.reserved.filter(
+            (r) => r !== reservation
+          );
+        } else {
+          const nextDay = new Date(cellData.date);
+          nextDay.setDate(nextDay.getDate() + 1);
+          reservation.range.start = asDateString(nextDay);
+        }
+      } else if (reservation.range.end === cellData.date) {
+        const previousDay = new Date(cellData.date);
+        previousDay.setDate(previousDay.getDate() - 1);
+        reservation.range.end = asDateString(previousDay);
+      } else {
+        const priorDay = new Date(cellData.date);
+        priorDay.setDate(priorDay.getDate() - 1);
+        const nextDay = new Date(cellData.date);
+        nextDay.setDate(nextDay.getDate() + 1);
+
+        const newReservation = {
+          range: {
+            start: asDateString(new Date(cellData.date)),
+            end: reservation.range.end,
+          },
+        };
+        siteInfo.reserved.push(newReservation);
+
+        reservation.range.end = asDateString(priorDay);
+      }
+
       await database.upsertSiteAvailability(siteInfo);
       grid.refresh();
     }
