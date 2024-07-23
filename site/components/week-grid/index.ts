@@ -1,3 +1,6 @@
+import { type SiteAvailabilityModel } from "../../db/index.js";
+import { asDateString } from "../../fun/index.js";
+
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const template = `
@@ -5,8 +8,9 @@ const template = `
   .grid {
     display: grid;
     grid-template-columns: 1fr repeat(7, 1fr);
+    justify-items: center;
   }
-  .site {
+  .row-2 {
     grid-row: span 2;
   }
   .available {
@@ -22,39 +26,52 @@ const template = `
     font-weight: bold;
     margin-bottom: 1rem;
   }
+
+  .site {
+    font-weight: bold;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+  }
+
+  .siteday {
+    border-radius: 50%;
+    width: 5vw;
+    height: 5vw;
+    border: 0.1em solid var(--color-white);
+    padding: 0.2em;
+    margin: 0.2em;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   </style>
   <div class="start-date center title">Start date</div>
   <div class="grid">
-    <div class="site">Site</div>
-    <div class="day">Mon</div>
-    <div class="day">Tue</div>
-    <div class="day">Wed</div>
-    <div class="day">Thu</div>
-    <div class="day">Fri</div>
-    <div class="day">Sat</div>
-    <div class="date">Sun</div>
-    <div class="date">Mon</div>
-    <div class="date">Tue</div>
-    <div class="date">Wed</div>
-    <div class="date">Thu</div>
-    <div class="date">Fri</div>
-    <div class="date">Sat</div>
-    <div class="day">Sun</div>
+    <div class="site row-2 center">Site</div>
+    <div class="day center">Mon</div>
+    <div class="day center">Tue</div>
+    <div class="day center">Wed</div>
+    <div class="day center">Thu</div>
+    <div class="day center">Fri</div>
+    <div class="day center">Sat</div>
+    <div class="day center">Sun</div>
+    <div class="date center">Mon</div>
+    <div class="date center">Tue</div>
+    <div class="date center">Wed</div>
+    <div class="date center">Thu</div>
+    <div class="date center">Fri</div>
+    <div class="date center">Sat</div>
+    <div class="date center">Sun</div>
   </div>
 `;
 
-type SiteAvailability = {
-  site: number;
-  reserved: {
-    range: {
-      start: Date;
-      end: Date;
-    };
-  }[];
-};
-
 export class WeekGrid extends HTMLElement {
-  #availableSites: Array<SiteAvailability> = [];
+  #availableSites: Array<SiteAvailabilityModel> = [];
   #startDate: Date = new Date();
 
   constructor() {
@@ -71,17 +88,23 @@ export class WeekGrid extends HTMLElement {
     const monday = new Date(value);
     monday.setDate(value.getDate() - daySinceMonday);
     this.#startDate = monday;
-    console.log({ startDate: this.#startDate });
     this.refresh();
   }
 
-  set availableSites(value: SiteAvailability[]) {
+  set availableSites(value: SiteAvailabilityModel[]) {
     this.#availableSites = value;
     this.refresh();
   }
 
   refresh() {
     const grid = this.shadowRoot!.querySelector(".grid")!;
+
+    // remove all "data" elements
+    const data = this.shadowRoot!.querySelectorAll(".data");
+    data.forEach((element) => {
+      element.remove();
+    });
+
     const startDate = this.shadowRoot!.querySelector(".start-date")!;
     const endDate = new Date(this.#startDate);
     endDate.setDate(endDate.getDate() + 6);
@@ -98,36 +121,42 @@ export class WeekGrid extends HTMLElement {
     sites.forEach((site) => {
       const siteElement = document.createElement("div");
       siteElement.textContent = `${site.site}`;
-      siteElement.classList.add("site");
+      siteElement.classList.add("site", "data");
       grid.appendChild(siteElement);
 
-      const date = new Date(this.#startDate);
       days.forEach((day, index) => {
-        const reserved = isReserved(site, date);
+        const date = new Date(this.#startDate);
+        date.setDate(date.getDate() + index);
+        const reserved = isReserved(site, asDateString(date));
         const dayElement = document.createElement("div");
         dayElement.textContent = reserved ? "X" : "A";
+        dayElement.classList.add("siteday", "data");
         dayElement.classList.add(reserved ? "reserved" : "available");
         grid.appendChild(dayElement);
-        date.setDate(date.getDate() + index);
         dayElement.addEventListener("click", () => {
-          console.log({
+          this.trigger("cell-click", {
             site: site.site,
-            date: date.toDateString(),
+            date: asDateString(date),
             reserved,
           });
         });
       });
     });
   }
+
+  trigger(topic: string, data: any) {
+    this.dispatchEvent(new CustomEvent(topic, { detail: data }));
+  }
 }
 
 customElements.define("week-grid", WeekGrid);
 
-function isReserved(site: SiteAvailability, date: Date) {
+function isReserved(site: SiteAvailabilityModel, date: string) {
   return site.reserved.some((reservation) => {
     const result =
       date >= reservation.range.start && date <= reservation.range.end;
     console.log({
+      site: site.site,
       date,
       start: reservation.range.start,
       end: reservation.range.end,

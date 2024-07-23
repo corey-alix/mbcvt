@@ -7,6 +7,17 @@ export const API_URL = "/api";
 
 let isSaving = false;
 
+export type SiteAvailabilityModel = {
+  site: string;
+  reserved: {
+    range: {
+      start: string;
+      end: string;
+    };
+  }[];
+};
+
+
 const sampleFormData = {
   batchId: 1,
   partyName: "test",
@@ -88,6 +99,7 @@ export type DatabaseSchema = {
   posReceipts: PointOfSaleReceiptModel[];
   freeChlorine: FreeChlorineData[];
   contacts: Contact[];
+  siteAvailability: SiteAvailabilityModel[];
 };
 
 export type Contact = {
@@ -109,6 +121,21 @@ class Database {
 
   addEventListener(event: string, doit: () => void) {
     this.events.on(event, doit);
+  }
+
+  getSiteAvailability() {
+    return this.#data.siteAvailability || [];
+  }
+
+  async upsertSiteAvailability(site: SiteAvailabilityModel) {
+    this.#data.siteAvailability = this.#data.siteAvailability || [];
+    const index = this.#data.siteAvailability.findIndex((s) => s.site === site.site);
+    if (index === -1) {
+      this.#data.siteAvailability.push(site);
+    } else {
+      this.#data.siteAvailability[index] = site;
+    }
+    await this.#save();
   }
 
   getContacts() {
@@ -246,6 +273,7 @@ class Database {
     freeChlorine: [] as FreeChlorineData[],
     contacts: [] as Contact[],
     posReceipts: [] as PointOfSaleReceiptModel[],
+    siteAvailability: [] as SiteAvailabilityModel[],
   } satisfies DatabaseSchema;
 
   constructor() {}
