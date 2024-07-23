@@ -312,17 +312,22 @@ class Database {
     siteNotes: [] as SiteNoteModel[],
   } satisfies DatabaseSchema;
 
+  #init = false;
+
   constructor() {}
 
   async init() {
+    if (this.#init) return;
     const data = localStorage.getItem(DATABASE_NAME);
     if (data) {
       this.#data = JSON.parse(data);
     }
     try {
       await this.#load();
+      localStorage.setItem(DATABASE_NAME, JSON.stringify(this.#data));
+      this.#init = true;
     } catch (error) {
-      console.error(`Failed to load data: ${error}`);
+      console.error(`Failed to load data: ${error}, using cached version`);
     }
   }
 
@@ -421,6 +426,8 @@ class Database {
     const response = await fetch(`${API_URL}/${DATABASE_NAME}`, {
       method: "GET",
       headers: {
+        // prevent caching
+        "Cache-Control": "no-cache",
         // public key for the API
         "X-API-Key": PUBLIC_KEY,
         "Content-Type": "application/json",
