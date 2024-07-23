@@ -6,9 +6,9 @@ const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const template = `
   <style>
   :host {
-    --color-white: white;
+    --color-white: #ddd;
     --color-red: red;
-    --color-black: black;
+    --color-black: #333;
   }
   .grid {
     display: grid;
@@ -63,17 +63,31 @@ const template = `
     background-color: var(--color-white);
   }
 
+  .header {
+    font-weight: bold;
+    /* prevent this column from scrolling */
+    position: sticky;
+    top: 0;
+    background-color: var(--color-black);
+    color: var(--color-white);
+    padding: 0.5em;
+    margin: 0;
+    /* fill */
+    width: 100%;
+    border-bottom: 1px solid var(--color-white);
+  }
+
   </style>
   <div class="start-date center title">Start date</div>
   <div class="grid">
     <div class="site row-2 center">Site</div>
-    <div class="day center">Mon</div>
-    <div class="day center">Tue</div>
-    <div class="day center">Wed</div>
-    <div class="day center">Thu</div>
-    <div class="day center">Fri</div>
-    <div class="day center">Sat</div>
-    <div class="day center">Sun</div>
+    <div class="header day center">Mon</div>
+    <div class="header day center">Tue</div>
+    <div class="header day center">Wed</div>
+    <div class="header day center">Thu</div>
+    <div class="header day center">Fri</div>
+    <div class="header day center">Sat</div>
+    <div class="header day center">Sun</div>
     <div class="date center">Mon</div>
     <div class="date center">Tue</div>
     <div class="date center">Wed</div>
