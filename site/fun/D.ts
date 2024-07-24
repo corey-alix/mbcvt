@@ -18,7 +18,10 @@ export class D {
   }
 
   static asDateOnly(ymd: string) {
-    return new Date(ymd);
+    const year = parseInt(ymd.slice(0, 4), 10);
+    const month = parseInt(ymd.slice(5, 7), 10) - 1;
+    const day = parseInt(ymd.slice(8, 10), 10);
+    return new Date(year, month, day);
   }
 
   static dayOfMonth(date: Date): number {
