@@ -1,4 +1,5 @@
 import { database, type SiteAvailabilityModel } from "../../db/index.js";
+import { D } from "../../fun/D.js";
 import { asDateString } from "../../fun/index.js";
 
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -161,10 +162,8 @@ export class WeekGrid extends HTMLElement {
   }
 
   set startDate(value: string) {
-    const monday = today(new Date(value));
-    const daySinceMonday = (monday.getDay() + 6) % 7;
-    monday.setDate(monday.getDate() - daySinceMonday);
-    this.#startDate = asDateString(monday);
+    const monday = D.closestMonday(D.asDateOnly(value));
+    this.#startDate = D.asYmd(monday);
     this.refresh();
   }
 
@@ -194,15 +193,13 @@ export class WeekGrid extends HTMLElement {
     });
 
     const startDate = this.shadowRoot!.querySelector(".start-date")!;
-    const endDate = today(new Date(this.#startDate));
-    endDate.setDate(endDate.getDate() + 6);
+    const endDate = D.addDay(D.asDateOnly(this.#startDate), 7);
     startDate.textContent = `${this.#startDate} - ${endDate.toDateString()}`;
 
     const days = this.shadowRoot!.querySelectorAll(".date");
-    const date = new Date(this.#startDate);
     days.forEach((day, index) => {
-      day.textContent = `${date.getDate()}`;
-      date.setDate(date.getDate() + 1);
+      const date = D.addDay(D.asDateOnly(this.#startDate), index);
+      day.textContent = `${D.dayOfMonth(date)}`;
     });
 
     const sites = this.#availableSites;
@@ -210,8 +207,7 @@ export class WeekGrid extends HTMLElement {
 
     sites.forEach((site) => {
       const weeklyAvailability = daysOfWeek.map((dayOfWeek, index) => {
-        const date = new Date(this.#startDate);
-        date.setDate(date.getDate() + index);
+        const date = D.addDay(D.asDateOnly(this.#startDate), index);
         const note = notes.find(
           (n) => n.site === site.site && n.date === asDateString(date)
         );
@@ -228,8 +224,7 @@ export class WeekGrid extends HTMLElement {
       grid.appendChild(siteElement);
 
       days.forEach((day, index) => {
-        const date = new Date(this.#startDate);
-        date.setDate(date.getDate() + index);
+        const date = D.addDay(D.asDateOnly(this.#startDate), index);
         const reserved = isReserved(site, asDateString(date));
         const dayElement = document.createElement("div");
         dayElement.tabIndex = 0;

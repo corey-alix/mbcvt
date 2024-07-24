@@ -1,6 +1,7 @@
 import "../components/week-grid/index.js";
 import { WeekGrid } from "../components/week-grid/index.js";
 import { database, SiteAvailabilityModel } from "../db/index.js";
+import { D } from "../fun/D.js";
 import { asDateString, autoShortcut, getElements } from "../fun/index.js";
 
 function asDateOnly(now = new Date()) {
@@ -44,17 +45,17 @@ export async function setupReservationForm() {
   });
 
   ux.thisWeek.addEventListener("click", () => {
-    currentDate.setDate(asDateOnly().getDate());
+    D.copy(currentDate, D.dateOnly(D.closestMonday()));
     grid.startDate = asDateString(currentDate);
   });
 
   ux.priorWeek.addEventListener("click", () => {
-    currentDate.setDate(currentDate.getDate() - 7);
+    D.copy(currentDate, D.addDay(currentDate, -7));
     grid.startDate = asDateString(currentDate);
   });
 
   ux.nextWeek.addEventListener("click", () => {
-    currentDate.setDate(currentDate.getDate() + 7);
+    D.copy(currentDate, D.addDay(currentDate, 7));
     grid.startDate = asDateString(currentDate);
   });
 
