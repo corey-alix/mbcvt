@@ -1,3 +1,5 @@
+import { D } from "./D.js";
+
 export function asCurrency(amount: number) {
   // return the amount as USD
   return new Intl.NumberFormat("en-US", {
@@ -96,7 +98,7 @@ const shortcuts = new Map<
   HTMLInputElement | HTMLButtonElement | HTMLAnchorElement | null
 >();
 
-const whitelist = "abcefghijklmnopqrstuvwxyz0123456789<>".split("");
+const whitelist = "abcfghijklmnopqrstuvwxyz0123456789<>".split("");
 
 function findShortcut(text: string) {
   const candidates = text
@@ -192,5 +194,5 @@ function hasPhysicalKeyboard() {
 }
 
 export function asDateString(date: Date) {
-  return date.toISOString().split("T")[0];
+  return D.asYmd(date);
 }

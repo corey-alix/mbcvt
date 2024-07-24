@@ -7,10 +7,6 @@ export class D {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   }
 
-  static asYmd(date: Date): string {
-    return date.toISOString().split("T")[0];
-  }
-
   static addDay(date: Date, days = 1): Date {
     return new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
   }
@@ -27,5 +23,12 @@ export class D {
 
   static dayOfMonth(date: Date): number {
     return date.getDate();
+  }
+
+  static asYmd(date: Date) {
+    const year = (date.getFullYear()).toString().padStart(4, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = (date.getDate()).toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }
 }
