@@ -1,12 +1,26 @@
 import {
+  getElements,
   getStickyValue,
+  injectActions,
   readQueryString,
   setStickyValue,
 } from "../fun/index.js";
 
 export function setupGeneralLedgerWelcomeForm() {
-  const dbNameInput = document.getElementById("dbName") as HTMLInputElement;
-  if (!dbNameInput) throw new Error("missing dbName input");
+  const ux = {
+    shareUrl: null as any as HTMLInputElement,
+    dbName: null as any as HTMLInputElement,
+    publicKey: null as any as HTMLInputElement,
+  };
+  getElements(ux, document.body);
+  injectActions({
+    "copy-on-click": (event: HTMLInputElement) => {
+      event.addEventListener("click", () => {
+        event.select();
+        navigator.clipboard.writeText(event.value);
+      });
+    },
+  });
 
   const stickyInputs = document.querySelectorAll<HTMLInputElement>(
     "input[data-sticky-key]"
@@ -28,7 +42,15 @@ export function setupGeneralLedgerWelcomeForm() {
   // if there is a "database" query string, update the sticky value
   const databaseName = readQueryString("database");
   if (databaseName) {
-    dbNameInput.value = databaseName;
-    dbNameInput.dispatchEvent(new Event("change"));
+    ux.dbName.value = databaseName;
+    ux.dbName.dispatchEvent(new Event("change"));
   }
+
+  const publicKey = readQueryString("key");
+  if (publicKey) {
+    ux.publicKey.value = publicKey;
+    ux.publicKey.dispatchEvent(new Event("change"));
+  }
+
+  ux.shareUrl.value = `${window.location.origin}${window.location.pathname}?database=${ux.dbName.value}&key=${ux.publicKey.value}`;
 }

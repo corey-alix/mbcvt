@@ -1,13 +1,17 @@
 import "../components/week-grid/index.js";
 import { WeekGrid } from "../components/week-grid/index.js";
-import { database } from "../db/index.js";
-import { asDateString, getElements } from "../fun/index.js";
+import { database, SiteAvailabilityModel } from "../db/index.js";
+import { asDateString, autoShortcut, getElements } from "../fun/index.js";
+
+function asDateOnly(now = new Date()) {
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+}
 
 export async function setupReservationForm() {
   await database.init();
   const grid = document.querySelector<WeekGrid>("week-grid")!;
-  const currentDate = new Date();
-  grid.startDate = currentDate;
+  const currentDate = asDateOnly();
+  grid.startDate = asDateString(currentDate);
 
   const ux = {
     priorWeek: null as any as HTMLButtonElement,
@@ -15,8 +19,15 @@ export async function setupReservationForm() {
     thisWeek: null as any as HTMLButtonElement,
     addNote: null as any as HTMLInputElement,
     showAllSites: null as any as HTMLButtonElement,
+    siteDayTemplate: null as any as HTMLDivElement,
+    siteNumber: null as any as HTMLInputElement,
+    siteNote: null as any as HTMLTextAreaElement,
+    siteDate: null as any as HTMLInputElement,
+    reserveSite: null as any as HTMLButtonElement,
+    cancelSite: null as any as HTMLButtonElement,
   };
   getElements(ux, document.body);
+  autoShortcut();
 
   let activeNote = false;
   let lastNote = "";
@@ -33,18 +44,18 @@ export async function setupReservationForm() {
   });
 
   ux.thisWeek.addEventListener("click", () => {
-    currentDate.setDate(new Date().getDate());
-    grid.startDate = currentDate;
+    currentDate.setDate(asDateOnly().getDate());
+    grid.startDate = asDateString(currentDate);
   });
 
   ux.priorWeek.addEventListener("click", () => {
     currentDate.setDate(currentDate.getDate() - 7);
-    grid.startDate = currentDate;
+    grid.startDate = asDateString(currentDate);
   });
 
   ux.nextWeek.addEventListener("click", () => {
     currentDate.setDate(currentDate.getDate() + 7);
-    grid.startDate = currentDate;
+    grid.startDate = asDateString(currentDate);
   });
 
   const siteAvailability = database.getSiteAvailability().sort((a, b) => {
@@ -54,7 +65,87 @@ export async function setupReservationForm() {
   });
 
   grid.availableSites = siteAvailability;
+
   grid.addEventListener("cell-click", async (event) => {
+    if (!activeNote) return;
+    const cellData = (event as CustomEvent).detail as {
+      site: string;
+      date: string;
+      reserved: boolean;
+    };
+    const siteInfo = siteAvailability.find(
+      (site) => site.site === cellData.site
+    );
+    if (!siteInfo) throw new Error("Site not found");
+
+    ux.siteDayTemplate.classList.remove("hidden");
+    ux.siteNumber.value = cellData.site;
+    ux.siteDate.value = cellData.date;
+
+    const note = database
+      .getSiteNotes()
+      .find((n) => n.site === cellData.site && n.date === cellData.date);
+
+    ux.siteNote.value = note?.note || "";
+  });
+
+  ux.cancelSite.addEventListener("click", async () => {
+    const site = ux.siteNumber.value;
+    const date = ux.siteDate.value;
+
+    const siteInfo = siteAvailability.find(
+      (s) => s.site === site && isReserved(s, date)
+    );
+
+    if (siteInfo) {
+      removeDateFromReservation(date, siteInfo);
+      await database.upsertSiteAvailability(siteInfo);
+    }
+
+    const siteNote = ux.siteNote.value;
+    if (siteNote) {
+      await database.upsertNote({
+        site,
+        date,
+        note: siteNote,
+      });
+    } else {
+      /*await*/ database.deleteNote({
+        site,
+        date,
+      });
+    }
+
+    grid.refresh();
+    ux.siteDayTemplate.classList.add("hidden");
+  });
+
+  ux.reserveSite.addEventListener("click", async () => {
+    const site = ux.siteNumber.value;
+    const date = ux.siteDate.value;
+
+    const siteInfo = siteAvailability.find((s) => s.site === site);
+    if (!siteInfo) throw "site not found";
+    if (!isReserved(siteInfo, date)) {
+      addDateToReservation(date, siteInfo);
+      await database.upsertSiteAvailability(siteInfo);
+    }
+
+    const siteNote = ux.siteNote.value;
+    if (siteNote) {
+      await database.upsertNote({
+        site,
+        date,
+        note: siteNote,
+      });
+    }
+
+    grid.refresh();
+    ux.siteDayTemplate.classList.add("hidden");
+  });
+
+  grid.addEventListener("cell-click", async (event) => {
+    if (activeNote) return;
     const cellData = (event as CustomEvent).detail as {
       site: string;
       date: string;
@@ -164,5 +255,84 @@ export async function setupReservationForm() {
       await database.upsertSiteAvailability(siteInfo);
       grid.refresh();
     }
+  });
+}
+
+function addDateToReservation(
+  reservationDate: string,
+  siteInfo: SiteAvailabilityModel
+) {
+  // is there a block that begins one day after the reservation date?
+  const nextDay = new Date(reservationDate);
+  nextDay.setDate(nextDay.getDate() + 1);
+  const reservationEnd = siteInfo.reserved.find(
+    (reservation) => reservation.range.start === asDateString(nextDay)
+  );
+  if (reservationEnd) {
+    reservationEnd.range.start = reservationDate;
+  } else {
+    // is there a block that ends one day before the reservation date?
+    const previousDay = new Date(reservationDate);
+    previousDay.setDate(previousDay.getDate() - 1);
+    const reservationStart = siteInfo.reserved.find(
+      (reservation) => reservation.range.end === asDateString(previousDay)
+    );
+    if (reservationStart) {
+      reservationStart.range.end = reservationDate;
+    } else {
+      siteInfo.reserved.push({
+        range: {
+          start: reservationDate,
+          end: reservationDate,
+        },
+      });
+    }
+  }
+}
+
+function removeDateFromReservation(
+  date: string,
+  siteInfo: SiteAvailabilityModel
+) {
+  const reservation = siteInfo.reserved.find(
+    (r) => r.range.start <= date && r.range.end >= date
+  );
+  if (!reservation) throw "reservation not found";
+
+  if (reservation.range.start === date) {
+    if (reservation.range.end === date) {
+      siteInfo.reserved = siteInfo.reserved.filter((r) => r !== reservation);
+    } else {
+      const nextDay = new Date(date);
+      nextDay.setDate(nextDay.getDate() + 1);
+      reservation.range.start = asDateString(nextDay);
+    }
+  } else if (reservation.range.end === date) {
+    const previousDay = new Date(date);
+    previousDay.setDate(previousDay.getDate() - 1);
+    reservation.range.end = asDateString(previousDay);
+  } else {
+    const priorDay = new Date(date);
+    priorDay.setDate(priorDay.getDate() - 1);
+    const nextDay = new Date(date);
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    const newReservation = {
+      range: {
+        start: asDateString(new Date(date)),
+        end: reservation.range.end,
+      },
+    };
+    siteInfo.reserved.push(newReservation);
+
+    reservation.range.end = asDateString(priorDay);
+  }
+}
+
+function isReserved(site: SiteAvailabilityModel, date: string) {
+  return site.reserved.some((reservation) => {
+    const result =
+      date >= reservation.range.start && date <= reservation.range.end;
+    return result;
   });
 }

@@ -133,9 +133,14 @@ const template = `
   </div>
 `;
 
+function today(now = new Date()) {
+  now.setHours(0, 0, 0, 0);
+  return now;
+}
+
 export class WeekGrid extends HTMLElement {
   #availableSites: Array<SiteAvailabilityModel> = [];
-  #startDate: Date = new Date();
+  #startDate = asDateString(today());
 
   constructor() {
     super();
@@ -155,11 +160,11 @@ export class WeekGrid extends HTMLElement {
     });
   }
 
-  set startDate(value: Date) {
-    const daySinceMonday = (value.getDay() + 6) % 7;
-    const monday = new Date(value);
-    monday.setDate(value.getDate() - daySinceMonday);
-    this.#startDate = monday;
+  set startDate(value: string) {
+    const monday = today(new Date(value));
+    const daySinceMonday = (monday.getDay() + 6) % 7;
+    monday.setDate(monday.getDate() - daySinceMonday);
+    this.#startDate = asDateString(monday);
     this.refresh();
   }
 
@@ -189,9 +194,9 @@ export class WeekGrid extends HTMLElement {
     });
 
     const startDate = this.shadowRoot!.querySelector(".start-date")!;
-    const endDate = new Date(this.#startDate);
+    const endDate = today(new Date(this.#startDate));
     endDate.setDate(endDate.getDate() + 6);
-    startDate.textContent = `${this.#startDate.toDateString()} - ${endDate.toDateString()}`;
+    startDate.textContent = `${this.#startDate} - ${endDate.toDateString()}`;
 
     const days = this.shadowRoot!.querySelectorAll(".date");
     const date = new Date(this.#startDate);

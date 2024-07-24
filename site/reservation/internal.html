@@ -37,6 +37,18 @@ yellow if reserved but no deposit.
             }
         }
 
+        form>fieldset {
+            display: flex;
+            flex-direction: column;
+            border: none;
+        }
+
+        .fat-border {
+            border: 0.2em solid var(--color-white);
+            border-radius: 1em;
+            padding: 1em;
+        }
+
         .center {
             text-align: center;
         }
@@ -55,6 +67,10 @@ yellow if reserved but no deposit.
             border: none;
             min-height: 1em;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 
@@ -67,7 +83,26 @@ yellow if reserved but no deposit.
         <button id="addNote">Add Note</button>
         <button id="showAllSites">Show All</button>
     </div>
-    <!-- 7 x n grid -->
+    <div id="siteDayTemplate" class="hidden">
+        <form class="fat-border">
+            <fieldset>
+                <label for="siteNumber">Site Number</label>
+                <input id="siteNumber" readonly />
+            </fieldset>
+            <fieldset>
+                <label for="siteDate">Site Date</label>
+                <input id="siteDate" readonly />
+            </fieldset>
+            <fieldset>
+                <label for="siteNote">Site Note</label>
+                <textarea id="siteNote"></textarea>
+            </fieldset>
+            <div class="toolbar">
+                <button type="button" id="reserveSite">Reserve</button>
+                <button type="button" id="cancelSite">Release</button>
+            </div>
+        </form>
+    </div>
     <week-grid></week-grid>
 
     <script type="module">
