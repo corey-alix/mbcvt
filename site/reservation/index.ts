@@ -2,7 +2,14 @@ import "../components/week-grid/index.js";
 import { WeekGrid } from "../components/week-grid/index.js";
 import { database, SiteAvailabilityModel } from "../db/index.js";
 import { D } from "../fun/D.js";
-import { asDateString, autoShortcut, getElements } from "../fun/index.js";
+import {
+  asDateString,
+  autoShortcut,
+  getElements,
+  getStickyValue,
+  injectActions,
+  setStickyValue,
+} from "../fun/index.js";
 
 function asDateOnly(now = new Date()) {
   return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
@@ -26,9 +33,25 @@ export async function setupReservationForm() {
     siteDate: null as any as HTMLInputElement,
     reserveSite: null as any as HTMLButtonElement,
     cancelSite: null as any as HTMLButtonElement,
+    cancelButton: null as any as HTMLButtonElement,
   };
   getElements(ux, document.body);
   autoShortcut();
+  injectActions({
+    "sticky": (input: HTMLInputElement) => {
+      const key = input.getAttribute("data-sticky-key")! || input.id;
+      if (!key) throw new Error("Sticky key not found");
+      const value = getStickyValue(key, "");
+      if (value) {
+        input.value = value;
+        const event = new Event("change");
+        input.dispatchEvent(event);
+      }
+      input.addEventListener("change", () => {
+        setStickyValue(key, input.value);
+      });
+    },
+  });
 
   let activeNote = false;
   let lastNote = "";
@@ -41,6 +64,7 @@ export async function setupReservationForm() {
 
   ux.addNote.addEventListener("click", async () => {
     activeNote = !activeNote;
+    if (!activeNote) ux.siteDayTemplate.classList.add("hidden");
     document.body.classList.toggle("add-note-tool", activeNote);
   });
 
@@ -87,7 +111,13 @@ export async function setupReservationForm() {
       .getSiteNotes()
       .find((n) => n.site === cellData.site && n.date === cellData.date);
 
-    ux.siteNote.value = note?.note || "";
+    ux.siteNote.value = note?.note || ux.siteNote.value;
+  });
+
+  ux.cancelButton.addEventListener("click", () => {
+    activeNote = false;
+    ux.siteDayTemplate.classList.add("hidden");
+    document.body.classList.remove("add-note-tool");
   });
 
   ux.cancelSite.addEventListener("click", async () => {

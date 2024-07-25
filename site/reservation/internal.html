@@ -95,11 +95,12 @@ yellow if reserved but no deposit.
             </fieldset>
             <fieldset>
                 <label for="siteNote">Site Note</label>
-                <textarea id="siteNote"></textarea>
+                <textarea id="siteNote" data-action="sticky" data-sticky-key="reservation-site-note"></textarea>
             </fieldset>
             <div class="toolbar">
-                <button type="button" id="reserveSite">Reserve</button>
-                <button type="button" id="cancelSite">Release</button>
+                <button type="button" id="reserveSite">+ Create Reservation</button>
+                <button type="button" id="cancelSite">- Cancel Reservation</button>
+                <button type="button" id="cancelButton">X Dismiss</button>
             </div>
         </form>
     </div>
