@@ -38,19 +38,6 @@ export async function setupReservationForm() {
   getElements(ux, document.body);
   autoShortcut();
   injectActions({
-    "sticky": (input: HTMLInputElement) => {
-      const key = input.getAttribute("data-sticky-key")! || input.id;
-      if (!key) throw new Error("Sticky key not found");
-      const value = getStickyValue(key, "");
-      if (value) {
-        input.value = value;
-        const event = new Event("change");
-        input.dispatchEvent(event);
-      }
-      input.addEventListener("change", () => {
-        setStickyValue(key, input.value);
-      });
-    },
   });
 
   let activeNote = false;

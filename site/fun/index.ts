@@ -65,7 +65,70 @@ export function getElements(
   return inputs;
 }
 
-export function injectActions(handlers: Record<string, Function> = {}) {
+const defaultActionHandlers = {
+  sticky: (input: HTMLInputElement) => {
+    const key = input.getAttribute("data-sticky-key")! || input.id;
+    if (!key) throw new Error("Sticky key not found");
+    const value = getStickyValue(key, "");
+    if (value) {
+      input.value = value;
+      const event = new Event("change");
+      input.dispatchEvent(event);
+    }
+    input.addEventListener("change", () => {
+      setStickyValue(key, input.value);
+    });
+  },
+  "date-today": (actionNode: HTMLInputElement) => {
+    actionNode.valueAsDate = new Date();
+  },
+  "select-on-focus": (actionNode: HTMLInputElement) => {
+    actionNode.addEventListener("focus", () => {
+      (actionNode as HTMLInputElement).select();
+    });
+  },
+  "input-email": (input: HTMLInputElement) => {
+    /* only allow valid email as input */
+    input.addEventListener("input", () => {
+      const value = input.value;
+      if (value.match(/^.+@.+\..+$/)) {
+        input.setCustomValidity("");
+      } else {
+        input.setCustomValidity("Invalid email address");
+      }
+    });
+  },
+  "input-telephone": (input: HTMLInputElement) => {
+    /* only allow valid telephone number as input */
+    input.addEventListener("input", () => {
+      const value = input.value;
+      if (value.match(/^\d{3}-\d{3}-\d{4}$/)) {
+        input.setCustomValidity("");
+      } else {
+        input.setCustomValidity("Invalid telephone number");
+      }
+    });
+  },
+  "label-as-placeholder": (form: HTMLFormElement) => {
+    form.querySelectorAll("label").forEach((label) => {
+      const input = form.querySelector(`#${label.htmlFor}`) as HTMLInputElement;
+      input.placeholder = label.innerText;
+    });
+  },
+  "auto-shortcut": (root: HTMLElement) => {
+    // find every label with a for attribute and find the input with that id
+    // if the input can be focused, setup a keyboard shortcut and modify the label text
+    // to indicate the shortcut.  Prefer the first letter of the label text, but if that
+    // is already used, use another letter.
+    // If no letter is available, do not set a shortcut.
+
+    autoShortcut(root);
+  },
+} as Record<string, Function>;
+
+export function injectActions(
+  handlers: Record<string, (node: any) => void> = {}
+) {
   const nodes = document.querySelectorAll("[data-action]");
   nodes.forEach((actionNode) => {
     const actionNames = actionNode.getAttribute("data-action")?.split(" ");
@@ -74,16 +137,11 @@ export function injectActions(handlers: Record<string, Function> = {}) {
         handlers[actionName](actionNode);
         return;
       }
-      switch (actionName) {
-        case "date-today":
-          (actionNode as HTMLInputElement).valueAsDate = new Date();
-          break;
-        case "select-on-focus":
-          actionNode.addEventListener("focus", () => {
-            (actionNode as HTMLInputElement).select();
-          });
-          break;
+      if (defaultActionHandlers[actionName]) {
+        defaultActionHandlers[actionName](actionNode as HTMLInputElement);
+        return;
       }
+      throw new Error(`Action handler not found: ${actionName}`);
     });
   });
 

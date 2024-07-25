@@ -30,45 +30,6 @@ export async function setupAccountsPayableForm() {
 
   getElements(ux, document.body);
   injectActions({
-    "input-email": (input: HTMLInputElement) => {
-      /* only allow valid email as input */
-      input.addEventListener("input", () => {
-        const value = input.value;
-        if (value.match(/^.+@.+\..+$/)) {
-          input.setCustomValidity("");
-        } else {
-          input.setCustomValidity("Invalid email address");
-        }
-      });
-    },
-    "input-telephone": (input: HTMLInputElement) => {
-      /* only allow valid telephone number as input */
-      input.addEventListener("input", () => {
-        const value = input.value;
-        if (value.match(/^\d{3}-\d{3}-\d{4}$/)) {
-          input.setCustomValidity("");
-        } else {
-          input.setCustomValidity("Invalid telephone number");
-        }
-      });
-    },
-    "label-as-placeholder": (form: HTMLFormElement) => {
-      form.querySelectorAll("label").forEach((label) => {
-        const input = form.querySelector(
-          `#${label.htmlFor}`
-        ) as HTMLInputElement;
-        input.placeholder = label.innerText;
-      });
-    },
-    "auto-shortcut": (root: HTMLElement) => {
-      // find every label with a for attribute and find the input with that id
-      // if the input can be focused, setup a keyboard shortcut and modify the label text
-      // to indicate the shortcut.  Prefer the first letter of the label text, but if that
-      // is already used, use another letter.
-      // If no letter is available, do not set a shortcut.
-
-      autoShortcut(root);
-    },
     "auto-complete-gl-account": (input: HTMLInputElement) => {
       const datalist = document.createElement("datalist");
       datalist.id = `datalist_for_${input.id}`;
