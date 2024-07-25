@@ -38,7 +38,7 @@ export async function setupReservationForm() {
   getElements(ux, document.body);
   autoShortcut();
   injectActions({
-    "sticky": (input: HTMLInputElement) => {
+    sticky: (input: HTMLInputElement) => {
       const key = input.getAttribute("data-sticky-key")! || input.id;
       if (!key) throw new Error("Sticky key not found");
       const value = getStickyValue(key, "");
@@ -215,77 +215,12 @@ export async function setupReservationForm() {
     }
 
     if (!cellData.reserved) {
-      const reservationDate = cellData.date;
-      // is there a block that begins one day after the reservation date?
-      const nextDay = new Date(reservationDate);
-      nextDay.setDate(nextDay.getDate() + 1);
-      const reservationEnd = siteInfo.reserved.find(
-        (reservation) => reservation.range.start === asDateString(nextDay)
-      );
-      if (reservationEnd) {
-        reservationEnd.range.start = reservationDate;
-      } else {
-        // is there a block that ends one day before the reservation date?
-        const previousDay = new Date(reservationDate);
-        previousDay.setDate(previousDay.getDate() - 1);
-        const reservationStart = siteInfo.reserved.find(
-          (reservation) => reservation.range.end === asDateString(previousDay)
-        );
-        if (reservationStart) {
-          reservationStart.range.end = reservationDate;
-        } else {
-          siteInfo.reserved.push({
-            range: {
-              start: reservationDate,
-              end: reservationDate,
-            },
-          });
-        }
-      }
-      await database.upsertSiteAvailability(siteInfo);
-      grid.refresh();
+      addDateToReservation(cellData.date, siteInfo);
     } else {
-      const reservation = siteInfo.reserved.find(
-        (reservation) =>
-          reservation.range.start <= cellData.date &&
-          reservation.range.end >= cellData.date
-      );
-      if (!reservation) throw new Error("Reservation not found");
-
-      if (reservation.range.start === cellData.date) {
-        if (reservation.range.end === cellData.date) {
-          siteInfo.reserved = siteInfo.reserved.filter(
-            (r) => r !== reservation
-          );
-        } else {
-          const nextDay = new Date(cellData.date);
-          nextDay.setDate(nextDay.getDate() + 1);
-          reservation.range.start = asDateString(nextDay);
-        }
-      } else if (reservation.range.end === cellData.date) {
-        const previousDay = new Date(cellData.date);
-        previousDay.setDate(previousDay.getDate() - 1);
-        reservation.range.end = asDateString(previousDay);
-      } else {
-        const priorDay = new Date(cellData.date);
-        priorDay.setDate(priorDay.getDate() - 1);
-        const nextDay = new Date(cellData.date);
-        nextDay.setDate(nextDay.getDate() + 1);
-
-        const newReservation = {
-          range: {
-            start: asDateString(new Date(cellData.date)),
-            end: reservation.range.end,
-          },
-        };
-        siteInfo.reserved.push(newReservation);
-
-        reservation.range.end = asDateString(priorDay);
-      }
-
-      await database.upsertSiteAvailability(siteInfo);
-      grid.refresh();
+      removeDateFromReservation(cellData.date, siteInfo);
     }
+    await database.upsertSiteAvailability(siteInfo);
+    grid.refresh();
   });
 }
 
@@ -294,8 +229,7 @@ function addDateToReservation(
   siteInfo: SiteAvailabilityModel
 ) {
   // is there a block that begins one day after the reservation date?
-  const nextDay = new Date(reservationDate);
-  nextDay.setDate(nextDay.getDate() + 1);
+  const nextDay = D.addDay(D.asDateOnly(reservationDate), 1);
   const reservationEnd = siteInfo.reserved.find(
     (reservation) => reservation.range.start === asDateString(nextDay)
   );
@@ -303,8 +237,7 @@ function addDateToReservation(
     reservationEnd.range.start = reservationDate;
   } else {
     // is there a block that ends one day before the reservation date?
-    const previousDay = new Date(reservationDate);
-    previousDay.setDate(previousDay.getDate() - 1);
+    const previousDay = D.addDay(D.asDateOnly(reservationDate), -1);
     const reservationStart = siteInfo.reserved.find(
       (reservation) => reservation.range.end === asDateString(previousDay)
     );
@@ -334,29 +267,25 @@ function removeDateFromReservation(
     if (reservation.range.end === date) {
       siteInfo.reserved = siteInfo.reserved.filter((r) => r !== reservation);
     } else {
-      const nextDay = new Date(date);
-      nextDay.setDate(nextDay.getDate() + 1);
+      const nextDay = D.addDay(D.asDateOnly(date), 1);
       reservation.range.start = asDateString(nextDay);
     }
   } else if (reservation.range.end === date) {
-    const previousDay = new Date(date);
-    previousDay.setDate(previousDay.getDate() - 1);
+    const previousDay = D.addDay(D.asDateOnly(date), -1);
     reservation.range.end = asDateString(previousDay);
   } else {
-    const priorDay = new Date(date);
-    priorDay.setDate(priorDay.getDate() - 1);
-    const nextDay = new Date(date);
-    nextDay.setDate(nextDay.getDate() + 1);
+    const previousDay = D.addDay(D.asDateOnly(date), -1);
+    const nextDay = D.addDay(D.asDateOnly(date), 1);
 
     const newReservation = {
       range: {
-        start: asDateString(new Date(date)),
+        start: asDateString(nextDay),
         end: reservation.range.end,
       },
     };
     siteInfo.reserved.push(newReservation);
 
-    reservation.range.end = asDateString(priorDay);
+    reservation.range.end = asDateString(previousDay);
   }
 }
 
