@@ -53,7 +53,9 @@ export async function setupReservationForm() {
     },
   });
 
-  let activeNote = false;
+  let activeNote = true;
+  document.body.classList.toggle("add-note-tool", activeNote)
+
   let lastNote = "";
 
   let showAllSites = false;
@@ -115,9 +117,7 @@ export async function setupReservationForm() {
   });
 
   ux.cancelButton.addEventListener("click", () => {
-    activeNote = false;
     ux.siteDayTemplate.classList.add("hidden");
-    document.body.classList.remove("add-note-tool");
   });
 
   ux.cancelSite.addEventListener("click", async () => {
@@ -196,7 +196,6 @@ export async function setupReservationForm() {
       if (null == promptResult) return;
       lastNote = promptResult || "";
       if (!lastNote) {
-        activeNote = false;
         await database.deleteNote({
           site: cellData.site,
           date: cellData.date,

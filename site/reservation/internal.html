@@ -28,14 +28,28 @@ yellow if reserved but no deposit.
                 background-color: var(--color-black);
                 color: var(--color-white);
             }
+        }
 
-            .add-note-tool {
-                cursor: text;
+        @media (prefers-color-scheme: light) {
+            :root {
+                --color-white: #bbb;
+                --color-black: #333;
+                --color-yellow: #ff0;
+                --color-red: #f33;
             }
 
-            .add-note-tool button#addNote {
-                outline: 0.25em solid var(--color-red);
+            body {
+                background-color: var(--color-white);
+                color: var(--color-black);
             }
+        }
+
+        .add-note-tool {
+            cursor: text;
+        }
+
+        .add-note-tool button#addNote {
+            outline: 0.25em solid var(--color-red);
         }
 
         form>fieldset {
