@@ -12,16 +12,14 @@ const template = `
       --color-white: #ccc;
       --color-red: #a22;
       --color-black: #333;
-      --color-yellow: #dd6;
     }
   }
 
   @media (prefers-color-scheme: light) {
     :host {
       --color-white: #ccc;
-      --color-red: #fdd;
-      --color-black: #333;
-      --color-yellow: #dd6;
+      --color-red: #f99;
+      --color-black: #000;
     }
   }
 
@@ -86,7 +84,7 @@ const template = `
   }
 
   .note {
-    border: 0.2em solid var(--color-yellow);
+    border: 0.2em solid var(--color-red);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -105,6 +103,7 @@ const template = `
     position: sticky;
     top: 0;
     height: 2em;
+    color: var(--color-white);
     background-color: var(--color-black);
   }
 
