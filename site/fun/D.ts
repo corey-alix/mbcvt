@@ -17,6 +17,10 @@ export class D {
     return D.addDay(date, -(day - 1));
   }
 
+  static closestMonth(date = new Date()): string {
+    return date.toLocaleString("default", { month: "long" });
+  }
+
   static asDateOnly(ymd: string) {
     const year = parseInt(ymd.slice(0, 4), 10);
     const month = parseInt(ymd.slice(5, 7), 10) - 1;

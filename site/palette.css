@@ -1,0 +1,13 @@
+:root {
+  --color-white: #ccc;
+  --color-red: #f99;
+  --color-black: #000;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-white: #ccc;
+    --color-red: #a22;
+    --color-black: #333;
+  }
+}

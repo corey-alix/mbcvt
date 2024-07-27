@@ -7,18 +7,20 @@ const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const template = `
   <style>
 
-  :host {
-    --color-white: #ccc;
-    --color-red: #f99;
-    --color-black: #000;
+  @import url("../palette.css");
+  .date {
+    border-radius: 50%;
+    padding: 0.2em;
+    border: 0.2em solid transparent;
+    aspect-ratio: 1;
+  }
+  .date.today {
+    font-weight: 900;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :host {
-      --color-white: #ccc;
-      --color-red: #a22;
-      --color-black: #333;
-    }
+
+  .day.today {
+    font-weight: 900;
   }
 
   .tiny {
@@ -201,14 +203,18 @@ export class WeekGrid extends HTMLElement {
       element.remove();
     });
 
-    const startDate = this.shadowRoot!.querySelector(".start-date")!;
-    const endDate = D.addDay(D.asDateOnly(this.#startDate), 7);
-    startDate.textContent = `${this.#startDate} - ${endDate.toDateString()}`;
+    const startOfWeek = D.asDateOnly(this.#startDate);
+    const endOfWeek = D.addDay(startOfWeek, 6);
+    const month1 = D.closestMonth(startOfWeek);
+    const month2 = D.closestMonth(endOfWeek);
+    const range = month1 === month2 ? month1 : `${month1} - ${month2}`;
+    this.shadowRoot!.querySelector(".start-date")!.textContent = range;
 
     const days = this.shadowRoot!.querySelectorAll(".date");
     days.forEach((day, index) => {
       const date = D.addDay(D.asDateOnly(this.#startDate), index);
       day.textContent = `${D.dayOfMonth(date)}`;
+      day.classList.toggle("today", D.asYmd(date) === D.asYmd(D.dateOnly()));
     });
 
     const sites = this.#availableSites;
