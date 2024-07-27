@@ -7,19 +7,17 @@ const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const template = `
   <style>
 
+  :host {
+    --color-white: #ccc;
+    --color-red: #f99;
+    --color-black: #000;
+  }
+
   @media (prefers-color-scheme: dark) {
     :host {
       --color-white: #ccc;
       --color-red: #a22;
       --color-black: #333;
-    }
-  }
-
-  @media (prefers-color-scheme: light) {
-    :host {
-      --color-white: #ccc;
-      --color-red: #f99;
-      --color-black: #000;
     }
   }
 
