@@ -6,11 +6,23 @@ const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const template = `
   <style>
-  :host {
-    --color-white: #ccc;
-    --color-red: #a22;
-    --color-black: #333;
-    --color-yellow: #dd6;
+
+  @media (prefers-color-scheme: dark) {
+    :host {
+      --color-white: #ccc;
+      --color-red: #a22;
+      --color-black: #333;
+      --color-yellow: #dd6;
+    }
+  }
+
+  @media (prefers-color-scheme: light) {
+    :host {
+      --color-white: #ccc;
+      --color-red: #fdd;
+      --color-black: #333;
+      --color-yellow: #dd6;
+    }
   }
 
   .tiny {
