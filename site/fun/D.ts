@@ -14,6 +14,7 @@ export class D {
   static closestMonday(date = new Date()): Date {
     const day = date.getDay();
     if (day === 1) return date;
+    if (day === 0) return D.addDay(date, -6);
     return D.addDay(date, -(day - 1));
   }
 
