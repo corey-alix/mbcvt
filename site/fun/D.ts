@@ -33,6 +33,10 @@ export class D {
     return date.getDate();
   }
 
+  static dayOfWeek(date: Date): string {
+    return date.toLocaleString("default", { weekday: "short" });
+  }
+
   static asYmd(date: Date) {
     const year = (date.getFullYear()).toString().padStart(4, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0");

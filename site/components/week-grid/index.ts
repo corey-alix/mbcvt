@@ -16,11 +16,14 @@ const template = `
   }
   .date.today {
     font-weight: 900;
+    text-decoration: underline;
   }
 
 
   .day.today {
     font-weight: 900;
+    border-color: var(--color-red);
+
   }
 
   .tiny {
@@ -214,6 +217,13 @@ export class WeekGrid extends HTMLElement {
     days.forEach((day, index) => {
       const date = D.addDay(D.asDateOnly(this.#startDate), index);
       day.textContent = `${D.dayOfMonth(date)}`;
+      day.classList.toggle("today", D.asYmd(date) === D.asYmd(D.dateOnly()));
+    });    
+    
+    const dayNames = this.shadowRoot!.querySelectorAll(".day");
+    dayNames.forEach((day, index) => {
+      const date = D.addDay(D.asDateOnly(this.#startDate), index);
+      day.textContent = `${D.dayOfWeek(date)}`;
       day.classList.toggle("today", D.asYmd(date) === D.asYmd(D.dateOnly()));
     });
 
