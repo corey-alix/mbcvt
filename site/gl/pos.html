@@ -207,6 +207,10 @@
         <summary>Quick Reservation Entry</summary>
         <form id="quickReservationForm">
             <fieldset>
+                <label for="partyTelephone">Text Number or Email Address</label>
+                <input type="text" id="partyTelephone" placeholder="Telephone or Email" required data-action="select-on-focus sticky" />
+            </fieldset>
+            <fieldset>
                 <label for="partyName">Name of Party</label>
                 <input type="text" id="partyName" placeholder="Name of Party" required data-action="select-on-focus sticky" />
             </fieldset>
@@ -275,7 +279,7 @@
                     </fieldset>
                     <fieldset>
                         <label for="paymentAmount">Amount</label>
-                        <input type="number" id="paymentAmount" step="0.01" min="0" data-action="incrementor select-on-focus" />
+                        <input type="number" id="paymentAmount" step="0.01" min="0" data-action="select-on-focus" />
                     </fieldset>
                 </div>
             </template>

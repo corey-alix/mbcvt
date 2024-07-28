@@ -219,6 +219,7 @@ export async function setupPointOfSaleForm() {
   await database.init();
   const inputs = {
     quickReservationForm: null as any as HTMLFormElement,
+    partyTelephone: null as any as HTMLInputElement,
     partyName: null as any as HTMLInputElement,
     siteNumber: null as any as HTMLInputElement,
     siteName: null as any as HTMLInputElement,
@@ -330,6 +331,7 @@ export async function setupPointOfSaleForm() {
 
     const transactionDate = asDateString(new Date());
 
+    const partyTelephone = inputs.partyTelephone.value;
     const nameOfParty = inputs.partyName.value;
     const dates = `${inputs.checkIn.value} to ${inputs.checkOut.value}`;
 
@@ -458,6 +460,7 @@ export async function setupPointOfSaleForm() {
 
     const receipt = {
       batchId,
+      partyTelephone,
       nameOfParty,
       dates,
       expenses,

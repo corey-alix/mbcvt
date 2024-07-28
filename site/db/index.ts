@@ -48,6 +48,7 @@ export type PointOfSaleFormData = typeof sampleFormData;
 
 export type PointOfSaleReceiptModel = {
   batchId: number;
+  partyTelephone: string;
   nameOfParty: string;
   dates: string;
   expenses: {
@@ -299,7 +300,7 @@ class Database {
     return this.#data.batches.find((b) => b.id === batchId)?.transactions || [];
   }
 
-  #data = {
+  #emptyDatabase = {
     version: 0,
     accounts: [] as AccountModel[],
     batches: [] as BatchModel[],
@@ -311,6 +312,8 @@ class Database {
     siteAvailability: [] as SiteAvailabilityModel[],
     siteNotes: [] as SiteNoteModel[],
   } satisfies DatabaseSchema;
+
+  #data = {...this.#emptyDatabase};
 
   #init = false;
 
@@ -434,7 +437,7 @@ class Database {
       },
     });
     const data = (await response.json()) as DatabaseSchema;
-    this.#data = data;
+    this.#data = {...this.#emptyDatabase, ...data};
   }
 
   public get data() {
