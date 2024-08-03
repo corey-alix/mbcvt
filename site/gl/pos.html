@@ -1,309 +1,413 @@
 <!DOCTYPE html>
 <html lang="en" class="pos">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <!-- mobile friendly -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>General Ledger</title>
     <link rel="stylesheet" href="../index.css" />
     <style>
-        body {
-            background-color: #7b1e1e;
+      body {
+        background-color: #7b1e1e;
+      }
+
+      .receipt {
+        background-color: white;
+        color: #111;
+        padding: 0.5em;
+        border-radius: 0.5em;
+      }
+
+      .no-border {
+        border: none;
+      }
+
+      button:hover {
+        border-color: var(--primary-hover);
+      }
+
+      button.primary {
+        background-color: var(--primary);
+        color: var(--primary-text-color);
+        border-color: var(--primary-text-color);
+      }
+
+      .if-discount {
+        display: none;
+      }
+
+      .discount .if-discount {
+        display: inherit;
+      }
+
+      .uppercase {
+        text-transform: uppercase;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+        margin: 0.25em;
+        padding: 0.25em;
+        flex-grow: 0.5em;
+        width: 75cqw;
+        gap: 0.5em;
+
+        button {
+          min-width: 13vw;
+          height: 4em;
         }
+      }
 
-        .no-border {
-            border: none;
-        }
+      .template {
+        display: none !important;
+      }
 
-        button:hover {
-            border-color: var(--primary-hover);
-        }
+      .payments.grid {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
 
-        button.primary {
-            background-color: var(--primary);
-            color: var(--primary-text-color);
-            border-color: var(--primary-text-color);
-        }
+      .method-of-payment.grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+      }
 
-        .if-discount {
-            display: none;
-        }
+      .method-of-payment > fieldset {
+        display: flex;
+        flex-direction: column;
+      }
 
-        .discount .if-discount {
-            display: inherit;
-        }
+      .bolder {
+        font-weight: bolder;
+      }
 
-        .uppercase {
-            text-transform: uppercase;
-        }
+      .bigger {
+        font-size: 1.5em;
+      }
 
-        .toolbar {
-            display: flex;
-            flex-direction: row;
-            justify-content: start;
-            align-items: center;
-            margin: 0.25em;
-            padding: 0.25em;
-            flex-grow: 0.5em;
-            width: 75cqw;
-            gap: 0.5em;
+      fieldset {
+        padding: 0;
+        border: none;
+      }
 
-            button {
-                min-width: 13vw;
-                height: 4em;
-            }
-        }
+      fieldset > select {
+        height: 100%;
+      }
 
-        .template {
-            display: none !important;
-        }
+      button,
+      select,
+      input {
+        border-radius: var(--border-radius);
+        padding: var(--spacer);
+        border: none;
+      }
 
-        .payments.grid {
-            display: grid;
-            grid-template-columns: 1fr;
-        }
+      .incrementor {
+        display: grid;
+        grid-template-columns: 2em 4em 2em;
+        gap: 1rem;
+        justify-content: right;
+        align-items: center;
 
-        .method-of-payment.grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-        }
-
-        .method-of-payment>fieldset {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .bolder {
-            font-weight: bolder;
-        }
-
-        .bigger {
-            font-size: 1.5em;
-        }
-
-        fieldset {
-            padding: 0;
-            border: none;
-        }
-
-        fieldset>select {
-            height: 100%;
-        }
-
-        button,
-        select,
-        input {
-            border-radius: var(--border-radius);
-            padding: var(--spacer);
-            border: none;
-        }
-
-        .incrementor {
-            display: grid;
-            grid-template-columns: 2em 4em 2em;
-            gap: 1rem;
-            justify-content: right;
-            align-items: center;
-
-            button {
-                margin: 0;
-                padding: 0;
-                border: none;
-                border-radius: 50%;
-                width: 1.7em;
-                height: auto;
-                aspect-ratio: 1/1;
-                text-align: center;
-                font-weight: bolder;
-            }
-
-            input[type="number"] {
-                text-align: center;
-                border: none;
-                border-bottom: 0.1em solid var(--gray);
-                background-color: transparent;
-                color: var(--white);
-                border-radius: 0;
-            }
-        }
-
-        form {
-            display: grid;
-            gap: 0.5em;
-        }
-
-        select,
-        button,
-        input {
-            font-size: inherit;
-        }
-
-        form>fieldset {
-            display: grid;
-            grid-template-columns: 8em auto;
-            align-items: baseline;
-            /* items in second column should align to the right edge of the column */
-            justify-content: space-between;
-        }
-
-        details>summary {
-            font-weight: bold;
-            font-size: 1.5em;
-            cursor: pointer;
-        }
-
-        .invalid {
-            outline: 1px solid var(--accent);
-        }
-
-        input[readonly] {
-            color: var(--white);
-            background-color: var(--gray);
-        }
-
-        input[type="date"] {
-            text-align: right;
-            justify-self: end;
+        button {
+          margin: 0;
+          padding: 0;
+          border: none;
+          border-radius: 50%;
+          width: 1.7em;
+          height: auto;
+          aspect-ratio: 1/1;
+          text-align: center;
+          font-weight: bolder;
         }
 
         input[type="number"] {
-            text-align: right;
+          text-align: center;
+          border: none;
+          border-bottom: 0.1em solid var(--gray);
+          background-color: transparent;
+          color: var(--white);
+          border-radius: 0;
         }
+      }
 
-        #quickReservationForm {
-            margin: 1rem;
+      form {
+        display: grid;
+        gap: 0.5em;
+      }
+
+      select,
+      button,
+      input {
+        font-size: inherit;
+      }
+
+      form > fieldset {
+        display: grid;
+        grid-template-columns: 8em auto;
+        align-items: baseline;
+        /* items in second column should align to the right edge of the column */
+        justify-content: space-between;
+      }
+
+      details > summary {
+        font-weight: bold;
+        font-size: 1.5em;
+        cursor: pointer;
+      }
+
+      .invalid {
+        outline: 1px solid var(--accent);
+      }
+
+      input[readonly] {
+        color: var(--white);
+        background-color: var(--gray);
+      }
+
+      input[type="date"] {
+        text-align: right;
+        justify-self: end;
+      }
+
+      input[type="number"] {
+        text-align: right;
+      }
+
+      #quickReservationForm {
+        margin: 1rem;
+      }
+
+      @media screen and (max-width: 600px) {
+        form > fieldset {
+          grid-template-columns: auto;
         }
+      }
 
-        @media screen and (min-width: 768px) {
-
-            /* increase the font size as the screen gets larger */
-            body {
-                font-size: 3vmin;
-            }
+      @media screen and (max-width: 900px) {
+        .method-of-payment.grid {
+          grid-template-columns: auto;
         }
+      }
 
+      @media screen and (min-width: 1200px) {
+      }
 
-        #toaster {
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            background-color: #333;
-            color: white;
-            margin: 0;
-            padding: 1rem;
-            border: 1px solid white;
-            min-width: 10rem;
-            min-height: 4rem;
-            overflow: visible;
-            border-radius: 0;
-            border-top-left-radius: 1rem;
-        }
+      #toaster {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        background-color: #333;
+        color: white;
+        margin: 0;
+        padding: 1rem;
+        border: 1px solid white;
+        min-width: 10rem;
+        min-height: 4rem;
+        overflow: visible;
+        border-radius: 0;
+        border-top-left-radius: 1rem;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <h1>Point of Sale</h1>
     <details id="reservation" open>
-        <summary>Quick Reservation Entry</summary>
-        <form id="quickReservationForm">
+      <summary>Quick Reservation Entry</summary>
+      <form id="quickReservationForm">
+        <fieldset>
+          <label for="partyTelephone">Text Number or Email Address</label>
+          <input
+            type="text"
+            id="partyTelephone"
+            placeholder="Telephone or Email"
+            required
+            data-action="select-on-focus sticky"
+          />
+        </fieldset>
+        <fieldset>
+          <label for="partyName">Name of Party</label>
+          <input
+            type="text"
+            id="partyName"
+            placeholder="Name of Party"
+            required
+            data-action="select-on-focus sticky"
+          />
+        </fieldset>
+        <fieldset>
+          <label for="siteNumber">Site Number</label>
+          <input
+            type="text"
+            id="siteNumber"
+            placeholder="Site Number"
+            data-action="select-on-focus sticky"
+          />
+        </fieldset>
+        <fieldset>
+          <label>Site Description</label>
+          <input
+            type="text"
+            id="siteName"
+            placeholder="Site Description"
+            readonly
+            tabindex="-1"
+          />
+        </fieldset>
+        <fieldset>
+          <label for="checkIn">Check In</label>
+          <input type="date" id="checkIn" required />
+        </fieldset>
+        <fieldset>
+          <label for="checkOut">Check Out</label>
+          <input type="date" id="checkOut" required />
+        </fieldset>
+        <fieldset>
+          <label for="adults">Adults</label>
+          <input
+            type="number"
+            id="adults"
+            value="1"
+            min="1"
+            data-action="select-on-focus incrementor"
+          />
+        </fieldset>
+        <fieldset>
+          <label for="children">Children</label>
+          <input
+            type="number"
+            id="children"
+            value="0"
+            min="0"
+            data-action="select-on-focus incrementor"
+          />
+        </fieldset>
+        <fieldset>
+          <label for="visitors">Visitor Passes</label>
+          <input
+            type="number"
+            id="visitors"
+            value="0"
+            min="0"
+            data-action="select-on-focus incrementor"
+          />
+        </fieldset>
+        <fieldset>
+          <label for="woodBundles">Wood Bundles</label>
+          <input
+            type="number"
+            id="woodBundles"
+            value="0"
+            min="0"
+            data-action="select-on-focus incrementor"
+          />
+        </fieldset>
+        <fieldset>
+          <label for="baseDue">Price</label>
+          <input
+            type="number"
+            id="baseDue"
+            step="0.01"
+            readonly
+            min="0"
+            tabindex="-1"
+          />
+        </fieldset>
+        <fieldset>
+          <label for="totalTax">Tax</label>
+          <input
+            type="number"
+            id="totalTax"
+            step="0.01"
+            readonly
+            min="0"
+            tabindex="-1"
+          />
+        </fieldset>
+        <fieldset>
+          <label for="totalDue">Total Due</label>
+          <input
+            type="number"
+            id="totalDue"
+            step="0.01"
+            readonly
+            min="0"
+            tabindex="-1"
+          />
+        </fieldset>
+        <fieldset>
+          <label for="totalDiscount">Discount</label>
+          <input
+            data-action="select-on-focus"
+            type="number"
+            id="totalDiscount"
+            step="0.01"
+            value="0"
+          />
+        </fieldset>
+        <template id="method-of-payment">
+          <div class="method-of-payment grid template">
             <fieldset>
-                <label for="partyTelephone">Text Number or Email Address</label>
-                <input type="text" id="partyTelephone" placeholder="Telephone or Email" required data-action="select-on-focus sticky" />
+              <label for="paymentDate">Payment Date</label>
+              <input type="date" id="paymentDate" required />
             </fieldset>
             <fieldset>
-                <label for="partyName">Name of Party</label>
-                <input type="text" id="partyName" placeholder="Name of Party" required data-action="select-on-focus sticky" />
+              <label>Payment Type</label>
+              <select id="paymentType">
+                <option value="cash">Cash</option>
+                <option value="check">Check</option>
+                <option value="paypal">Paypal</option>
+              </select>
             </fieldset>
             <fieldset>
-                <label for="siteNumber">Site Number</label>
-                <input type="text" id="siteNumber" placeholder="Site Number" data-action="select-on-focus sticky" />
+              <label for="paymentAmount">Amount</label>
+              <input
+                type="number"
+                id="paymentAmount"
+                step="0.01"
+                min="0"
+                data-action="select-on-focus"
+              />
             </fieldset>
-            <fieldset>
-                <label>Site Description</label>
-                <input type="text" id="siteName" placeholder="Site Description" readonly tabindex="-1" />
-            </fieldset>
-            <fieldset>
-                <label for="checkIn">Check In</label>
-                <input type="date" id="checkIn" required />
-            </fieldset>
-            <fieldset>
-                <label for="checkOut">Check Out</label>
-                <input type="date" id="checkOut" required />
-            </fieldset>
-            <fieldset>
-                <label for="adults">Adults</label>
-                <input type="number" id="adults" value="1" min="1" data-action="select-on-focus incrementor" />
-            </fieldset>
-            <fieldset>
-                <label for="children">Children</label>
-                <input type="number" id="children" value="0" min="0" data-action="select-on-focus incrementor" />
-            </fieldset>
-            <fieldset>
-                <label for="visitors">Visitor Passes</label>
-                <input type="number" id="visitors" value="0" min="0" data-action="select-on-focus incrementor" />
-            </fieldset>
-            <fieldset>
-                <label for="woodBundles">Wood Bundles</label>
-                <input type="number" id="woodBundles" value="0" min="0" data-action="select-on-focus incrementor" />
-            </fieldset>
-            <fieldset>
-                <label for="baseDue">Price</label>
-                <input type="number" id="baseDue" step="0.01" readonly min="0" tabindex="-1" />
-            </fieldset>
-            <fieldset>
-                <label for="totalTax">Tax</label>
-                <input type="number" id="totalTax" step="0.01" readonly min="0" tabindex="-1" />
-            </fieldset>
-            <fieldset>
-                <label for="totalDue">Total Due</label>
-                <input type="number" id="totalDue" step="0.01" readonly min="0" tabindex="-1" />
-            </fieldset>
-            <fieldset>
-                <label for="totalDiscount">Discount</label>
-                <input data-action="select-on-focus" type="number" id="totalDiscount" step="0.01"
-                    value="0" />
-            </fieldset>
-            <template id="method-of-payment">
-                <div class="method-of-payment grid template">
-                    <fieldset>
-                        <label for="paymentDate">Payment Date</label>
-                        <input type="date" id="paymentDate" required />
-                    </fieldset>
-                    <fieldset>
-                        <label>Payment Type</label>
-                        <select id="paymentType">
-                            <option value="cash">Cash</option>
-                            <option value="check">Check</option>
-                            <option value="paypal">Paypal</option>
-                        </select>
-                    </fieldset>
-                    <fieldset>
-                        <label for="paymentAmount">Amount</label>
-                        <input type="number" id="paymentAmount" step="0.01" min="0" data-action="select-on-focus" />
-                    </fieldset>
-                </div>
-            </template>
-            <fieldset>
-                <label for="addPaymentMethod">Payments</label>
-                <button type="button" id="addPaymentMethod">Add Payment</button>
-            </fieldset>
-            <fieldset>
-                <label>Remaining Balance</label>
-                <input type="number" id="balanceDue" step="0.01" readonly min="0" tabindex="-1" />
-            </fieldset>
-            <fieldset class="toolbar">
-                <button type="submit" class="primary">Submit</button>
-                <button id="resetForm" type="button" class="secondary" data-action="clear-sticky">Reset</button>
-                <button id="printReceiptButton" type="button">Print Receipt</button>
-            </fieldset>
-        </form>
+          </div>
+        </template>
+        <fieldset>
+          <label for="addPaymentMethod">Payments</label>
+          <button type="button" id="addPaymentMethod">Add Payment</button>
+        </fieldset>
+        <fieldset>
+          <label>Remaining Balance</label>
+          <input
+            type="number"
+            id="balanceDue"
+            step="0.01"
+            readonly
+            min="0"
+            tabindex="-1"
+          />
+        </fieldset>
+        <fieldset class="toolbar">
+          <button type="submit" class="primary">Submit</button>
+          <button
+            id="resetForm"
+            type="button"
+            class="secondary"
+            data-action="clear-sticky"
+          >
+            Reset
+          </button>
+          <button id="printReceiptButton" type="button">Print Receipt</button>
+        </fieldset>
+      </form>
     </details>
     <div id="toaster"></div>
-</body>
-<script type="module">
+  </body>
+  <script type="module">
     import { setupPointOfSaleForm } from "./index.js";
     setupPointOfSaleForm();
-</script>
-
+  </script>
 </html>

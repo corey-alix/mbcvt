@@ -252,11 +252,12 @@ export async function setupPointOfSaleForm() {
   inputs.printReceiptButton.addEventListener("click", () => {
     let batchId = getQuery("batch");
     if (!batchId) {
-      const batchId = prompt("Enter receipt number");
+      batchId = prompt("Enter receipt number")!;
       if (!batchId) return;
+      setQuery("batch", batchId);
     }
     const receipt = database.getReceipt(parseInt(batchId));
-    if (!receipt) return;
+    if (!receipt) throw "receipt not found";
     printReceipt(receipt);
   });
 
@@ -483,12 +484,7 @@ export async function setupPointOfSaleForm() {
     } satisfies PointOfSaleReceiptModel;
 
     await database.addReceipt(receipt);
-    inputs.quickReservationForm.reset();
-
-    // add batch={batchId} to the query string
-    const url = new URL(window.location.href);
-    url.searchParams.set("batch", batchId + "");
-    window.location.href = url.href;
+    setQuery("batch", batchId + "");
   });
 
   inputs.partyName.focus();
@@ -641,5 +637,11 @@ function getQuery(name: string) {
 function removeQuery(name: string) {
   const url = new URL(window.location.href);
   url.searchParams.delete(name);
+  window.history.replaceState({}, "", url.toString());
+}
+
+function setQuery(name: string, value: string) {
+  const url = new URL(window.location.href);
+  url.searchParams.set(name, value);
   window.history.replaceState({}, "", url.toString());
 }
