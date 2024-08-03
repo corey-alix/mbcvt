@@ -3,6 +3,7 @@ import {
   PointOfSaleReceiptModel,
   database,
 } from "../db/index.js";
+import { D } from "../fun/D.js";
 import {
   asDateString,
   autoShortcut,
@@ -365,7 +366,7 @@ export async function setupPointOfSaleForm() {
 
     const partyTelephone = inputs.partyTelephone.value;
     const nameOfParty = inputs.partyName.value;
-    const dates = `${inputs.checkIn.value} to ${inputs.checkOut.value}`;
+    const dates = `${D.asMd(inputs.checkIn.valueAsDate!)} to ${D.asMd(inputs.checkOut.valueAsDate!)}`;
 
     const paidTotal = computeTotalPaid();
     const expenses = getExpenses();
