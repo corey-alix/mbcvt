@@ -69,6 +69,7 @@ const defaultActionHandlers = {
   sticky: (input: HTMLInputElement) => {
     const key = input.getAttribute("data-sticky-key")! || input.id;
     if (!key) throw new Error("Sticky key not found");
+    input.setAttribute("data-sticky-key", key);
     const value = getStickyValue(key, "");
     if (value) {
       input.value = value;
@@ -77,6 +78,20 @@ const defaultActionHandlers = {
     }
     input.addEventListener("change", () => {
       setStickyValue(key, input.value);
+    });
+  },
+  "clear-sticky": (input: HTMLButtonElement) => {
+    input.addEventListener("click", () => {
+      const inputs = Array.from(
+        document.querySelectorAll<HTMLInputElement>("[data-sticky-key]")
+      );
+
+      for (let input of inputs) {
+        const key = input.getAttribute("data-sticky-key");
+        if (!key) throw new Error("Sticky key not found");
+        input.value = "";
+        setStickyValue(key, "");
+      }
     });
   },
   "date-today": (actionNode: HTMLInputElement) => {

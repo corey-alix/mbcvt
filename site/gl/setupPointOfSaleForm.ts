@@ -236,17 +236,26 @@ export async function setupPointOfSaleForm() {
     totalDiscount: null as any as HTMLInputElement,
     addPaymentMethod: null as any as HTMLButtonElement,
     printReceiptButton: null as any as HTMLButtonElement,
+    resetForm: null as any as HTMLButtonElement,
   };
 
   getElements(inputs, document.body);
   injectActions({
-    "incrementor": injectIncrementorButtons,
+    incrementor: injectIncrementorButtons,
+  });
+
+  inputs.resetForm.addEventListener("click", () => {
+    removeQuery("batch");
+    inputs.quickReservationForm.reset();
   });
 
   inputs.printReceiptButton.addEventListener("click", () => {
-    const receiptId = prompt("Enter receipt number");
-    if (!receiptId) return;
-    const receipt = database.getReceipt(parseInt(receiptId));
+    let batchId = getQuery("batch");
+    if (!batchId) {
+      const batchId = prompt("Enter receipt number");
+      if (!batchId) return;
+    }
+    const receipt = database.getReceipt(parseInt(batchId));
     if (!receipt) return;
     printReceipt(receipt);
   });
@@ -474,11 +483,12 @@ export async function setupPointOfSaleForm() {
     } satisfies PointOfSaleReceiptModel;
 
     await database.addReceipt(receipt);
-
-    printReceipt(receipt);
-
     inputs.quickReservationForm.reset();
-    // window.location.href = `./general-ledger.html?batch=${batchId}`;
+
+    // add batch={batchId} to the query string
+    const url = new URL(window.location.href);
+    url.searchParams.set("batch", batchId + "");
+    window.location.href = url.href;
   });
 
   inputs.partyName.focus();
@@ -626,4 +636,10 @@ function extractPaymentInfo(pos: PointOfSaleFormData) {
 function getQuery(name: string) {
   const match = new URLSearchParams(window.location.search).get(name);
   return match || "";
+}
+
+function removeQuery(name: string) {
+  const url = new URL(window.location.href);
+  url.searchParams.delete(name);
+  window.history.replaceState({}, "", url.toString());
 }

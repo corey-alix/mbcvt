@@ -48,7 +48,7 @@ class DataServices {
 
     // must only contain lowercase letters and numbers
     if (!/^[a-z0-9]+$/.test(topic)) {
-      throw new Error("Invalid topic");
+      throw new Error("Topic must only contain lowercase letters and numbers");
     }
   }
 
@@ -79,6 +79,7 @@ class DataServices {
     try {
       return JSON.parse(value);
     } catch (e) {
+      console.error(e);
       throw new Error("Invalid value");
     }
   }
@@ -158,6 +159,7 @@ app.post("/api", (req, res) => {
       res.setHeader("Content-Type", "application/json");
       res.send({ version });
     } catch (e) {
+      console.error(e);
       res.setHeader("Content-Type", "application/json");
       res.status(400).send({ error: e });
     }
@@ -177,6 +179,7 @@ app.get("/api/:topic", (req, res) => {
       },
     });
   } catch (e) {
+    console.error(e);
     res.status(400).send(e);
   }
 });
