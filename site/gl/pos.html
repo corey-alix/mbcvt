@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="../index.css" />
     <style>
       body {
-        background-color: #7b1e1e;
+        --pretty-red: #7b1e1e;
+        --pretty-teal: #243945;
+        background-color: var(--pretty-teal);
       }
 
       .receipt {
@@ -47,17 +49,18 @@
       .toolbar {
         display: flex;
         flex-direction: row;
-        justify-content: start;
+        justify-content: space-evenly;
         align-items: center;
         margin: 0.25em;
         padding: 0.25em;
-        flex-grow: 0.5em;
-        width: 75cqw;
         gap: 0.5em;
 
         button {
+          flex-grow: 1;
           min-width: 13vw;
           height: 4em;
+          padding-left: 0.5em;
+          padding-right: 0.5em;
         }
       }
 
@@ -391,7 +394,7 @@
           />
         </fieldset>
         <fieldset class="toolbar">
-          <button type="submit" class="primary">Submit</button>
+          <button type="submit" class="primary">Save</button>
           <button
             id="resetForm"
             type="button"
@@ -400,7 +403,8 @@
           >
             Reset
           </button>
-          <button id="printReceiptButton" type="button">Print Receipt</button>
+          <button id="printReceiptButton" type="button">Print</button>
+          <button id="priorReceiptButton" type="button">Prior</button>
         </fieldset>
       </form>
     </details>

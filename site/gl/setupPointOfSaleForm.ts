@@ -126,7 +126,7 @@ export async function setupPointOfSaleForm() {
         rates.push("Weekly");
       }
       if (counter.days) {
-        rates.push("Daily");
+        // rates.push("Daily");
       }
       toast(`${rates.join(", ")} rates applied`);
       state.counter = counter;
@@ -236,6 +236,7 @@ export async function setupPointOfSaleForm() {
     totalDiscount: null as any as HTMLInputElement,
     addPaymentMethod: null as any as HTMLButtonElement,
     printReceiptButton: null as any as HTMLButtonElement,
+    priorReceiptButton: null as any as HTMLButtonElement,
     resetForm: null as any as HTMLButtonElement,
   };
 
@@ -247,6 +248,15 @@ export async function setupPointOfSaleForm() {
   inputs.resetForm.addEventListener("click", () => {
     removeQuery("batch");
     inputs.quickReservationForm.reset();
+  });
+
+  inputs.priorReceiptButton.addEventListener("click", () => {
+    const batchId = getQuery("batch") ?? database.getLastReceiptId();
+    if (!batchId) throw "there are no receipts";
+    const nextId = parseInt(batchId) - 1;
+    if (nextId <= 0) throw "there are no prior receipts";
+    setQuery("batch", nextId + "");
+    window.location.reload();
   });
 
   inputs.printReceiptButton.addEventListener("click", () => {
@@ -475,16 +485,17 @@ export async function setupPointOfSaleForm() {
       dates,
       expenses,
       totalNet: expensesNet,
-      totalTax: expensesNet * magic.taxRate,
+      totalTax: taxTotal + discountTax,
       totalCash: expensesNet + taxTotal,
       discountNet,
-      discountTax: discountNet * magic.taxRate,
+      discountTax,
       totalPaid: computeTotalPaid(),
       balanceDue,
     } satisfies PointOfSaleReceiptModel;
 
     await database.addReceipt(receipt);
     setQuery("batch", batchId + "");
+    printReceipt(receipt);
   });
 
   inputs.partyName.focus();
@@ -494,6 +505,7 @@ export async function setupPointOfSaleForm() {
   if (invoice) {
     const pos = database.getPointOfSale(parseInt(invoice));
     if (!pos) throw new Error("Invalid invoice number");
+    inputs.partyTelephone.value = pos.partyTelephone;
     inputs.partyName.value = pos.partyName;
     inputs.siteNumber.value = pos.siteNumber;
     inputs.checkIn.value = pos.checkIn;

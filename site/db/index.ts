@@ -25,6 +25,7 @@ export type SiteAvailabilityModel = {
 
 const sampleFormData = {
   batchId: 1,
+  partyTelephone: "test",
   partyName: "test",
   siteNumber: "1001",
   siteName: "cash",
@@ -205,6 +206,10 @@ class Database {
     return this.#data.posReceipts.find((r) => r.batchId === batchId);
   }
 
+  getLastReceiptId() {
+    return this.#data.posReceipts[this.#data.posReceipts.length - 1]?.batchId;
+  }
+
   async addFreeChlorine(data: FreeChlorineData) {
     this.#data.freeChlorine = this.#data.freeChlorine || [];
     this.#data.freeChlorine.push(data);
@@ -313,7 +318,7 @@ class Database {
     siteNotes: [] as SiteNoteModel[],
   } satisfies DatabaseSchema;
 
-  #data = {...this.#emptyDatabase};
+  #data = { ...this.#emptyDatabase };
 
   #init = false;
 
@@ -437,7 +442,7 @@ class Database {
       },
     });
     const data = (await response.json()) as DatabaseSchema;
-    this.#data = {...this.#emptyDatabase, ...data};
+    this.#data = { ...this.#emptyDatabase, ...data };
   }
 
   public get data() {
