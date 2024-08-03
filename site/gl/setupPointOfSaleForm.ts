@@ -366,7 +366,9 @@ export async function setupPointOfSaleForm() {
 
     const partyTelephone = inputs.partyTelephone.value;
     const nameOfParty = inputs.partyName.value;
-    const dates = `${D.asMd(inputs.checkIn.valueAsDate!)} to ${D.asMd(inputs.checkOut.valueAsDate!)}`;
+    const dates = `${D.asMd(D.asDateOnly(inputs.checkIn.value))} to ${D.asMd(
+      D.asDateOnly(inputs.checkOut.value)
+    )}`;
 
     const paidTotal = computeTotalPaid();
     const expenses = getExpenses();
@@ -572,6 +574,7 @@ function printReceipt(sale: PointOfSaleReceiptModel) {
   const html = `
   <div class="receipt grid grid-2">
     <h1 class="span-all center">Millbrook Campground Receipt</h1>
+    <div class="span-all center">*** Beta Testing ***</div>
     <h2 class="span-all center"><a href="./general-ledger.html?batch=${
       sale.batchId
     }" class="no-border">#${(sale.batchId + "").padStart(5)}</a></h2>

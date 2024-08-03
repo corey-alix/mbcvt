@@ -45,8 +45,10 @@ export class D {
   }
 
   static asMd(date: Date) {
+    date = D.dateOnly(date);
     const nameOfMonth = D.closestMonth(date);
     const day = date.getDate().toString().padStart(2, "0");
+    console.log("asMd", date, day);
     return `${nameOfMonth} ${day}`;
   }
 }
