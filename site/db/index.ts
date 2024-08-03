@@ -196,18 +196,26 @@ class Database {
     await this.#save();
   }
 
-  async addReceipt(receipt: Partial<PointOfSaleReceiptModel>) {
+  async upsertReceipt(receipt: Partial<PointOfSaleReceiptModel>) {
     this.#data.posReceipts = this.#data.posReceipts || [];
-    this.#data.posReceipts.push(receipt as PointOfSaleReceiptModel);
+    if (!receipt.batchId) throw "receipt.batchId missing";
+    const target = this.#data.posReceipts.findIndex(
+      (r) => r.batchId === receipt.batchId
+    );
+    if (target < 0) {
+      this.#data.posReceipts.push(receipt as PointOfSaleReceiptModel);
+    } else {
+      this.#data.posReceipts[target] = receipt as PointOfSaleReceiptModel;
+    }
     await this.#save();
   }
 
   getReceipt(batchId: number) {
-    return this.#data.posReceipts.find((r) => r.batchId === batchId);
+    return this.#data.posReceipts.findLast((r) => r.batchId === batchId);
   }
 
-  getLastReceiptId() {
-    return this.#data.posReceipts[this.#data.posReceipts.length - 1]?.batchId;
+  getReceipts() {
+    return this.#data.posReceipts;
   }
 
   async addFreeChlorine(data: FreeChlorineData) {
@@ -332,6 +340,12 @@ class Database {
     }
     try {
       await this.#load();
+      {
+        this.#data.posReceipts = this.#data.posReceipts || [];
+        const hash = {} as Record<number, PointOfSaleReceiptModel>;
+        this.#data.posReceipts.forEach(r => hash[r.batchId] = r);
+        this.#data.posReceipts = Object.values(hash);
+      }
       localStorage.setItem(DATABASE_NAME, JSON.stringify(this.#data));
       this.#init = true;
     } catch (error) {

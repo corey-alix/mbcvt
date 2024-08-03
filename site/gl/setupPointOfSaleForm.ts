@@ -128,7 +128,9 @@ export async function setupPointOfSaleForm() {
       if (counter.days) {
         // rates.push("Daily");
       }
-      toast(`${rates.join(", ")} rates applied`);
+      if (rates.length) {
+        toast(`${rates.join(", ")} rates applied`);
+      }
       state.counter = counter;
     }
 
@@ -251,11 +253,21 @@ export async function setupPointOfSaleForm() {
   });
 
   inputs.priorReceiptButton.addEventListener("click", () => {
-    const batchId = getQuery("batch") ?? database.getLastReceiptId();
-    if (!batchId) throw "there are no receipts";
-    const nextId = parseInt(batchId) - 1;
-    if (nextId <= 0) throw "there are no prior receipts";
-    setQuery("batch", nextId + "");
+    const receipts = database.getReceipts();
+    if (!receipts.length) throw "there are not receipts";
+    let batchId = parseInt(getQuery("batch") || "0");
+    if (!batchId) {
+      batchId = receipts[receipts.length - 1].batchId;
+    } else {
+      let index = receipts.findIndex((r) => r.batchId === batchId) - 1;
+      if (index > 0) {
+        const receipt = receipts[index];
+        batchId = receipt.batchId;
+      } else {
+        batchId = receipts[receipts.length - 1].batchId;
+      }
+    }
+    setQuery("batch", batchId + "");
     window.location.reload();
   });
 
@@ -493,7 +505,7 @@ export async function setupPointOfSaleForm() {
       balanceDue,
     } satisfies PointOfSaleReceiptModel;
 
-    await database.addReceipt(receipt);
+    await database.upsertReceipt(receipt);
     setQuery("batch", batchId + "");
     printReceipt(receipt);
   });
