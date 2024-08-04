@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>POS Lookup</title>
+    <link rel="stylesheet" type="text/css" href="../index.css" />
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 10px;
+            .headerCell {
+                font-weight: bolder;
+                text-decoration: underline;
+            }
+        }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>POS Lookup</h1>
+      <div class="grid">
+        <div class="headerCell" data-sort="nameOfParty">Name</div>
+        <div class="headerCell" data-sort="dates">Date</div>
+        <template id="rowTemplate">
+          <div id="nameOfParty" class="data-row"></div>
+          <div id="dates" class="data-row"></div>
+        </template>
+      </div>
+    </div>
+    <script type="module">
+      import { setupPointOfSaleSearchForm } from "./index.js";
+      setupPointOfSaleSearchForm();
+    </script>
+  </body>
+</html>
