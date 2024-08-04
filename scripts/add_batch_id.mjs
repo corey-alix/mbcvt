@@ -4512,7 +4512,8 @@ const db = {
             "paymentDate": "2024-07-16",
             "paymentType": "cash",
             "paymentAmount": "29.00",
-            "balanceDue": "0.00"
+            "balanceDue": "0.00",
+            "batchId": 48
         },
         {
             "partyName": "Julie Perrault, 613.724.0154",
@@ -4531,7 +4532,8 @@ const db = {
             "paymentDate": "2024-07-16",
             "paymentType": "cash",
             "paymentAmount": "32.00",
-            "balanceDue": "0.00"
+            "balanceDue": "0.00",
+            "batchId": 49
         },
         {
             "partyName": "Alesia Palmer",
@@ -4550,7 +4552,8 @@ const db = {
             "paymentDate": "2024-07-16",
             "paymentType": "cash",
             "paymentAmount": "74.00",
-            "balanceDue": "0.00"
+            "balanceDue": "0.00",
+            "batchId": 50
         },
         {
             "partyName": "Karen & Paul",
@@ -4569,7 +4572,8 @@ const db = {
             "paymentDate": "2024-07-16",
             "paymentType": "cash",
             "paymentAmount": "177.00",
-            "balanceDue": "0.00"
+            "balanceDue": "0.00",
+            "batchId": 51
         },
         {
             "partyName": "Rose & Jesael, 613.808.8272",
@@ -4588,7 +4592,8 @@ const db = {
             "paymentDate": "2024-07-16",
             "paymentType": "cash",
             "paymentAmount": "49.00",
-            "balanceDue": "0.00"
+            "balanceDue": "0.00",
+            "batchId": 52
         },
         {
             "partyName": "Peter & Debbie, 585.217.7862",
@@ -4616,7 +4621,8 @@ const db = {
                 "35",
                 "476.61"
             ],
-            "balanceDue": "-0.00"
+            "balanceDue": "-0.00",
+            "batchId": 53
         },
         {
             "partyName": "Rich Manca",
@@ -4644,7 +4650,8 @@ const db = {
                 "35",
                 "217.00"
             ],
-            "balanceDue": "0.00"
+            "balanceDue": "0.00",
+            "batchId": 56
         },
         {
             "partyName": "Samantha Combs",
@@ -4680,7 +4687,8 @@ const db = {
             "totalTax": "3.72",
             "totalDue": "45.00",
             "totalDiscount": "3",
-            "balanceDue": "42.00"
+            "balanceDue": "42.00",
+            "batchId": 60
         },
         {
             "batchId": 62,
@@ -4740,7 +4748,8 @@ const db = {
             "paymentDate": "2024-07-19",
             "paymentType": "cash",
             "paymentAmount": "64.00",
-            "balanceDue": "0.00"
+            "balanceDue": "0.00",
+            "batchId": 64
         },
         {
             "partyTelephone": "502.930.9111",
