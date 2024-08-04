@@ -75,6 +75,8 @@ export async function setupGeneralLedgerForm() {
     accountDescription: null as any as HTMLInputElement,
     accountNumber: null as any as HTMLInputElement,
     saveButton: null as any as HTMLButtonElement,
+    summarizeButton: null as any as HTMLButtonElement,
+    invertButton: null as any as HTMLButtonElement,
     addAccountButton: null as any as HTMLButtonElement,
     addEntryButton: null as any as HTMLButtonElement,
     priorBatchButton: null as any as HTMLButtonElement,
@@ -289,6 +291,28 @@ export async function setupGeneralLedgerForm() {
 
   render();
   updateBalance();
+
+  ux.invertButton.addEventListener("click", () => {
+    const transactions = db.getCurrentTransactions();
+    transactions.forEach(t => t.amt *= -1);
+    render();
+    updateBalance();
+  })
+
+  ux.summarizeButton.addEventListener("click", () => {
+    const accountHash = {} as Record<string, TransactionModel>;
+    const transactions = db.getCurrentTransactions();
+    transactions.forEach(t => {
+      const key = `${t.account}-${t.date}-${t.description}`;
+      if (!accountHash[key]) {
+        accountHash[key] = t;
+      } else {
+        accountHash[key].amt += t.amt;
+        t.amt = 0;
+      }
+    });
+    render();
+  })
 
   ux.saveButton.addEventListener("click", async () => {
     if (!ux.generalLedgerForm.reportValidity()) return;
