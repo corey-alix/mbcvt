@@ -77,6 +77,7 @@ export async function setupGeneralLedgerForm() {
     saveButton: null as any as HTMLButtonElement,
     summarizeButton: null as any as HTMLButtonElement,
     invertButton: null as any as HTMLButtonElement,
+    voidButton: null as any as HTMLButtonElement,
     addAccountButton: null as any as HTMLButtonElement,
     addEntryButton: null as any as HTMLButtonElement,
     priorBatchButton: null as any as HTMLButtonElement,
@@ -292,17 +293,41 @@ export async function setupGeneralLedgerForm() {
   render();
   updateBalance();
 
+  ux.voidButton.addEventListener("click", async () => {
+    const batchId = state.batchId;
+    if (!batchId) throw "No batch to void";
+
+    const existingTransactionsExist = db.getCurrentTransactions().length > 0;
+    if (existingTransactionsExist) {
+      throw "Cannot void a batch with existing transactions";
+    }
+
+    const transactions = db.getTransactions(batchId);
+
+    await db.asAtomic(() => {
+      transactions.forEach((transaction) => {
+        const { account, amt, date, description } = transaction;
+        db.addTransaction({
+          account,
+          amt: -amt,
+          date,
+          description: `VOID: ${description}`,
+        });
+      });
+    });
+  });
+
   ux.invertButton.addEventListener("click", () => {
     const transactions = db.getCurrentTransactions();
-    transactions.forEach(t => t.amt *= -1);
+    transactions.forEach((t) => (t.amt *= -1));
     render();
     updateBalance();
-  })
+  });
 
   ux.summarizeButton.addEventListener("click", () => {
     const accountHash = {} as Record<string, TransactionModel>;
     const transactions = db.getCurrentTransactions();
-    transactions.forEach(t => {
+    transactions.forEach((t) => {
       const key = `${t.account}-${t.date}-${t.description}`;
       if (!accountHash[key]) {
         accountHash[key] = t;
@@ -312,7 +337,7 @@ export async function setupGeneralLedgerForm() {
       }
     });
     render();
-  })
+  });
 
   ux.saveButton.addEventListener("click", async () => {
     if (!ux.generalLedgerForm.reportValidity()) return;

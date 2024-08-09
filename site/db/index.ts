@@ -7,6 +7,24 @@ export const API_URL = "/api";
 
 let isSaving = false;
 
+function debounce(cb: () => void, wait = 20) {
+  let h = 0;
+  const callable = () => {
+    return new Promise<void>((good, bad) => {
+      clearTimeout(h);
+      h = setTimeout(() => {
+        try {
+          cb();
+          good();
+        } catch (error) {
+          bad(error);
+        }
+      }, wait);
+    });
+  };
+  return callable;
+}
+
 export type SiteNoteModel = {
   site: string;
   date: string;
@@ -125,6 +143,12 @@ export type Contact = {
 };
 
 class Database {
+
+  async asAtomic(op: () => void) {
+    op();
+    await this.#save();
+  }
+
   deleteNote(siteNote: { site: string; date: string }) {
     this.#data.siteNotes = this.#data.siteNotes || [];
     const index = this.#data.siteNotes.findIndex(
@@ -343,7 +367,7 @@ class Database {
       {
         this.#data.posReceipts = this.#data.posReceipts || [];
         const hash = {} as Record<number, PointOfSaleReceiptModel>;
-        this.#data.posReceipts.forEach(r => hash[r.batchId] = r);
+        this.#data.posReceipts.forEach((r) => (hash[r.batchId] = r));
         this.#data.posReceipts = Object.values(hash);
       }
       localStorage.setItem(DATABASE_NAME, JSON.stringify(this.#data));
@@ -417,7 +441,9 @@ class Database {
     await this.#save();
   }
 
-  async #save() {
+  #save = debounce(() => this.#saveNow());
+
+  async #saveNow() {
     if (isSaving) throw new Error("Already saving");
     isSaving = true;
     try {
