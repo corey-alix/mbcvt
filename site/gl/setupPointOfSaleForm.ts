@@ -587,16 +587,16 @@ function printReceipt(sale: PointOfSaleReceiptModel) {
     <div>Base Price</div><div class="align-right">${asCurrency(
       expenses.basePrice
     )}</div>
-    <div>Adults</div><div class="align-right">${asCurrency(
+    <div class="if-${expenses.adults}">Adults</div><div  class="align-right if-${expenses.adults}">${asCurrency(
       expenses.adults
     )}</div>
-    <div>Children</div><div class="align-right">${asCurrency(
+    <div class="if-${expenses.children}">Children</div><div class="align-right if-${expenses.children}">${asCurrency(
       expenses.children
     )}</div>
-    <div>Visitors</div><div class="align-right">${asCurrency(
+    <div class="if-${expenses.visitors}">Visitors</div><div class="align-right if-${expenses.visitors}">${asCurrency(
       expenses.visitors
     )}</div>
-    <div>Wood Bundles</div><div class="align-right">${asCurrency(
+    <div class="align-right if-${expenses.woodBundles}">Wood Bundles</div><div class="align-right if-${expenses.woodBundles}">${asCurrency(
       expenses.woodBundles
     )}</div>
     <div class="span-all"><br/></div>
