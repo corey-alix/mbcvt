@@ -394,124 +394,126 @@ export async function setupPointOfSaleForm() {
       2
     );
 
-    if (balanceDue) {
-      await database.addTransaction({
-        account: arAccount.id,
-        date: transactionDate,
-        description: balanceDue > 0 ? "Balance" : "Credit",
-        amt: balanceDue,
-      });
-    }
-
-    const payments = getPayments();
-    for (const payment of payments) {
-      await database.addTransaction({
-        account: cashAccount.id,
-        date: payment.date || transactionDate,
-        description: payment.mop,
-        amt: payment.amount,
-      });
-    }
-
-    await database.addTransaction({
-      account: taxAccount.id,
-      date: transactionDate,
-      description: "Tax Due",
-      amt: -taxTotal,
-    });
-
-    await database.addTransaction({
-      account: siteAccount.id,
-      date: transactionDate,
-      description: `Rental to ${nameOfParty}`,
-      amt: -expenses.basePrice,
-    });
-
-    if (discountGross) {
-      await database.addTransaction({
-        account: siteAccount.id,
-        date: transactionDate,
-        description: "Discount",
-        amt: discountNet,
-      });
-    }
-
-    if (expenses.woodBundles) {
-      await database.addTransaction({
-        account: firewoodAccount.id,
-        date: transactionDate,
-        description: "Firewood",
-        amt: -expenses.woodBundles,
-      });
-    }
-
-    const visitorGross =
-      expenses.children + expenses.adults + expenses.visitors;
-    if (visitorGross) {
-      await database.addTransaction({
-        account: peopleAccount.id,
-        date: transactionDate,
-        description: "Guests",
-        amt: -visitorGross,
-      });
-    }
-
-    // if there in an invoice number, insert correcting entries into the existing batc
-    const invoice = getQuery("batch");
-    let batchId = 0;
-    if (invoice) {
-      batchId = parseInt(invoice);
-      const batch = database.getBatches().find((b) => b.id === batchId);
-      if (!batch) throw new Error("Batch not found");
-      // reverse all past transactions
-      for (const transaction of batch.transactions) {
-        await database.addTransaction({
-          account: transaction.account,
-          date: transaction.date,
-          description: transaction.description,
-          amt: -transaction.amt,
+    await database.asAtomic(async () => {
+      let batchId = 0;
+      if (balanceDue) {
+        database.addTransaction({
+          account: arAccount.id,
+          date: transactionDate,
+          description: balanceDue > 0 ? "Balance" : "Credit",
+          amt: balanceDue,
         });
       }
-      await database.updateBatch(batchId);
-    } else {
-      batchId = await database.createBatch();
-    }
 
-    {
-      // form inputs as json
-      const formData = new FormData(inputs.quickReservationForm);
-      const json = {} as Record<string, any>;
+      const payments = getPayments();
+      for (const payment of payments) {
+        database.addTransaction({
+          account: cashAccount.id,
+          date: payment.date || transactionDate,
+          description: payment.mop,
+          amt: payment.amount,
+        });
+      }
 
-      // convert entries to an array
-      Array.from(formData.entries()).forEach((entry) => {
-        const [key, value] = entry;
-        if (typeof json[key] === "undefined") json[key] = value;
-        else if (Array.isArray(json[key])) json[key].push(value);
-        else json[key] = [json[key], value];
+      database.addTransaction({
+        account: taxAccount.id,
+        date: transactionDate,
+        description: "Tax Due",
+        amt: -taxTotal,
       });
-      json["batchId"] = batchId;
 
-      await database.upsertPointOfSale(json as PointOfSaleFormData);
-    }
+      database.addTransaction({
+        account: siteAccount.id,
+        date: transactionDate,
+        description: `Rental to ${nameOfParty}`,
+        amt: -expenses.basePrice,
+      });
 
-    const receipt = {
-      batchId,
-      partyTelephone,
-      nameOfParty,
-      dates,
-      expenses,
-      totalNet: expensesNet,
-      totalTax: taxTotal + discountTax,
-      totalCash: expensesNet + taxTotal,
-      discountNet,
-      discountTax,
-      totalPaid: computeTotalPaid(),
-      balanceDue,
-    } satisfies PointOfSaleReceiptModel;
+      if (discountGross) {
+        database.addTransaction({
+          account: siteAccount.id,
+          date: transactionDate,
+          description: "Discount",
+          amt: discountNet,
+        });
+      }
 
-    await database.upsertReceipt(receipt);
-    setQuery("batch", batchId + "");
-    printReceipt(receipt);
+      if (expenses.woodBundles) {
+        database.addTransaction({
+          account: firewoodAccount.id,
+          date: transactionDate,
+          description: "Firewood",
+          amt: -expenses.woodBundles,
+        });
+      }
+
+      const visitorGross =
+        expenses.children + expenses.adults + expenses.visitors;
+      if (visitorGross) {
+        database.addTransaction({
+          account: peopleAccount.id,
+          date: transactionDate,
+          description: "Guests",
+          amt: -visitorGross,
+        });
+      }
+
+      // if there in an invoice number, insert correcting entries into the existing batc
+      const invoice = getQuery("batch");
+      if (invoice) {
+        batchId = parseInt(invoice);
+        const batch = database.getBatches().find((b) => b.id === batchId);
+        if (!batch) throw new Error("Batch not found");
+        // reverse all past transactions
+        for (const transaction of batch.transactions) {
+          database.addTransaction({
+            account: transaction.account,
+            date: transaction.date,
+            description: transaction.description,
+            amt: -transaction.amt,
+          });
+        }
+        database.updateBatch(batchId);
+      } else {
+        batchId = await database.createBatch();
+      }
+
+      {
+        // form inputs as json
+        const formData = new FormData(inputs.quickReservationForm);
+        const json = {} as Record<string, any>;
+
+        // convert entries to an array
+        Array.from(formData.entries()).forEach((entry) => {
+          const [key, value] = entry;
+          if (typeof json[key] === "undefined") json[key] = value;
+          else if (Array.isArray(json[key])) json[key].push(value);
+          else json[key] = [json[key], value];
+        });
+        json["batchId"] = batchId;
+
+        await database.upsertPointOfSale(json as PointOfSaleFormData);
+      }
+
+      const receipt = {
+        batchId,
+        partyTelephone,
+        nameOfParty,
+        dates,
+        expenses,
+        totalNet: expensesNet,
+        totalTax: taxTotal + discountTax,
+        totalCash: expensesNet + taxTotal,
+        discountNet,
+        discountTax,
+        totalPaid: computeTotalPaid(),
+        balanceDue,
+      } satisfies PointOfSaleReceiptModel;
+
+      await database.upsertReceipt(receipt);
+      setQuery("batch", batchId + "");
+      printReceipt(receipt);
+    });
   });
 
   inputs.partyName.focus();
@@ -587,18 +589,26 @@ function printReceipt(sale: PointOfSaleReceiptModel) {
     <div>Base Price</div><div class="align-right">${asCurrency(
       expenses.basePrice
     )}</div>
-    <div class="if-${expenses.adults}">Adults</div><div  class="align-right if-${expenses.adults}">${asCurrency(
+    <div class="if-${
       expenses.adults
-    )}</div>
-    <div class="if-${expenses.children}">Children</div><div class="align-right if-${expenses.children}">${asCurrency(
+    }">Adults</div><div  class="align-right if-${expenses.adults}">${asCurrency(
+    expenses.adults
+  )}</div>
+    <div class="if-${
       expenses.children
-    )}</div>
-    <div class="if-${expenses.visitors}">Visitors</div><div class="align-right if-${expenses.visitors}">${asCurrency(
+    }">Children</div><div class="align-right if-${
+    expenses.children
+  }">${asCurrency(expenses.children)}</div>
+    <div class="if-${
       expenses.visitors
-    )}</div>
-    <div class="align-right if-${expenses.woodBundles}">Wood Bundles</div><div class="align-right if-${expenses.woodBundles}">${asCurrency(
+    }">Visitors</div><div class="align-right if-${
+    expenses.visitors
+  }">${asCurrency(expenses.visitors)}</div>
+    <div class="align-right if-${
       expenses.woodBundles
-    )}</div>
+    }">Wood Bundles</div><div class="align-right if-${
+    expenses.woodBundles
+  }">${asCurrency(expenses.woodBundles)}</div>
     <div class="span-all"><br/></div>
 
     <div>Price</div>

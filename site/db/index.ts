@@ -7,7 +7,7 @@ export const API_URL = "/api";
 
 let isSaving = false;
 
-function debounce(cb: () => void, wait = 20) {
+export function debounce(cb: () => void, wait = 20) {
   let h = 0;
   const callable = () => {
     return new Promise<void>((good, bad) => {
@@ -143,10 +143,18 @@ export type Contact = {
 };
 
 class Database {
+  #atomic = false;
 
-  async asAtomic(op: () => void) {
-    op();
-    await this.#save();
+  async asAtomic(op: () => void | Promise<void>) {
+    if (this.#atomic) throw new Error("Already in atomic operation");
+    try {
+      this.#atomic = true;
+      await op();
+      this.#atomic = false;
+      await this.#save();
+    } finally {
+      this.#atomic = false;
+    }
   }
 
   deleteNote(siteNote: { site: string; date: string }) {
@@ -441,10 +449,15 @@ class Database {
     await this.#save();
   }
 
-  #save = debounce(() => this.#saveNow());
+  async #save() {
+    if (this.#atomic) return;
+    return this.#saveNow();
+  }
 
   async #saveNow() {
     if (isSaving) throw new Error("Already saving");
+    if (this.#atomic) throw new Error("Cannot save while in atomic operation");
+    console.log("saving");
     isSaving = true;
     try {
       const data = JSON.stringify(this.#data);
