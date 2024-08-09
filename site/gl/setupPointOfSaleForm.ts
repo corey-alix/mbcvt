@@ -251,6 +251,7 @@ export async function setupPointOfSaleForm() {
   inputs.resetForm.addEventListener("click", () => {
     removeQuery("batch");
     inputs.quickReservationForm.reset();
+    location.reload();
   });
 
   inputs.priorReceiptButton.addEventListener("click", () => {

@@ -8,7 +8,7 @@ export async function setupPointOfSaleSearchForm() {
 
   const grid = rowTemplate.parentElement!;
 
-  const receipts = database.getReceipts();
+  const receipts = database.getReceipts().toReversed();
 
   const data = receipts.map((r) => {
     return {

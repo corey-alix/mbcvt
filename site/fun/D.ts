@@ -19,7 +19,7 @@ export class D {
   }
 
   static closestMonth(date = new Date()): string {
-    return date.toLocaleString("default", { month: "long" });
+    return date.toLocaleString("default", { month: "short" });
   }
 
   static asDateOnly(ymd: string) {
