@@ -1,15 +1,27 @@
-<script async
-  src="https://js.stripe.com/v3/buy-button.js">
-</script>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- mobile friendly -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reservation</title>
+    <link rel="author" href="mailto:coreyalix@gmail.com" />
+    <!-- use pallette.css -->
+    <link rel="stylesheet" href="../palette.css" />
 
-<stripe-buy-button
-  buy-button-id="buy_btn_1PlrWVLysPW28zmUYXNCbo2A"
-  publishable-key="pk_live_51PlpbzLysPW28zmUH5Ai2iT34HMzFngzK7yvxfJTITcSil6IrZwe6z7w0zYCm39JbhtT6TQpIGe8VvYvgGpZrTvb00TPg9tHMk"
->
-</stripe-buy-button>
+    <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+  </head>
+  <body>
+    <stripe-buy-button
+      buy-button-id="buy_btn_1PlrWVLysPW28zmUYXNCbo2A"
+      publishable-key="pk_live_51PlpbzLysPW28zmUH5Ai2iT34HMzFngzK7yvxfJTITcSil6IrZwe6z7w0zYCm39JbhtT6TQpIGe8VvYvgGpZrTvb00TPg9tHMk"
+    >
+    </stripe-buy-button>
 
-<stripe-buy-button
-  buy-button-id="buy_btn_1PlrZLLysPW28zmUja5Pd7gS"
-  publishable-key="pk_live_51PlpbzLysPW28zmUH5Ai2iT34HMzFngzK7yvxfJTITcSil6IrZwe6z7w0zYCm39JbhtT6TQpIGe8VvYvgGpZrTvb00TPg9tHMk"
->
-</stripe-buy-button>
+    <stripe-buy-button
+      buy-button-id="buy_btn_1PlrZLLysPW28zmUja5Pd7gS"
+      publishable-key="pk_live_51PlpbzLysPW28zmUH5Ai2iT34HMzFngzK7yvxfJTITcSil6IrZwe6z7w0zYCm39JbhtT6TQpIGe8VvYvgGpZrTvb00TPg9tHMk"
+    >
+    </stripe-buy-button>
+  </body>
+</html>
