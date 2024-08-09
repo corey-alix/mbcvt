@@ -16,24 +16,25 @@ const port = process.argv[2] || 3000;
 const versions = { test: 0 };
 
 class DataServices {
+  #secretKey = "";
   constructor() {
     // read secret key from environment variable
-    this.secretKey = process.env.MBCVT_PUBLIC_KEY || "123";
-    console.log("Secret key:", this.secretKey);
+    this.#secretKey = process.env.MBCVT_PUBLIC_KEY || "123";
+    console.log("Secret key:", this.#secretKey);
   }
 
   publicKey() {
     // generate a public key from the secret key that can then be shared with the client
     // and verified by the server as a valid key
-    const key = this.secretKey;
+    const key = this.#secretKey;
     return key;
   }
 
   /**
    * @param {string} key
    */
-  validateKey(key) {
-    if (key !== this.secretKey) {
+  validateKey(key: string) {
+    if (key !== this.#secretKey) {
       throw new Error("Invalid key");
     }
   }
@@ -41,7 +42,7 @@ class DataServices {
   /**
    * @param {string} topic
    */
-  validateTopic(topic) {
+  validateTopic(topic: string) {
     if (!topic) {
       throw new Error("Invalid topic");
     }
@@ -56,7 +57,7 @@ class DataServices {
    * @param {string} topic
    * @param {{ version: number; }} json
    */
-  validateVersion(topic, json) {
+  validateVersion(topic: string | number, json: { version: number; }) {
     const expectedVersion = versions[topic] || 0;
     const actualVersion = json.version || 0;
     if (actualVersion < expectedVersion) {
@@ -70,7 +71,7 @@ class DataServices {
   /**
    * @param {string} value
    */
-  validateValue(value) {
+  validateValue(value: string) {
     if (!value) {
       throw new Error("Invalid value");
     }
@@ -89,7 +90,7 @@ class DataServices {
    * @param {string} topic
    * @param {string} value
    */
-  save(key, topic, value) {
+  save(key: string, topic: any, value: any) {
     this.validateKey(key);
     this.validateTopic(topic);
     const json = this.validateValue(value);
@@ -103,7 +104,7 @@ class DataServices {
    * @param {any} key
    * @param {any} topic
    */
-  read(key, topic) {
+  read(key: string, topic: any) {
     this.validateKey(key);
     this.validateTopic(topic);
     // does the file exist?
@@ -116,6 +117,7 @@ class DataServices {
 }
 
 class WebServices {
+  dataServices: DataServices;
   constructor() {
     this.dataServices = new DataServices();
   }
@@ -123,7 +125,7 @@ class WebServices {
   /**
    * @param {{ key: string; topic: string; value: string; }} request
    */
-  writeTopic(request) {
+  writeTopic(request: { key: any; topic: any; value: any; }) {
     const { key, topic, value } = request;
     return this.dataServices.save(key, topic, value);
   }
@@ -131,7 +133,7 @@ class WebServices {
   /**
    * @param {{ key: string; topic: string; }} request
    */
-  readTopic(request) {
+  readTopic(request: { key: any; topic: any; }) {
     const { key, topic } = request;
     return this.dataServices.read(key, topic);
   }
