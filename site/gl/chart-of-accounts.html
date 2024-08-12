@@ -1,40 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- mobile friendly -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chart of Accounts</title>
+    <link rel="stylesheet" href="../index.css" />
+    <style>
+      body {
+      }
+      a {
+        color: inherit;
+        margin: 0.5rem;
+      }
 
-<head>
-  <meta charset="UTF-8" />
-  <!-- mobile friendly -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chart of Accounts</title>
-  <link rel="stylesheet" href="../index.css" />
-  <style>
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    a {
-      color: inherit;
-      margin: 0.5rem;
-    }
+      a:hover {
+        color: white;
+      }
 
-    a:hover {
-      color: white;
-    }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        max-width: 25em;
+      }
 
-    td > input {
-      margin: 0;
-      padding: 0.5em;
-    }
-  </style>
-</head>
+      .data > input {
+        width: 100%;
+      }
+    </style>
+  </head>
 
-<body>
-  <h1>Chart of Accounts</h1>
-  <script type="module">
-    import { setupChartOfAccountsForm } from "./index.js";
-    setupChartOfAccountsForm();
-  </script>
-</body>
-
+  <body>
+    <h1>Chart of Accounts</h1>
+    <script type="module">
+      import { setupChartOfAccountsForm } from "./index.js";
+      setupChartOfAccountsForm();
+    </script>
+  </body>
 </html>

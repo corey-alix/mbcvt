@@ -19,33 +19,28 @@ export class ChartOfAccounts {
     this.#state.root.innerHTML = "";
     node.appendChild(this.#state.root);
 
-    const table = document.createElement("table");
-    table.innerHTML = `
-      <thead>
-        <tr>
-          <th class="left">Account</th>
-          <th class="left">Description</th>
-          <th class="right">Balance</th>
-        </tr>
-      </thead>
-      <tbody>
+    const html = `
+      <div class='grid'>
+          <div class="header left">Account</div>
+          <div class="header left">Description</div>
+          <div class="header right">Balance</div>
         ${this.accounts
           .sort((a, b) => a.id - b.id)
           .map(
             (account) => `
-          <tr>
-            <td class="align-left">${asLinkToAccountHistory(account.id, account.id + "")}</td>
-            <td class="align-left"><input data-account-id="${account.id}" value="${
-              account.name
-            }"/></td>
-            <td class="align-right">${asCurrency(account.balance)}</td>
-          </tr>
+            <div class="data align-left">${asLinkToAccountHistory(
+              account.id,
+              account.id + ""
+            )}</div>
+            <div class="data align-left">
+              <input data-account-id="${account.id}" value="${account.name}"/>
+            </div>
+            <div class="data align-right">${asCurrency(account.balance)}</div>
         `
           )
           .join("")}
-      </tbody>
     `;
-    this.#state.root.appendChild(table);
+    this.#state.root.insertAdjacentHTML("beforeend", html);
 
     const inputs = this.#state.root.querySelectorAll("input");
     inputs.forEach((input) => {
