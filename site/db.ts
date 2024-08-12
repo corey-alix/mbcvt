@@ -8,9 +8,9 @@ const tax = 0.09;
 
 export const officeInfo = {
   name: "Millbrook Campground",
-  address: "1152 VT RT 100, Westfield, VT 05874",
-  phone: "802.744.8085",
-  email: "camp@mbcg.email",
+  address: "1184 VT RT 100, Westfield, VT 05874",
+  phone: "802.309.1338",
+  email: "coreyalix@gmail.com",
   template: {
     "{{no-vacancy}}":
       "No sites are available on this date. Please call 802.744.8085 to see if we can find a way to accommodate you.",

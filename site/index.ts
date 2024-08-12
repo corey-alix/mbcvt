@@ -1,23 +1,12 @@
 import { officeInfo, siteMap } from "./db.js";
 import "./components/index.js";
 import { asDateString, range } from "./fun/index.js";
+import { CtEventManager } from "./CtEventManager.js";
 
 const MIN_RESERVATION_DAYS = 2;
 const MAX_RESERVATION_DAYS = 28;
 
-export class EventManager {
-  #queue: Record<string, Array<(e?: Event) => void>> = {};
-  on(topic: string, callback: (e?: Event) => void) {
-    if (!this.#queue[topic]) this.#queue[topic] = [];
-    this.#queue[topic].push(callback);
-  }
-  trigger(topic: string, e: Event) {
-    log(`trigger ${topic}`);
-    this.#queue[topic]?.forEach((callback) => callback(e));
-  }
-}
-
-const globalEventManager = new EventManager();
+const globalEventManager = new CtEventManager();
 
 export const bindings = makeObservable(
   {
@@ -31,7 +20,7 @@ export const bindings = makeObservable(
 );
 
 // convert the bindings object into an observable that can be used to update the DOM
-function makeObservable<T extends Object>(bindings: T, events: EventManager) {
+function makeObservable<T extends Object>(bindings: T, events: CtEventManager) {
   return new Proxy(bindings, {
     set: (target, property, value) => {
       (target as any)[property] = value;
@@ -74,16 +63,49 @@ function setupBindings() {
     element.textContent = template.replace(key, value);
   }
   elements.forEach((element) => {
-    const originalText = element.textContent;
-    if (!originalText) return;
-    // find all bindings that start with "{{" and end with "}}"
-    const matches = originalText.match(/{{.+?}}/g);
-    if (!matches) return;
-    matches.forEach((match) => {
-      const key = match as keyof typeof bindings;
-      globalEventManager.on(key, () => doit(key, element, originalText));
-      doit(key, element, originalText);
-    });
+    switch (element.tagName) {
+      case "A": {
+        {
+          ["href"].forEach((attribute) => {
+            const originalText = element.getAttribute(attribute);
+            if (!originalText) return;
+            const matches = originalText.match(/{{.+?}}/g);
+            if (!matches) return;
+            matches.forEach((match) => {
+              const key = match as keyof typeof bindings;
+              const value = bindings[key];
+              element.setAttribute(attribute, originalText.replace(key, value));
+            });
+          });
+        }
+        {
+          const originalText = element.textContent;
+          if (!originalText) return;
+          // find all bindings that start with "{{" and end with "}}"
+          const matches = originalText.match(/{{.+?}}/g);
+          if (!matches) return;
+          matches.forEach((match) => {
+            const key = match as keyof typeof bindings;
+            globalEventManager.on(key, () => doit(key, element, originalText));
+            doit(key, element, originalText);
+          });
+        }
+        break;
+      }
+      default: {
+        const originalText = element.textContent;
+        if (!originalText) return;
+        // find all bindings that start with "{{" and end with "}}"
+        const matches = originalText.match(/{{.+?}}/g);
+        if (!matches) return;
+        matches.forEach((match) => {
+          const key = match as keyof typeof bindings;
+          globalEventManager.on(key, () => doit(key, element, originalText));
+          doit(key, element, originalText);
+        });
+        break;
+      }
+    }
   });
 }
 
@@ -445,7 +467,7 @@ function asHtml(html: string) {
   return template.content;
 }
 
-function log(message: string) {
+export function log(message: string) {
   console.log(message);
 }
 

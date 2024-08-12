@@ -1,5 +1,5 @@
-import { getStickyValue, readQueryString } from "../fun/index.js";
-import { EventManager } from "../index.js";
+import { getStickyValue } from "../fun/index.js";
+import { CtEventManager } from "../CtEventManager.js";
 
 export const PUBLIC_KEY = getStickyValue("public-key", "123");
 export const DATABASE_NAME = getStickyValue("database-name", "test");
@@ -184,7 +184,7 @@ class Database {
     return this.#data.siteNotes || [];
   }
 
-  private events = new EventManager();
+  private events = new CtEventManager();
 
   addEventListener(event: string, doit: () => void) {
     this.events.on(event, doit);
