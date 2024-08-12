@@ -2,6 +2,7 @@ import { officeInfo, siteMap } from "./db.js";
 import "./components/index.js";
 import { asDateString, range } from "./fun/index.js";
 import { CtEventManager } from "./CtEventManager.js";
+import { log } from "./fun/log.js";
 
 const MIN_RESERVATION_DAYS = 2;
 const MAX_RESERVATION_DAYS = 28;
@@ -465,10 +466,6 @@ function asHtml(html: string) {
   const template = document.createElement("template");
   template.innerHTML = html;
   return template.content;
-}
-
-export function log(message: string) {
-  console.log(message);
 }
 
 function interpolateDates(start: string, end: string) {
