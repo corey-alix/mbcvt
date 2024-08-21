@@ -166,6 +166,26 @@ app.post("/api", (req, res) => {
   });
 });
 
+
+// listen for a GET request for a topic version
+app.get("/api/:topic/version", (req, res) => {
+  const key = (req.headers["x-api-key"] || req.query.key || "123") + "";
+  const topic = req.params.topic;
+  console.log({ key, topic });
+  try {
+    const response = webServices.readTopic({ key, topic });
+    // as json
+    res.format({
+      "application/json": function () {
+        res.send({ version: JSON.parse(response).version });
+      },
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(400).send(e);
+  }
+});
+
 app.get("/api/:topic", (req, res) => {
   const key = (req.headers["x-api-key"] || req.query.key || "123") + "";
   const topic = req.params.topic;
