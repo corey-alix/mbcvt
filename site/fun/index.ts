@@ -1,3 +1,4 @@
+import { database, PointOfSaleFormData } from "../db/index.js";
 import { D } from "./D.js";
 
 export function asCurrency(amount: number) {
@@ -92,6 +93,23 @@ const defaultActionHandlers = {
         input.value = "";
         setStickyValue(key, "");
       }
+    });
+  },
+  clone: (button: HTMLButtonElement) => {
+    button.addEventListener("click", async () => {
+      // read the "batch" query string parameter
+      const batch = readQueryString("batch");
+      if (!batch) throw new Error("Batch query string not found");
+      // read the pos from the database
+      await database.init();
+      const thisReceipt = database.getPointOfSale(parseInt(batch));
+      if (!thisReceipt) throw new Error("Receipt not found");
+      // create a new receipt
+      const newReceipt = await clone(thisReceipt);
+      // redirect to the new receipt by modifying the "batch" query string
+      const url = new URL(window.location.href);
+      url.searchParams.set("batch", newReceipt.batchId.toString());
+      window.location.href = url.toString();
     });
   },
   "date-today": (actionNode: HTMLInputElement) => {
@@ -268,4 +286,16 @@ function hasPhysicalKeyboard() {
 
 export function asDateString(date: Date) {
   return D.asYmd(date);
+}
+
+async function clone(receipt: PointOfSaleFormData) {
+  const newReceipt = { ...receipt };
+  newReceipt.checkIn = D.asYmd(new Date());
+  newReceipt.paymentAmount = [];
+  newReceipt.paymentType = [];
+  newReceipt.paymentDate = [];
+  const batchId = await database.createBatch();
+  newReceipt.batchId = batchId;
+  await database.upsertPointOfSale(newReceipt);
+  return newReceipt;
 }

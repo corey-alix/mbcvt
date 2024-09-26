@@ -10,11 +10,10 @@ Similar to a spreadsheet, the user can tab through the columns and rows but must
 
 ## UX
 
+- TODO: Add a "clone" to POS
 - TODO: search receipt by name
 - TODO: do not allow overlapping reservations to occur
 - TODO: Add description to chart-of-accounts, if user types "F3" in account, it will show dropdown with all accounts containing "F3".
-- DONE: When user clicks "Apply" the current row is added to the transaction records and the input fields are cleared.  The debit/credit column will be updated to to the remaining balance.
-- DONE: If user enters an incorrect value, the row can be deleted before the entire batch is saved.  To delete a row, the user clicks the "X" button. This requires reducing the date column width (remove year).
 
 ## Storage
 
