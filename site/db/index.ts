@@ -267,6 +267,11 @@ class Database {
     return this.#data.pos[id];
   }
 
+  getPointOfSales() {
+    this.#data.pos = this.#data.pos || [];
+    return this.#data.pos;
+  }
+
   async upsertPointOfSale(pos: PointOfSaleFormData) {
     this.#data.pos = this.#data.pos || [];
     const index = this.#data.pos.findIndex((p) => p.batchId === pos.batchId);

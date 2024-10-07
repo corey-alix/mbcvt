@@ -9,7 +9,7 @@ export { setupPointOfSaleForm } from "./setupPointOfSaleForm.js";
 export { setupPointOfSaleSearchForm } from "./setupPointOfSaleSearchForm.js";
 export { renderPriceChart } from "./renderPriceChart.js";
 export { setupGeneralLedgerWelcomeForm } from "./setupGeneralLedgerWelcomeForm.js";
-export { runSalesReport } from "./runSalesReport.js";
+export { runSalesReport, runSalesBySiteReport } from "./runSalesReport.js";
 
 export async function setupGeneralLedgerRawEditor() {
   const ux = {
