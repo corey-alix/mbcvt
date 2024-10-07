@@ -1,4 +1,4 @@
-import { log } from "./fun/log.js";
+import { log } from "../fun/log.js";
 
 export class CtEventManager {
   #queue: Record<string, Array<(e?: Event) => void>> = {};

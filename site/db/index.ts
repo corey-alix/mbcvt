@@ -1,5 +1,5 @@
 import { getStickyValue } from "../fun/index.js";
-import { CtEventManager } from "../CtEventManager.js";
+import { CtEventManager } from "../welcome/CtEventManager.js";
 
 export const PUBLIC_KEY = getStickyValue("public-key", "123");
 export const DATABASE_NAME = getStickyValue("database-name", "test");

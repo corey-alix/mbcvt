@@ -1,4 +1,4 @@
-import { range, asDateString } from "./fun/index.js";
+import { range, asDateString } from "../fun/index.js";
 
 const baseRate = 14;
 const sewerRate = 10;

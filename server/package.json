@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server": "node ./api.mjs 3001"
+    "server": "node ./api.mjs 3001",
+    "vi": "cd /etc/nginx/sites-available/ && vi default",
+    "nginx": "systemctl restart nginx"
   },
   "keywords": [],
   "author": "",

@@ -1,8 +1,8 @@
 import { officeInfo, siteMap } from "./db.js";
-import "./components/index.js";
-import { asDateString, range } from "./fun/index.js";
+import "../components/index.js";
+import { asDateString, range } from "../fun/index.js";
 import { CtEventManager } from "./CtEventManager.js";
-import { log } from "./fun/log.js";
+import { log } from "../fun/log.js";
 
 const MIN_RESERVATION_DAYS = 2;
 const MAX_RESERVATION_DAYS = 28;

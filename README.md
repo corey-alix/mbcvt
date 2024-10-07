@@ -139,6 +139,22 @@ server {
                 proxy_pass http://localhost:3001/api;
         }
 }
+
+server {
+        listen 443 ssl;
+        server_name millbrookcampgroundvt.com;
+
+        ssl_certificate /etc/letsencrypt/live/millbrookcampgroundvt.com/fullchain.pem; # managed by Certbot
+        ssl_certificate_key /etc/letsencrypt/live/millbrookcampgroundvt.com/privkey.pem; # managed by Certbot
+
+        location / {
+                proxy_pass http://localhost:3001/app;
+        }
+
+        location /api {
+                proxy_pass http://localhost:3001/api;
+        }
+}
 ```
 
 

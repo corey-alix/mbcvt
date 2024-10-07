@@ -1,393 +1,380 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <!-- mobile friendly -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reservation</title>
-    <link rel="author" href="mailto:coreyalix@gmail.com" />
-    <style>
-      .hide {
-        display: none !important;
-      }
 
-      @media screen {
-        body {
-          --text-color: #fff;
-          font-size: min(2vw, 9pt);
-        }
+<head>
+  <meta charset="UTF-8" />
+  <!-- mobile friendly -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reservation</title>
+  <link rel="author" href="mailto:coreyalix@gmail.com" />
+  <style>
+    .hide {
+      display: none !important;
+    }
 
-        p {
-          font-size: 2em;
-        }
-
-        .largest {
-          font-size: 5em;
-        }
-
-        .larger {
-          font-size: 4em;
-        }
-
-        .large {
-          font-size: 3em;
-        }
-
-        .toolbar {
-          display: flex;
-          flex-direction: row;
-          gap: 1em;
-          justify-content: space-around;
-        }
-
-        .v-toolbar {
-          display: flex;
-          flex-direction: column;
-          gap: 1em;
-          justify-content: space-around;
-          align-items: center;
-        }
-      }
-
-      @media print {
-        body {
-          font-size: 12pt;
-        }
-      }
-
-      /* if dark mode is on */
-      @media (prefers-color-scheme: dark) {
-        body {
-          --text-color: #eee;
-          background-color: #333;
-          color: white;
-        }
-
-        .map {
-          background-color: #333;
-          border-color: white;
-        }
-
-        .bg-lite {
-          background-color: #444;
-        }
-      }
-
-      /* if dark mode is off */
-      @media (prefers-color-scheme: light) {
-        body {
-          --text-color: #111;
-          background-color: white;
-          color: #333;
-        }
-
-        .map {
-          background-color: white;
-          border-color: #333;
-        }
-      }
-
+    @media screen {
       body {
-        display: flex;
-        flex-direction: column;
-        gap: 1em;
-        align-items: center;
-        padding: 1em;
+        --text-color: #fff;
+        font-size: min(2vw, 9pt);
       }
 
       p {
-        padding-bottom: 0.5em;
-        margin: 0;
+        font-size: 2em;
       }
 
-      .align-left,
-      .left {
-        text-align: left;
-        margin-right: auto;
+      .largest {
+        font-size: 5em;
       }
 
-      .align-right,
-      .right {
-        text-align: right;
-        margin-left: auto;
+      .larger {
+        font-size: 4em;
       }
 
-      .pad {
-        padding: 1em;
+      .large {
+        font-size: 3em;
       }
 
-      thead th {
-        border-bottom: 1px solid var(--text-color, #fff);
+      .toolbar {
+        display: flex;
+        flex-direction: row;
+        gap: 1em;
+        justify-content: space-around;
       }
 
-      table .pad {
-        padding: 0.25em;
+      .v-toolbar {
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+        justify-content: space-around;
+        align-items: center;
       }
+    }
 
-      .round {
-        border-radius: 1em;
+    @media print {
+      body {
+        font-size: 12pt;
+      }
+    }
+
+    /* if dark mode is on */
+    @media (prefers-color-scheme: dark) {
+      body {
+        --text-color: #eee;
+        background-color: #333;
+        color: white;
       }
 
       .map {
-        /* align content to the center */
-        display: flex;
-        justify-content: center;
+        background-color: #333;
+        border-color: white;
+      }
+
+      .bg-lite {
+        background-color: #444;
+      }
+    }
+
+    /* if dark mode is off */
+    @media (prefers-color-scheme: light) {
+      body {
+        --text-color: #111;
         background-color: white;
-        border-radius: 2em;
-        padding: 2em;
-        margin: 2em;
-        border: 0.2em dashed #333;
+        color: #333;
       }
 
-      .bolder {
-        font-weight: 500;
+      .map {
+        background-color: white;
+        border-color: #333;
       }
+    }
 
-      .boldest {
-        font-weight: 900;
+    body {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+      align-items: center;
+      padding: 1em;
+    }
+
+    p {
+      padding-bottom: 0.5em;
+      margin: 0;
+    }
+
+    .align-left,
+    .left {
+      text-align: left;
+      margin-right: auto;
+    }
+
+    .align-right,
+    .right {
+      text-align: right;
+      margin-left: auto;
+    }
+
+    .pad {
+      padding: 1em;
+    }
+
+    thead th {
+      border-bottom: 1px solid var(--text-color, #fff);
+    }
+
+    table .pad {
+      padding: 0.25em;
+    }
+
+    .round {
+      border-radius: 1em;
+    }
+
+    .map {
+      /* align content to the center */
+      display: flex;
+      justify-content: center;
+      background-color: white;
+      border-radius: 2em;
+      padding: 2em;
+      margin: 2em;
+      border: 0.2em dashed #333;
+    }
+
+    .bolder {
+      font-weight: 500;
+    }
+
+    .boldest {
+      font-weight: 900;
+    }
+
+    .v-spacer {
+      display: block;
+      height: 3em;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .mb-carousel {
+      /* use flex to create a carousel */
+      display: flex;
+      overflow-x: auto;
+      gap: 1em;
+      flex-direction: row;
+      width: 50vw;
+
+      img {
+        width: 100%;
+        border-radius: 1em;
       }
+    }
 
-      .v-spacer {
-        display: block;
-        height: 3em;
+    .testimonials {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+    }
+
+    .h-split-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1em;
+
+      img {
+        width: 100%;
+        height: auto;
       }
+    }
 
-      .center {
-        text-align: center;
-      }
-
-      .mb-carousel {
-        /* use flex to create a carousel */
-        display: flex;
-        overflow-x: auto;
-        gap: 1em;
-        flex-direction: row;
-        width: 50vw;
-        img {
-          width: 100%;
-          border-radius: 1em;
-        }
-      }
-
-      .testimonials {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5em;
-      }
-
+    @media screen and (max-width: 800px) {
       .h-split-panel {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1em;
-
-        img {
-          width: 100%;
-          height: auto;
-        }
+        grid-template-columns: 1fr;
       }
+    }
+  </style>
+</head>
 
-      @media screen and (max-width: 800px) {
-        .h-split-panel {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-  </head>
+<body>
+  <section class="welcome pad">
+    <div class="center">
+      <address class="center largest boldest">Millbrook Campground</address>
+      <address class="center larger" data-has="binding">
+        {{primary-address}}
+      </address>
+      <address class="center large">
+        <a data-has="binding" href="mailto:{{primary-telephone-number}}">{{primary-telephone-number}}</a>
+      </address>
+      <address class="center large">
+        <a data-has="binding" href="mailto:{{primary-email}}">{{primary-email}}</a>
+      </address>
+    </div>
+  </section>
 
-  <body>
-    <section class="welcome pad">
-      <div class="center">
-        <address class="center largest boldest">Millbrook Campground</address>
-        <address class="center larger" data-has="binding">
-          {{primary-address}}
-        </address>
-        <address class="center large">
-          <a data-has="binding" href="mailto:{{primary-telephone-number}}"
-            >{{primary-telephone-number}}</a
-          >
-        </address>
-        <address class="center large">
-          <a data-has="binding" href="mailto:{{primary-email}}"
-            >{{primary-email}}</a
-          >
-        </address>
+  <section class="photos pad">
+    <div class="mb-carousel round">
+      <img src="./assets/site_A00.png" />
+      <img src="./assets/site_A01.png" />
+      <img src="./assets/site_A02.png" />
+    </div>
+  </section>
+
+  <section class="testimonials pad bg-lite round">
+    <p class="larger">Reviews ⭐⭐⭐⭐⭐</p>
+    <p>
+      <q>Friendly people, wifi, nice campsites.</q>
+      <cite>Jim, August 28, 2021</cite>
+    </p>
+
+    <p>
+      <q>ALL I CAN SAY IS EXCELLENT IN EVERY WAY POSSIBLE !!</q>
+      <cite>Rhonda, July 17, 2021</cite>
+    </p>
+    <p>
+      <q>This is our first time trying them out and we love it here! Our
+        daughter loves the pond and the brook is awesome!</q>
+      <cite>Nicole June 21, 2020</cite>
+    </p>
+    <p>
+      <q>A very Friendly and clean Campground. Just the right amount of sites,
+        Family friendly but not all noisy. We Love it!</q>
+      <cite>George, July 27, 2019</cite>
+    </p>
+  </section>
+
+  <section class="about pad bg-lite round">
+    <p class="larger">We're in Northern Vermont</p>
+    <div class="h-split-panel">
+      <section class="pad round bg-lite">
+        <p>
+          Located in northeastern Vermont, we're open from May through
+          September and longer if weather permits.
+        </p>
+        <p>
+          We accommodate RV's and tents with 30 campsites nestled along a
+          stream. All RV sites have full hookups with water, sewer and
+          electric. All our tent sites also have water and electric.
+        </p>
+        <p>
+          <b>The Millbrook Campground has direct access to local ATV Trails</b>. Come on up and ride! Also, enjoy local
+          hike and bike trails or
+          area lakes during your stay. We are also near the Jay Peak Resort.
+        </p>
+        <p>
+          Just 90 minutes from Montreal, 3.5 hours from Boston, and 4.5 hours
+          from Albany, NY
+        </p>
+      </section>
+
+      <section>
+        <img class="round" src="./assets/site_A03.png" />
+      </section>
+    </div>
+  </section>
+
+  <section class="amenities round bg-lite pad">
+    <p class="larger">What's At the Millbrook Campground?</p>
+    <div class="h-split-panel round bg-lite">
+      <section class="pad round bg-lite">
+        <img class="round" src="./assets/site_B04.png" />
+      </section>
+      <section class="pad round bg-lite">
+        <p class="large">Our Amenities</p>
+        <p>
+          We are a campground that caters to the whole family. Most campsites
+          have frontage along a local brook, surrounded by forests. A natural
+          pond and local stream are a part of the Millbrook Campground and
+          available for you and your family to explore and enjoy.
+        </p>
+
+        <ul class="large">
+          <li>Free Showers</li>
+          <li>Free Wifi</li>
+          <li>Full Hook-Ups</li>
+          <li>Natural Pond, Stream and Forest</li>
+          <li>Play Area & Rec Hall</li>
+          <li>Walk to Shopping</li>
+          <li>ATV Trail Access</li>
+        </ul>
+
+        <p>
+          For the youngin's we have available landscaped lawns for family
+          fun..
+        </p>
+        <p>
+          From the Millbrook Campground, you're within walking distance to the
+          Westfield General Store for general merchandise, groceries and
+          sundries.
+        </p>
+      </section>
+    </div>
+  </section>
+
+  <section class="rates round bg-lite pad">
+    <p class="larger">Rates</p>
+    <p class="large">
+      Please contact us with your questions or to reserve your site. All rates
+      include tax.
+    </p>
+    <table class="large" style="width: 100%">
+      <thead>
+        <tr>
+          <th class="pad align-left">Site Type</th>
+          <th class="pad align-right">Daily</th>
+          <th class="pad align-right">Week</th>
+          <th class="pad align-right">Month</th>
+          <th class="pad align-right">Seasonal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="pad align-left">Tent (W/E)</td>
+          <td class="align-right">$32</td>
+          <td class="align-right">$203</td>
+          <td class="align-right">$600</td>
+          <td class="align-right">$1500</td>
+        </tr>
+        <tr>
+          <td class="pad align-left">RV (W/E/S)</td>
+          <td class="align-right">$42</td>
+          <td class="align-right">$273</td>
+          <td class="align-right">$810</td>
+          <td class="align-right">$1950</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="toolbar large">
+      <a href="mailto:{{primary-email}}" data-has="binding">Email Us</a>
+      <a href="tel:{{primary-telephone-number}}" data-has="binding">Text Us</a>
+      <a href="tel:{{primary-telephone-number}}" data-has="binding">Leave a Message</a>
+    </div>
+    <div class="v-spacer">&nbsp;</div>
+    <div class="v-toolbar">
+      <div class="center large">
+        Once you have confirmed availability, make a one-night deposit to
+        secure the reservation.
       </div>
-    </section>
-
-    <section class="photos pad">
-      <div class="mb-carousel round">
-        <img src="../assets/site_A00.png" />
-        <img src="../assets/site_A01.png" />
-        <img src="../assets/site_A02.png" />
+      <div class="toolbar">
+        <stripe-buy-button buy-button-id="buy_btn_1PlrZLLysPW28zmUja5Pd7gS"
+          publishable-key="pk_live_51PlpbzLysPW28zmUH5Ai2iT34HMzFngzK7yvxfJTITcSil6IrZwe6z7w0zYCm39JbhtT6TQpIGe8VvYvgGpZrTvb00TPg9tHMk">
+        </stripe-buy-button>
+        <stripe-buy-button buy-button-id="buy_btn_1PlrWVLysPW28zmUYXNCbo2A"
+          publishable-key="pk_live_51PlpbzLysPW28zmUH5Ai2iT34HMzFngzK7yvxfJTITcSil6IrZwe6z7w0zYCm39JbhtT6TQpIGe8VvYvgGpZrTvb00TPg9tHMk">
+        </stripe-buy-button>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="testimonials pad bg-lite round">
-      <p class="larger">Reviews ⭐⭐⭐⭐⭐</p>
-      <p>
-        <q>Friendly people, wifi, nice campsites.</q>
-        <cite>Jim, August 28, 2021</cite>
-      </p>
+  <section class="map hide">
+    <img src="./assets/map.svg" alt="Millbrook Campground Map" />
+  </section>
 
-      <p>
-        <q>ALL I CAN SAY IS EXCELLENT IN EVERY WAY POSSIBLE !!</q>
-        <cite>Rhonda, July 17, 2021</cite>
-      </p>
-      <p>
-        <q
-          >This is our first time trying them out and we love it here! Our
-          daughter loves the pond and the brook is awesome!</q
-        >
-        <cite>Nicole June 21, 2020</cite>
-      </p>
-      <p>
-        <q
-          >A very Friendly and clean Campground. Just the right amount of sites,
-          Family friendly but not all noisy. We Love it!</q
-        >
-        <cite>George, July 27, 2019</cite>
-      </p>
-    </section>
+  <script type="module">
+    import { setupWelcomeForm } from "./index.js";
+    setupWelcomeForm();
+  </script>
+  <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+</body>
 
-    <section class="about pad bg-lite round">
-      <p class="larger">We're in Northern Vermont</p>
-      <div class="h-split-panel">
-        <section class="pad round bg-lite">
-          <p>
-            Located in northeastern Vermont, we're open from May through
-            September and longer if weather permits.
-          </p>
-          <p>
-            We accommodate RV's and tents with 30 campsites nestled along a
-            stream. All RV sites have full hookups with water, sewer and
-            electric. All our tent sites also have water and electric.
-          </p>
-          <p>
-            <b>The Millbrook Campground has direct access to local ATV Trails</b
-            >. Come on up and ride! Also, enjoy local hike and bike trails or
-            area lakes during your stay. We are also near the Jay Peak Resort.
-          </p>
-          <p>
-            Just 90 minutes from Montreal, 3.5 hours from Boston, and 4.5 hours
-            from Albany, NY
-          </p>
-        </section>
-
-        <section>
-          <img class="round" src="../assets/site_A03.png" />
-        </section>
-      </div>
-    </section>
-
-    <section class="amenities round bg-lite pad">
-      <p class="larger">What's At the Millbrook Campground?</p>
-      <div class="h-split-panel round bg-lite">
-        <section class="pad round bg-lite">
-          <img class="round" src="../assets/site_B04.png" />
-        </section>
-        <section class="pad round bg-lite">
-          <p class="large">Our Amenities</p>
-          <p>
-            We are a campground that caters to the whole family. Most campsites
-            have frontage along a local brook, surrounded by forests. A natural
-            pond and local stream are a part of the Millbrook Campground and
-            available for you and your family to explore and enjoy.
-          </p>
-
-          <ul class="large">
-            <li>Free Showers</li>
-            <li>Free Wifi</li>
-            <li>Full Hook-Ups</li>
-            <li>Natural Pond, Stream and Forest</li>
-            <li>Play Area & Rec Hall</li>
-            <li>Walk to Shopping</li>
-            <li>ATV Trail Access</li>
-          </ul>
-
-          <p>
-            For the youngin's we have available landscaped lawns for family
-            fun..
-          </p>
-          <p>
-            From the Millbrook Campground, you're within walking distance to the
-            Westfield General Store for general merchandise, groceries and
-            sundries.
-          </p>
-        </section>
-      </div>
-    </section>
-
-    <section class="rates round bg-lite pad">
-      <p class="larger">Rates</p>
-      <p class="large">
-        Please contact us with your questions or to reserve your site. All rates
-        include tax.
-      </p>
-      <table class="large" style="width: 100%">
-        <thead>
-          <tr>
-            <th class="pad align-left">Site Type</th>
-            <th class="pad align-right">Daily</th>
-            <th class="pad align-right">Week</th>
-            <th class="pad align-right">Month</th>
-            <th class="pad align-right">Seasonal</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="pad align-left">Tent (W/E)</td>
-            <td class="align-right">$32</td>
-            <td class="align-right">$203</td>
-            <td class="align-right">$600</td>
-            <td class="align-right">$1500</td>
-          </tr>
-          <tr>
-            <td class="pad align-left">RV (W/E/S)</td>
-            <td class="align-right">$42</td>
-            <td class="align-right">$273</td>
-            <td class="align-right">$810</td>
-            <td class="align-right">$1950</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="toolbar large">
-        <a href="mailto:{{primary-email}}" data-has="binding">Email Us</a>
-        <a href="tel:{{primary-telephone-number}}" data-has="binding"
-          >Text Us</a
-        >
-        <a href="tel:{{primary-telephone-number}}" data-has="binding"
-          >Leave a Message</a
-        >
-      </div>
-      <div class="v-spacer">&nbsp;</div>
-      <div class="v-toolbar">
-        <div class="center large">
-          Once you have confirmed availability, make a one-night deposit to
-          secure the reservation.
-        </div>
-        <div class="toolbar">
-          <stripe-buy-button
-            buy-button-id="buy_btn_1PlrZLLysPW28zmUja5Pd7gS"
-            publishable-key="pk_live_51PlpbzLysPW28zmUH5Ai2iT34HMzFngzK7yvxfJTITcSil6IrZwe6z7w0zYCm39JbhtT6TQpIGe8VvYvgGpZrTvb00TPg9tHMk"
-          >
-          </stripe-buy-button>
-          <stripe-buy-button
-            buy-button-id="buy_btn_1PlrWVLysPW28zmUYXNCbo2A"
-            publishable-key="pk_live_51PlpbzLysPW28zmUH5Ai2iT34HMzFngzK7yvxfJTITcSil6IrZwe6z7w0zYCm39JbhtT6TQpIGe8VvYvgGpZrTvb00TPg9tHMk"
-          >
-          </stripe-buy-button>
-        </div>
-      </div>
-    </section>
-
-    <section class="map hide">
-      <img src="../assets/map.svg" alt="Millbrook Campground Map" />
-    </section>
-
-    <script type="module">
-      import { setupWelcomeForm } from "../index.js";
-      setupWelcomeForm();
-    </script>
-    <script async src="https://js.stripe.com/v3/buy-button.js"></script>
-  </body>
 </html>
