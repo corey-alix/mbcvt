@@ -1,0 +1,22 @@
+<html>
+
+<head></head>
+
+<body>
+    <account-lookup></account-lookup>
+    <script type="module">
+        import "../index.js";
+        const lookup = document.querySelector("account-lookup");
+        lookup.items = [{
+            id: 1001,
+            keywords: "cash"
+        },
+        {
+            id: 2001,
+            keywords: "accounts receivable",
+        }]
+    </script>
+
+</body>
+
+</html>

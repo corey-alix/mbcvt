@@ -1,6 +1,6 @@
 import { officeInfo, siteMap } from "./db.js";
-import "../components/index.js";
-import { asDateString, range } from "../fun/index.js";
+import "./components/index.js";
+import { asDateString, range } from "./fun/index.js";
 import { CtEventManager } from "./CtEventManager.js";
 import { log } from "../fun/log.js";
 
