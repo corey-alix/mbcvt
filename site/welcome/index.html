@@ -58,10 +58,17 @@
 
     /* if dark mode is on */
     @media (prefers-color-scheme: dark) {
+      * {
+        --c1: hsla(0, 0%, 20%, 0.846);
+        --c2: hsla(0, 0%, 93%, 0.903);
+        --c3: hsla(206, 78%, 62%, 0.887);
+        --white: hsla(0, 0%, 100%, 0.905);
+        --black: hsla(0, 0%, 0%, 0.907);
+      }
+
       body {
-        --text-color: #eee;
-        background-color: #333;
-        color: white;
+        background-color: var(--c1, #333);
+        color: var(--c2, #eee);
       }
 
       .map {
@@ -71,6 +78,10 @@
 
       .bg-lite {
         background-color: #444;
+      }
+
+      a {
+        color: var(--c3, #eee);
       }
     }
 
@@ -214,9 +225,9 @@
 
   <section class="photos pad">
     <div class="mb-carousel round">
-      <img src="./assets/site_A00.png" />
-      <img src="./assets/site_A01.png" />
-      <img src="./assets/site_A02.png" />
+      <img src="./assets/train-crop.jpg" />
+      <img src="./assets/crookedhouse-crop.jpg" />
+      <img src="./assets/brook-crop.jpg" />
     </div>
   </section>
 
@@ -268,7 +279,7 @@
       </section>
 
       <section>
-        <img class="round" src="./assets/site_A03.png" />
+        <img class="round" src="./assets/brook.jpg" />
       </section>
     </div>
   </section>
@@ -277,7 +288,7 @@
     <p class="larger">What's At the Millbrook Campground?</p>
     <div class="h-split-panel round bg-lite">
       <section class="pad round bg-lite">
-        <img class="round" src="./assets/site_B04.png" />
+        <img class="round" src="./assets/daytona-beach.jpg" />
       </section>
       <section class="pad round bg-lite">
         <p class="large">Our Amenities</p>
@@ -317,33 +328,6 @@
       Please contact us with your questions or to reserve your site. All rates
       include tax.
     </p>
-    <table class="large" style="width: 100%">
-      <thead>
-        <tr>
-          <th class="pad align-left">Site Type</th>
-          <th class="pad align-right">Daily</th>
-          <th class="pad align-right">Week</th>
-          <th class="pad align-right">Month</th>
-          <th class="pad align-right">Seasonal</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="pad align-left">Tent (W/E)</td>
-          <td class="align-right">$32</td>
-          <td class="align-right">$203</td>
-          <td class="align-right">$600</td>
-          <td class="align-right">$1500</td>
-        </tr>
-        <tr>
-          <td class="pad align-left">RV (W/E/S)</td>
-          <td class="align-right">$42</td>
-          <td class="align-right">$273</td>
-          <td class="align-right">$810</td>
-          <td class="align-right">$1950</td>
-        </tr>
-      </tbody>
-    </table>
     <div class="toolbar large">
       <a href="mailto:{{primary-email}}" data-has="binding">Email Us</a>
       <a href="tel:{{primary-telephone-number}}" data-has="binding">Text Us</a>
@@ -355,15 +339,14 @@
         Once you have confirmed availability, make a one-night deposit to
         secure the reservation.
       </div>
-      <div class="toolbar">
-        <stripe-buy-button buy-button-id="buy_btn_1PlrZLLysPW28zmUja5Pd7gS"
-          publishable-key="pk_live_51PlpbzLysPW28zmUH5Ai2iT34HMzFngzK7yvxfJTITcSil6IrZwe6z7w0zYCm39JbhtT6TQpIGe8VvYvgGpZrTvb00TPg9tHMk">
-        </stripe-buy-button>
-        <stripe-buy-button buy-button-id="buy_btn_1PlrWVLysPW28zmUYXNCbo2A"
-          publishable-key="pk_live_51PlpbzLysPW28zmUH5Ai2iT34HMzFngzK7yvxfJTITcSil6IrZwe6z7w0zYCm39JbhtT6TQpIGe8VvYvgGpZrTvb00TPg9tHMk">
-        </stripe-buy-button>
-      </div>
+      <stripe-buy-button buy-button-id="buy_btn_1PlrZLLysPW28zmUja5Pd7gS"
+        publishable-key="pk_live_51PlpbzLysPW28zmUH5Ai2iT34HMzFngzK7yvxfJTITcSil6IrZwe6z7w0zYCm39JbhtT6TQpIGe8VvYvgGpZrTvb00TPg9tHMk">
+      </stripe-buy-button>
+      <stripe-buy-button buy-button-id="buy_btn_1PlrWVLysPW28zmUYXNCbo2A"
+        publishable-key="pk_live_51PlpbzLysPW28zmUH5Ai2iT34HMzFngzK7yvxfJTITcSil6IrZwe6z7w0zYCm39JbhtT6TQpIGe8VvYvgGpZrTvb00TPg9tHMk">
+      </stripe-buy-button>
     </div>
+
   </section>
 
   <section class="map hide">

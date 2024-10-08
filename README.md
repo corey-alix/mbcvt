@@ -228,3 +228,9 @@ Deployed to <https://dynamic-unicorn-70879a.netlify.app/site/reservation/index.h
 
 - Incorporate other campgrounds -- Basecamp, Barrewood, others?
 - What is Vermont Campground Association?
+
+## View MBCVT_PUBLIC_KEY
+
+To see an envronment variable in linux, type the following: 
+
+`echo $MBCVT_PUBLIC_KEY`
