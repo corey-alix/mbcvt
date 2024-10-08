@@ -16,6 +16,8 @@ export const bindings = makeObservable(
     "{{primary-address}}": officeInfo.address,
     "{{primary-email}}": officeInfo.email,
     "{{primary-telephone-number}}": officeInfo.phone,
+    "{{first-saturday-in-may}}": firstSaturdayInMay(),
+    "{{second-sunday-in-october}}": secondSundayInOctober(),
   },
   globalEventManager
 );
@@ -508,4 +510,39 @@ function initializationComplete() {
   document
     .querySelectorAll(".if-init")
     .forEach((element) => element.classList.toggle("if-init", false));
+}
+function firstSaturdayInMay(): string {
+  // get the first saturday in May of this year
+  const date = new Date();
+  const thisYear = date.getFullYear();
+  const thisMonth = date.getMonth();
+  if (thisMonth > 9) {
+    date.setFullYear(thisYear + 1);
+  }
+
+  date.setMonth(4); // May
+  date.setDate(1); // first day of May
+  while (date.getDay() !== 6) {
+    date.setDate(date.getDate() + 1);
+  }
+  return date.toLocaleDateString();
+}
+
+function secondSundayInOctober(): string {
+  // get the second sunday in October of this year
+  const date = new Date();
+  const thisYear = date.getFullYear();
+  const thisMonth = date.getMonth();
+  if (thisMonth > 9) {
+    date.setFullYear(thisYear + 1);
+  }
+
+  date.setMonth(9); // October
+  date.setDate(1); // first day of October
+  let sundays = 0;
+  while (sundays < 2) {
+    if (date.getDay() === 0) sundays++;
+    date.setDate(date.getDate() + 1);
+  }
+  return date.toLocaleDateString();
 }

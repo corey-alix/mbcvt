@@ -18,8 +18,21 @@
         font-size: min(2vw, 9pt);
       }
 
+      a {
+        text-align: center;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
       p {
         font-size: 2em;
+      }
+
+      time {
+        font-weight: bold;
       }
 
       .largest {
@@ -100,16 +113,22 @@
     }
 
     body {
+      align-items: stretch;
       display: flex;
       flex-direction: column;
       gap: 1em;
-      align-items: center;
       padding: 1em;
     }
 
     p {
       padding-bottom: 0.5em;
       margin: 0;
+      line-height: 3ch;
+    }
+
+    cite {
+      display: block;
+      font-size: smaller;
     }
 
     .align-left,
@@ -174,7 +193,9 @@
       overflow-x: auto;
       gap: 1em;
       flex-direction: row;
-      width: 50vw;
+      width: 90vw;
+      /* center the carousel */
+      margin: 0 auto;
 
       img {
         width: 100%;
@@ -232,7 +253,7 @@
   </section>
 
   <section class="testimonials pad bg-lite round">
-    <p class="larger">Reviews ⭐⭐⭐⭐⭐</p>
+    <h2 class="larger">Reviews ⭐⭐⭐⭐⭐</h2>
     <p>
       <q>Friendly people, wifi, nice campsites.</q>
       <cite>Jim, August 28, 2021</cite>
@@ -255,26 +276,24 @@
   </section>
 
   <section class="about pad bg-lite round">
-    <p class="larger">We're in Northern Vermont</p>
+    <h2 class="larger">Northern Vermont</h2>
     <div class="h-split-panel">
       <section class="pad round bg-lite">
         <p>
-          Located in northeastern Vermont, we're open from May through
-          September and longer if weather permits.
+          Located in northeastern Vermont, we try hard to be open from <time
+            data-has="binding">{{first-saturday-in-may}}</time>
+          through <time data-has="binding">{{second-sunday-in-october}}</time>.
         </p>
+        <h3 class="large">Utilities</h3>
         <p>
-          We accommodate RV's and tents with 30 campsites nestled along a
-          stream. All RV sites have full hookups with water, sewer and
-          electric. All our tent sites also have water and electric.
+          RV sites have full hookups with water, sewer and electric.
+          Tent sites have water and electric.
         </p>
+        <h3 class="large">Recreation</h3>
         <p>
-          <b>The Millbrook Campground has direct access to local ATV Trails</b>. Come on up and ride! Also, enjoy local
-          hike and bike trails or
-          area lakes during your stay. We are also near the Jay Peak Resort.
-        </p>
-        <p>
-          Just 90 minutes from Montreal, 3.5 hours from Boston, and 4.5 hours
-          from Albany, NY
+          <b>The Millbrook Campground has direct access to local ATV Trails!</b>
+          We are also near the northern terminus of the Long Trail, Jay Peak Ski Area, Jay Recreation Center, and some
+          lovely bike routes. Adventure Awaits!
         </p>
       </section>
 
@@ -285,13 +304,13 @@
   </section>
 
   <section class="amenities round bg-lite pad">
-    <p class="larger">What's At the Millbrook Campground?</p>
+    <h2 class="larger">What's At the Millbrook Campground?</h2>
     <div class="h-split-panel round bg-lite">
       <section class="pad round bg-lite">
         <img class="round" src="./assets/daytona-beach.jpg" />
       </section>
       <section class="pad round bg-lite">
-        <p class="large">Our Amenities</p>
+        <h3 class="large">Amenities</h3>
         <p>
           We are a campground that caters to the whole family. Most campsites
           have frontage along a local brook, surrounded by forests. A natural
@@ -309,24 +328,22 @@
           <li>ATV Trail Access</li>
         </ul>
 
+        <h3 class="large">
+          Convenient
+        </h3>
         <p>
-          For the youngin's we have available landscaped lawns for family
-          fun..
-        </p>
-        <p>
-          From the Millbrook Campground, you're within walking distance to the
-          Westfield General Store for general merchandise, groceries and
-          sundries.
+          The Millbrook Campground share both the <b>Westfield General Store</b> and <b>Home Town Hardware</b> as close
+          neighbors.
         </p>
       </section>
     </div>
   </section>
 
   <section class="rates round bg-lite pad">
-    <p class="larger">Rates</p>
+    <p class="larger">Reservation</p>
     <p class="large">
-      Please contact us with your questions or to reserve your site. All rates
-      include tax.
+      Please contact us with your questions or to reserve your site. Once you have confirmed availability, make a
+      one-night deposit to secure the reservation.
     </p>
     <div class="toolbar large">
       <a href="mailto:{{primary-email}}?subject=Millbrook%20Campground" data-has="binding">Email Us</a>
@@ -335,10 +352,6 @@
     </div>
     <div class="v-spacer">&nbsp;</div>
     <div class="v-toolbar">
-      <div class="center large">
-        Once you have confirmed availability, make a one-night deposit to
-        secure the reservation.
-      </div>
       <stripe-buy-button buy-button-id="buy_btn_1PlrZLLysPW28zmUja5Pd7gS"
         publishable-key="pk_live_51PlpbzLysPW28zmUH5Ai2iT34HMzFngzK7yvxfJTITcSil6IrZwe6z7w0zYCm39JbhtT6TQpIGe8VvYvgGpZrTvb00TPg9tHMk">
       </stripe-buy-button>
