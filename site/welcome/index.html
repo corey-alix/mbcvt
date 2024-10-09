@@ -38,6 +38,11 @@
         }
       }
 
+      .br {
+        display: block;
+        margin-top: 2ch;
+      }
+
       time {
         font-weight: bold;
       }
@@ -56,6 +61,10 @@
 
       .small {
         font-size: 2.5em;
+      }
+
+      .bold {
+        font-weight: bold;
       }
 
       .capitalize {
@@ -328,9 +337,10 @@
         <h3 class="large no-margin">Recreation</h3>
         <p>
           The Millbrook Campground has direct access to local ATV Trails.
-          <br />We are also near the northern terminus of the Long Trail, Jay Peak Ski Area, Jay Recreation Center, and
-          some lovely bike routes.
-          <br />Adventure Awaits!
+          <span class="br">We are also near the northern terminus of the Long Trail, Jay Peak Ski Area, Jay Recreation
+            Center.</span>
+            <span class="br">Many bike routes can be discovered that begin and end from the campground.</span>
+            <span class="br capitalize bold">Adventure awaits, go find it!</span>
         </p>
       </section>
     </div>
@@ -373,14 +383,14 @@
   <section class="rates round bg-lite pad">
     <h2 class="larger">Reservation</h2>
     <h3 class="large no-margin">Contact</h3>
-    <p class="large">
+    <p>
       Please contact us with your questions or to reserve your site. You can contact us via
       <a href="mailto:{{primary-email}}?subject=Millbrook%20Campground" data-has="binding">Email</a>,
       <a href="tel:{{primary-text-number}}" data-has="binding">Text</a> or
       <a href="tel:{{primary-telephone-number}}" data-has="binding">Phone</a>.
     </p>
     <h3 class="large no-margin">Pay</h3>
-    <p class="large">
+    <p>
       Once you have confirmed availability, make a
       one-night deposit to secure the reservation.
     </p>
