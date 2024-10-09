@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background:rgb(57, 39, 39)">
 
 <head>
   <meta charset="UTF-8" />
@@ -13,9 +13,10 @@
     }
 
     @media screen {
-      body {
+      html, body {
         --text-color: #fff;
         font-size: min(2vw, 9pt);
+        border-radius: 1ch;
       }
 
       a {
@@ -45,6 +46,18 @@
 
       .large {
         font-size: 3em;
+      }
+
+      .small {
+        font-size: 2.5em;
+      }
+
+      .capitalize {
+        text-transform: capitalize;
+      }
+
+      .no-margin {
+        margin: 0;
       }
 
       .toolbar {
@@ -121,7 +134,7 @@
     }
 
     p {
-      padding-bottom: 0.5em;
+      padding: 2ch;
       margin: 0;
       line-height: 3ch;
     }
@@ -209,6 +222,17 @@
       gap: 0.5em;
     }
 
+    .v-split-panel {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1em;
+
+      img {
+        width: 100%;
+        height: auto;
+      }
+    }
+    
     .h-split-panel {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -228,13 +252,15 @@
   </style>
 </head>
 
-<body>
+<body class="hide">
   <section class="welcome pad">
     <div class="center">
       <address class="center largest boldest">Millbrook Campground</address>
       <address class="center larger" data-has="binding">
         {{primary-address}}
       </address>
+      <p class="center small capitalize">open from <time data-has="binding">{{first-saturday-in-may}}</time>
+        through <time data-has="binding">{{second-sunday-in-october}}</time></p>
       <address class="center large">
         <a data-has="binding" href="mailto:{{primary-telephone-number}}">{{primary-telephone-number}}</a>
       </address>
@@ -277,28 +303,28 @@
 
   <section class="about pad bg-lite round">
     <h2 class="larger">Northern Vermont</h2>
-    <div class="h-split-panel">
+    <div class="v-split-panel">
+      <section>
+        <img class="round" src="./assets/brook.jpg" />
+      </section>
       <section class="pad round bg-lite">
+        <h3 class="large no-margin">Season</h3>
         <p>
           Located in northeastern Vermont, we try hard to be open from <time
             data-has="binding">{{first-saturday-in-may}}</time>
           through <time data-has="binding">{{second-sunday-in-october}}</time>.
         </p>
-        <h3 class="large">Utilities</h3>
+        <h3 class="large no-margin">Utilities</h3>
         <p>
           RV sites have full hookups with water, sewer and electric.
           Tent sites have water and electric.
         </p>
-        <h3 class="large">Recreation</h3>
+        <h3 class="large no-margin">Recreation</h3>
         <p>
           <b>The Millbrook Campground has direct access to local ATV Trails!</b>
           We are also near the northern terminus of the Long Trail, Jay Peak Ski Area, Jay Recreation Center, and some
           lovely bike routes. Adventure Awaits!
         </p>
-      </section>
-
-      <section>
-        <img class="round" src="./assets/brook.jpg" />
       </section>
     </div>
   </section>
@@ -310,7 +336,7 @@
         <img class="round" src="./assets/daytona-beach.jpg" />
       </section>
       <section class="pad round bg-lite">
-        <h3 class="large">Amenities</h3>
+        <h3 class="large no-margin">Amenities</h3>
         <p>
           We are a campground that caters to the whole family. Most campsites
           have frontage along a local brook, surrounded by forests. A natural
@@ -328,7 +354,7 @@
           <li>ATV Trail Access</li>
         </ul>
 
-        <h3 class="large">
+        <h3 class="large no-margin">
           Convenient
         </h3>
         <p>
@@ -340,7 +366,7 @@
   </section>
 
   <section class="rates round bg-lite pad">
-    <p class="larger">Reservation</p>
+    <h2 class="larger">Reservation</h2>
     <p class="large">
       Please contact us with your questions or to reserve your site. Once you have confirmed availability, make a
       one-night deposit to secure the reservation.
@@ -362,13 +388,14 @@
 
   </section>
 
-  <section class="map hide">
+  <section class="map">
     <img src="./assets/map.svg" alt="Millbrook Campground Map" />
   </section>
 
   <script type="module">
     import { setupWelcomeForm } from "./index.js";
     setupWelcomeForm();
+    document.body.classList.remove("hide");
   </script>
   <script async src="https://js.stripe.com/v3/buy-button.js"></script>
 </body>
