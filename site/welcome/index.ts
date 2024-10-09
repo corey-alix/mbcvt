@@ -15,6 +15,7 @@ export const bindings = makeObservable(
     "{{total-nites}}": "",
     "{{primary-address}}": officeInfo.address,
     "{{primary-email}}": officeInfo.email,
+    "{{primary-text-number}}": officeInfo.phone,
     "{{primary-telephone-number}}": officeInfo.phone,
     "{{first-saturday-in-may}}": firstSaturdayInMay(),
     "{{second-sunday-in-october}}": secondSundayInOctober(),

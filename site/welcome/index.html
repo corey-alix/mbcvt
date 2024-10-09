@@ -13,7 +13,9 @@
     }
 
     @media screen {
-      html, body {
+
+      html,
+      body {
         --text-color: #fff;
         font-size: min(2vw, 9pt);
         border-radius: 1ch;
@@ -30,6 +32,9 @@
 
       p {
         font-size: 2em;
+        a {
+          font-weight: bold;
+        }
       }
 
       time {
@@ -232,7 +237,7 @@
         height: auto;
       }
     }
-    
+
     .h-split-panel {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -367,15 +372,18 @@
 
   <section class="rates round bg-lite pad">
     <h2 class="larger">Reservation</h2>
+    <h3 class="large no-margin">Contact</h3>
     <p class="large">
-      Please contact us with your questions or to reserve your site. Once you have confirmed availability, make a
+      Please contact us with your questions or to reserve your site. You can contact us via 
+      <a href="mailto:{{primary-email}}?subject=Millbrook%20Campground" data-has="binding">Email</a>,
+      <a href="tel:{{primary-text-number}}" data-has="binding">Text</a> or
+      <a href="tel:{{primary-telephone-number}}" data-has="binding">Phone</a>.
+    </p>
+    <h3 class="large no-margin">Pay</h3>
+    <p class="large">
+      Once you have confirmed availability, make a
       one-night deposit to secure the reservation.
     </p>
-    <div class="toolbar large">
-      <a href="mailto:{{primary-email}}?subject=Millbrook%20Campground" data-has="binding">Email Us</a>
-      <a href="tel:{{primary-telephone-number}}" data-has="binding">Text Us</a>
-      <a href="tel:{{primary-telephone-number}}" data-has="binding">Leave a Message</a>
-    </div>
     <div class="v-spacer">&nbsp;</div>
     <div class="v-toolbar">
       <stripe-buy-button buy-button-id="buy_btn_1PlrZLLysPW28zmUja5Pd7gS"
@@ -388,8 +396,8 @@
 
   </section>
 
-  <section class="map">
-    <img src="./assets/map.svg" alt="Millbrook Campground Map" />
+  <section class="map hide">
+    <img src="./assets/map.svg" alt="Millbrook Campground Map" style="width:100%" />
   </section>
 
   <script type="module">
