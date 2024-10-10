@@ -118,6 +118,7 @@ export function setupWelcomeForm() {
   applyTemplates();
   setupBindings();
   initializationComplete();
+  spinCarousel();
 }
 
 export function setupReservationForm() {
@@ -512,6 +513,7 @@ function initializationComplete() {
     .querySelectorAll(".if-init")
     .forEach((element) => element.classList.toggle("if-init", false));
 }
+
 function firstSaturdayInMay(): string {
   // get the first saturday in May of this year
   const date = new Date();
@@ -546,4 +548,36 @@ function secondSundayInOctober(): string {
     date.setDate(date.getDate() + 1);
   }
   return date.toLocaleDateString();
+}
+
+function spinCarousel() {
+  const carousel = document.querySelector<HTMLDivElement>(".mb-carousel");
+  if (!carousel) return;
+  const slides = carousel.querySelectorAll("img");
+
+  let exit = false;
+
+  // setup an animation loop
+  const doit = () => {
+    if (exit) return;
+    // scroll one pixel right
+    const currentScroll = carousel.scrollLeft;
+    const nextScroll = currentScroll + 1;
+    carousel.scrollLeft = nextScroll;
+    // if we scrolled past the end of the carousel, reset to the beginning
+    console.log(carousel.scrollWidth, carousel.scrollLeft);
+    if (nextScroll + carousel.clientWidth >= carousel.scrollWidth) {
+      carousel.scrollLeft = 0;
+    }
+    // call animation again
+    requestAnimationFrame(doit);    
+  }
+  // start the animation
+  doit();
+
+  // stop the animation when the mouse enters the carousel
+  carousel.addEventListener("mouseenter", () => {
+    exit = true;
+  });
+
 }
