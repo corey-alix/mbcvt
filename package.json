@@ -7,7 +7,9 @@
     "deploy": "tsc",
     "tsc": "tsc -w",
     "server": "cd ./server && npm run server",
-    "dev": "npm-run-all --parallel tsc server"
+    "dev": "npm-run-all --parallel tsc server",
+    "pull": "git pull",
+    "do": "npm run pull && npm run deploy"
   },
   "repository": {
     "type": "git",
