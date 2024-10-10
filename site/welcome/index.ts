@@ -568,6 +568,7 @@ function spinCarousel() {
     console.log(carousel.scrollWidth, carousel.scrollLeft);
     if (nextScroll + carousel.clientWidth >= carousel.scrollWidth) {
       carousel.scrollLeft = 0;
+      exit = true;
     }
     // call animation again
     requestAnimationFrame(doit);    
