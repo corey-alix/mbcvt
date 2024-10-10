@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <!-- mobile friendly -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reservation</title>
+  <title>Millbrook Campground Reservation</title>
   <link rel="author" href="mailto:coreyalix@gmail.com" />
   <style>
     .hide {
@@ -222,6 +222,7 @@
       gap: 1em;
       flex-direction: row;
       width: 90vw;
+      height: 50vh;
       /* center the carousel */
       margin: 0 auto;
 
@@ -296,23 +297,18 @@
   <section class="testimonials pad bg-lite round">
     <h2 class="larger">Reviews ⭐⭐⭐⭐⭐</h2>
     <p>
-      <q>Friendly people, wifi, nice campsites.</q>
-      <cite>Jim, August 28, 2021</cite>
-    </p>
-
-    <p>
-      <q>ALL I CAN SAY IS EXCELLENT IN EVERY WAY POSSIBLE !!</q>
-      <cite>Rhonda, July 17, 2021</cite>
+      <q>Absolutely beautiful location and a great host! Electricity and water at each tent site and bathrooms close by.
+        Can’t beat the view of the brook and mini waterfalls from your site.</q>
+      <cite>Zeb 2024</cite>
     </p>
     <p>
-      <q>This is our first time trying them out and we love it here! Our
-        daughter loves the pond and the brook is awesome!</q>
-      <cite>Nicole June 21, 2020</cite>
+      <q>We spent 6 days here, great family owned atmosphere, The owners Nephew Corey bought the camp ground.., they put
+        100% into this awesome camp ground. Loved it!</q>
+      <cite>Ken 2024</cite>
     </p>
     <p>
-      <q>A very Friendly and clean Campground. Just the right amount of sites,
-        Family friendly but not all noisy. We Love it!</q>
-      <cite>George, July 27, 2019</cite>
+      <q>Very friendly and nice spacious sites. Would differently come back again.</q>
+      <cite>Carol 2024</cite>
     </p>
   </section>
 
@@ -320,14 +316,13 @@
     <h2 class="larger">Northern Vermont</h2>
     <div class="v-split-panel">
       <section>
-        <img class="round" src="./assets/brook.jpg" />
+        <img class="round" src="./assets/fall_2024.jpg" style="" />
       </section>
       <section class="pad round bg-lite">
         <h3 class="large no-margin">Season</h3>
         <p>
-          Located in northeastern Vermont, we try hard to be open from <time
-            data-has="binding">{{first-saturday-in-may}}</time>
-          through <time data-has="binding">{{second-sunday-in-october}}</time>.
+          Located in northeastern Vermont, we are open from <time data-has="binding">{{first-saturday-in-may}}</time>
+          through <time data-has="binding">{{second-sunday-in-october}}</time> if the weather allows it.
         </p>
         <h3 class="large no-margin">Utilities</h3>
         <p>
@@ -339,8 +334,16 @@
           The Millbrook Campground has direct access to local ATV Trails.
           <span class="br">We are also near the northern terminus of the Long Trail, Jay Peak Ski Area, Jay Recreation
             Center.</span>
-            <span class="br">Many bike routes can be discovered that begin and end from the campground.</span>
-            <span class="br capitalize bold">Adventure awaits, go find it!</span>
+          <span class="br">Many bike routes can be discovered that begin and end from the campground.</span>
+          <span class="br capitalize bold">Adventure is literally just around the corner!</span>
+          <div class="mb-carousel round">
+            <img class="round" src="./assets/falls_2024.jpg" />
+            <img class="round" src="./assets/rocky_2024.jpg" />
+            <img class="round" src="./assets/ballground_hike_2024.jpg" />
+            <img class="round" src="./assets/dogs_welcome_2024.jpg" />
+            <img class="round" src="./assets/hillview_2024.jpg" />
+            <img class="round" src="./assets/tenting_2024.jpg" />
+          </div>
         </p>
       </section>
     </div>
@@ -348,7 +351,7 @@
 
   <section class="amenities round bg-lite pad">
     <h2 class="larger capitalize">Provisions</h2>
-    <div class="h-split-panel round bg-lite">
+    <div class="v-split-panel round bg-lite">
       <section class="pad round bg-lite">
         <img class="round" src="./assets/daytona-beach.jpg" />
       </section>
@@ -358,6 +361,7 @@
           Most sites have frontage along a local brook. The campground is nestled against the forest
           and we have a <i>clean</i> pond and local stream for you and your family to explore and enjoy.
         </p>
+        <img class="round" src="./assets/pond_2024.jpg" />
 
         <ul class="small capitalize">
           <li>Free showers</li>
