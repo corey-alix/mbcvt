@@ -63,6 +63,14 @@
         font-size: 2.5em;
       }
 
+      .smaller {
+        font-size: 2.0em;
+      }
+
+      .smallest {
+        font-size: 1.4em;
+      }
+
       .bold {
         font-weight: bold;
       }
@@ -138,6 +146,11 @@
         background-color: white;
         border-color: #333;
       }
+
+      .bg-lite {
+        background-color: hsl(0, 0%, 97%);
+      }
+
     }
 
     body {
@@ -272,18 +285,18 @@
   <section class="welcome pad">
     <div class="center">
       <address class="center largest boldest">Millbrook Campground</address>
-      <address class="center larger" data-has="binding">
+      <address class="center large" data-has="binding">
         {{primary-address}}
       </address>
-      <p class="center small capitalize">open from <time data-has="binding">{{first-saturday-in-may}}</time>
-        through <time data-has="binding">{{second-sunday-in-october}}</time></p>
-      <address class="center large">
+      <address class="center small">
         <a data-has="binding" href="tel:{{primary-telephone-number}}">{{primary-telephone-number}}</a>
       </address>
-      <address class="center large">
+      <address class="center small">
         <a data-has="binding" href="mailto:{{primary-email}}?subject=Millbrook%20Campground">{{primary-email}}</a>
       </address>
     </div>
+    <p class="center large capitalize">open <time data-has="binding">{{first-saturday-in-may}}</time>
+      thru <time data-has="binding">{{second-sunday-in-october}}</time></p>
   </section>
 
   <section class="photos pad">
@@ -306,14 +319,14 @@
   </section>
 
   <section class="testimonials pad bg-lite round">
-    <h2 class="larger">Reviews ⭐⭐⭐⭐⭐</h2>
+    <h3 class="large">Reviews ⭐⭐⭐⭐⭐</h3>
     <p>
       <q>Absolutely beautiful location and a great host! Electricity and water at each tent site and bathrooms close by.
         Can’t beat the view of the brook and mini waterfalls from your site.</q>
       <cite>Zeb 2024</cite>
     </p>
     <p>
-      <q>We spent 6 days here, great family owned atmosphere, The owners Nephew Corey bought the camp ground.., they put
+      <q>We spent 6 days here, great family owned atmosphere, The owners Nephew Corey bought the camp ground. They put
         100% into this awesome camp ground. Loved it!</q>
       <cite>Ken 2024</cite>
     </p>
@@ -324,76 +337,79 @@
   </section>
 
   <section class="about pad bg-lite round">
-    <h2 class="larger">Location</h2>
-    <p>We are located in the North East Kingdom of Vermont, the most lovely and approchable place in the world.  Listen to the birds sing, the brook babble, and the crackle of the fire as the sun sets, the moon rises and you begin to end another perfect day in Vermont.</p>
-    <div class="v-split-panel">
-      <section class="pad round bg-lite">
-        <h3 class="large no-margin">Season</h3>
-        <p>
-          We are open from <time data-has="binding">{{first-saturday-in-may}}</time>
-          through <time data-has="binding">{{second-sunday-in-october}}</time> if the weather allows it, because not every day in Vermont is <q>perfect</q>.
-        </p>
-        <h3 class="large no-margin">Utilities</h3>
-        <p>
-          RV sites have full hookups with water, sewer and electric.
-          Tent sites have water and electric.
-        </p>
-        <h3 class="large no-margin">Recreation</h3>
-        <p>
-          The Millbrook Campground has direct access to local ATV Trails.
-          <span class="br">We are also near the northern terminus of the Long Trail, the Jay Peak Ski Area, and the Jay Recreation
-            Center.</span>
-          <span class="br capitalize bold">Adventure is literally just around the corner!</span>
-        </p>
-      </section>
-    </div>
+    <h3 class="large no-margin">Location</h3>
+    <p>We are located in the North East Kingdom of Vermont, the most lovely and approchable place in the world. Listen
+      to the birds sing, the brook babble, and the crackle of the fire as the sun sets, the moon rises and you begin to
+      end another perfect day in Vermont.</p>
   </section>
 
-  <section class="amenities round bg-lite pad">
-    <h2 class="larger capitalize">Provisions</h2>
-    <div class="v-split-panel round bg-lite">
-      <section class="pad round bg-lite">
-        <h3 class="large no-margin">Amenities</h3>
-        <p>
-          Most sites have frontage along a local brook. The campground is nestled against the forest
-          and we have a <i>clean</i> pond and local stream for you and your family to explore and enjoy.
-        </p>
+  <section class="pad round bg-lite">
+    <h3 class="large no-margin">Season</h3>
+    <p>
+      We are open from <time data-has="binding">{{first-saturday-in-may}}</time>
+      through <time data-has="binding">{{second-sunday-in-october}}</time> if the weather allows it, because not
+      every day in Vermont is <q>perfect</q>.
+    </p>
+  </section>
 
-        <ul class="small capitalize">
-          <li>Free showers</li>
-          <li>Free wifi</li>
-          <li>Full hook-ups</li>
-          <li><i>Seasoned</i> Firewood</li>
-          <li>Play Area</li>
-          <li>Rec Hall (under construction)</li>
-          <li>Natural Pond, Stream and Forest</li>
-          <li>ATV Trail Access</li>
-        </ul>
+  <section class="pad round bg-lite">
+    <h3 class="large no-margin">Utilities</h3>
+    <p>
+      RV sites have full hookups with water, sewer and electric.
+      Tent sites have water and electric.
+    </p>
+  </section>
 
-        <h3 class="large no-margin">
-          Shopping
-        </h3>
-        <p>
-          The Millbrook Campground share both the <b>Westfield General Store</b> and <b>Home Town Hardware</b> as close
-          neighbors.
-        </p>
-      </section>
-    </div>
+  <section class="pad round bg-lite">
+    <h3 class="large no-margin">Recreation</h3>
+    <p>
+      The Millbrook Campground has direct access to local ATV Trails.
+      <span class="br">We are also near the northern terminus of the Long Trail, the Jay Peak Ski Area, and the Jay
+        Recreation
+        Center.</span>
+      <span class="br capitalize bold">Adventure is literally just around the corner!</span>
+    </p>
+  </section>
+
+  <section class="pad round bg-lite">
+    <h4 class="large no-margin">Amenities</h4>
+    <p>
+      Most sites have frontage along a local brook. The campground is nestled against the forest
+      and we have a <i>clean</i> pond and local stream for you and your family to explore and enjoy.
+    </p>
+
+    <ul class="small capitalize">
+      <li>Free showers</li>
+      <li>Free wifi</li>
+      <li>Full hook-ups</li>
+      <li><i>Seasoned</i> Firewood</li>
+      <li>Play Area</li>
+      <li>Rec Hall (under construction)</li>
+      <li>Natural Pond, Stream and Forest</li>
+      <li>ATV Trail Access</li>
+    </ul>
+
+    <h4 class="large no-margin">
+      Shopping
+    </h4>
+    <p>
+      The Millbrook Campground share both the <b>Westfield General Store</b> and <b>Home Town Hardware</b> as close
+      neighbors.
+    </p>
   </section>
 
   <section class="rates round bg-lite pad">
-    <h2 class="larger">Reservation</h2>
-    <h3 class="large no-margin">Contact</h3>
+    <h3 class="large no-margin">Reservation</h3>
     <p>
-      Please contact us with your questions or to reserve your site. You can contact us via
+      Please contact us with your questions or to reserve your site via
       <a href="mailto:{{primary-email}}?subject=Millbrook%20Campground" data-has="binding">Email</a>,
       <a href="tel:{{primary-text-number}}" data-has="binding">Text</a> or
       <a href="tel:{{primary-telephone-number}}" data-has="binding">Phone</a>.
     </p>
-    <h3 class="large no-margin">Pay</h3>
+    <h3 class="large no-margin">Deposit</h3>
     <p>
-      Once you have confirmed availability, make a
-      one-night deposit to secure the reservation.
+      Once you have confirmed availability, we request that make a
+      one-night deposit to secure the entire reservation.
     </p>
     <div class="v-spacer">&nbsp;</div>
     <div class="v-toolbar">
